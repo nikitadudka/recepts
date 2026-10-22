@@ -4,6 +4,7 @@ from pathlib import Path
 import shutil
 import signal
 import subprocess
+import sys
 import tempfile
 
 
@@ -36,6 +37,17 @@ def expect_failure(root, environment, marker):
 
 
 if __name__ == '__main__':
+    lifecycle = subprocess.Popen([sys.executable, str(ROOT / 'tests/server_lifecycle_test.py')],
+                                 cwd=ROOT, start_new_session=True)
+    try:
+        if lifecycle.wait(timeout=90) != 0:
+            raise AssertionError('Server lifecycle regression failed')
+    finally:
+        try:
+            os.killpg(lifecycle.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        lifecycle.wait(timeout=10)
     with tempfile.TemporaryDirectory(prefix='kroshka-ci-negative-') as directory:
         base = Path(directory)
         root = base / 'source'

@@ -63,6 +63,8 @@ class RecipeBookTests(unittest.TestCase):
             try:
                 cls.server.wait(timeout=10)
             except subprocess.TimeoutExpired:
+                # Browser connections can keep graceful HTTP shutdown pending.
+                print('Test server did not drain in 10s; killing before cleanup/restart', flush=True)
                 cls.server.kill()
                 cls.server.wait(timeout=10)
 
@@ -285,8 +287,7 @@ class RecipeBookTests(unittest.TestCase):
     def test_14_server_restart_keeps_recipes_and_login(self):
         self.save(self.fill_recipe('Суп после перезапуска'))
         cls = type(self)
-        cls.server.terminate()
-        cls.server.wait(timeout=10)
+        cls.stop_server()
         cls.server = subprocess.Popen(['node', 'server.js'], cwd=ROOT, env=cls.environment, stdout=subprocess.DEVNULL)
         for _ in range(50):
             try:
@@ -808,7 +809,7 @@ class RecipeBookTests(unittest.TestCase):
             if recipe.get('catalogId')=='mojito':recipe['image']=''
             if recipe.get('catalogId')=='virgin-mojito':recipe['image']='sample:salad'
         self.assertEqual(self.context.request.put(self.url+'/api/library',data=snapshot).status,200)
-        self.__class__.server.terminate();self.__class__.server.wait(timeout=10)
+        self.__class__.stop_server()
         with sqlite3.connect(Path(self.data_dir.name)/'recipes.sqlite') as db:
             db.execute("UPDATE settings SET value='0' WHERE key='catalogArtVersion'")
         self.__class__.server=subprocess.Popen(['node','server.js'],cwd=ROOT,env=self.environment,stdout=subprocess.DEVNULL)
@@ -879,7 +880,7 @@ class RecipeBookTests(unittest.TestCase):
     def test_43_upgrade_migrates_legacy_methods_without_losing_fields(self):
         import sqlite3
         cls=type(self)
-        cls.server.terminate();cls.server.wait(timeout=10)
+        cls.stop_server()
         path=Path(cls.data_dir.name)/'recipes.sqlite'
         with sqlite3.connect(path) as db:
             recipe=json.loads(db.execute('SELECT content FROM recipes WHERE id=?',('salmon',)).fetchone()[0])
