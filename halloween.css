@@ -1,0 +1,172 @@
+/* Seasonal decoration is isolated: the classic recipe book keeps its own styles. */
+.seasonal-only{display:none}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:35px;padding:0 11px;border:1px solid var(--line);border-radius:7px;background:transparent;color:var(--green);font-size:10px}
+.theme-toggle svg{width:16px;height:16px}
+.auth-card>.theme-toggle{position:absolute;top:21px;right:20px;width:34px;padding:0}
+.auth-card>.theme-toggle span{display:none}
+.theme-dialog{width:510px}
+.theme-dialog .dialog-heading{padding:25px 26px}
+.theme-dialog .dialog-heading h2{font-size:28px}
+.theme-options{display:grid;gap:10px;padding:23px 26px 0}
+.theme-option{display:flex;gap:15px;align-items:center;text-align:left;min-height:100px;border:1px solid var(--line);background:transparent;border-radius:11px;padding:15px}
+.theme-option strong{display:block;font-size:13px;font-weight:500;margin-bottom:7px}
+.theme-option small{display:block;color:var(--muted);font-size:11px;line-height:1.6}
+.theme-option[aria-pressed=true]{border-color:var(--green);background:var(--mint)}
+.theme-swatch{display:grid;place-items:center;width:54px;height:64px;border-radius:28px 28px 9px 9px;flex-shrink:0;font:35px Georgia,serif;border:1px solid #c29b6955}
+.swatch-auto{background:linear-gradient(125deg,#e9e5d1 49%,#342333 50%);color:#bb8654}
+.swatch-halloween{background:#2b1e2d;color:#f1b671}
+.swatch-classic{background:#e9eee0;color:#7e9570}
+.theme-check{visibility:hidden;margin-left:auto;color:var(--green)}
+.theme-option[aria-pressed=true] .theme-check{visibility:visible}
+.theme-footnote{padding:0 26px;margin:18px 0 25px;font-size:10px;color:var(--muted);line-height:1.6}
+@media(max-width:680px){.topbar-actions .theme-toggle{width:33px;min-height:33px;padding:0}.topbar-actions .theme-toggle span{display:none}.topbar-actions{gap:8px}.theme-dialog .dialog-heading{padding:23px 20px}.theme-dialog .dialog-heading h2{font-size:24px}.theme-options{padding:20px 16px 0}.theme-option{gap:11px;padding:12px}.theme-option small{font-size:10px}.theme-swatch{width:46px;height:58px}.theme-footnote{padding:0 20px}.topbar-actions #logout{font-size:8px}}
+@media(max-width:360px){.topbar-actions{gap:5px}.topbar-actions .theme-toggle{width:28px}.topbar-actions .button{padding:0 6px;font-size:7px}}
+
+:root[data-theme=halloween]{color-scheme:dark;--paper:#211a24;--ink:#f3e9dc;--muted:#b2a3af;--green:#ecb779;--mint:#3e2d39;--line:#493647;--serif:Georgia,'Times New Roman',serif;--copper:#d39762;--lavender:#b3a1be}
+[data-theme=halloween] body{background:radial-gradient(ellipse at 85% 0,#43273555,transparent 45%),var(--paper)}
+[data-theme=halloween] .seasonal-only{display:block}
+[data-theme=halloween] .sidebar{background:radial-gradient(ellipse at 30% 5%,#50354655,transparent 50%),#281e2b;border-color:#463143}
+[data-theme=halloween] .brand-book{fill:#3d2936;stroke:#b27d50}
+[data-theme=halloween] .brand-book-edge{stroke:#a3744e;opacity:.5}
+[data-theme=halloween] .brand-word-svg{fill:#f4d2a5}
+[data-theme=halloween] .brand-dot-svg{fill:#dc9354}
+[data-theme=halloween] .brand-moon{fill:#dca267;stroke:none}
+[data-theme=halloween] .brand-stars{fill:none;stroke:#dca267;stroke-width:4;stroke-linecap:round}
+[data-theme=halloween] .sidebar>.brand-caption{color:#c5a888}
+[data-theme=halloween] .nav-label{color:#a58caa}
+[data-theme=halloween] .nav-item{color:#c3afc2}
+[data-theme=halloween] .nav-item.active{background:#48313b;color:#f3c591}
+[data-theme=halloween] .nav-item:hover{background:#3b2b3c}
+[data-theme=halloween] .nav-count{background:#392b39;color:#dcb98f}
+[data-theme=halloween] .sidebar-note{background:radial-gradient(ellipse at 90% 10%,#a46b3044,transparent 75%),#362634;border:1px solid #654536;border-radius:13px}
+[data-theme=halloween] .sidebar-note:after{content:'☾';position:absolute;right:13px;top:7px;font:50px Georgia;color:#c48a51}
+[data-theme=halloween] .note-illustration{display:none}
+[data-theme=halloween] .sidebar-note p{font-size:21px;color:#ead4ba}
+[data-theme=halloween] .sidebar-note>span{color:#b69cad}
+[data-theme=halloween] .sidebar-footer{border-color:var(--line);color:#d9c6ce}
+[data-theme=halloween] .sidebar-footer small{color:#aa91a5}
+[data-theme=halloween] .avatar{background:#583c36;color:#efc092}
+[data-theme=halloween] .saved-dot,[data-theme=halloween] .tiny-dot{background:#d4a26b;box-shadow:0 0 8px #d4a26b44}
+[data-theme=halloween] .home-status{color:#baa2b7}
+[data-theme=halloween] .topbar{background:#241b27aa;border-color:var(--line)}
+[data-theme=halloween] .eyebrow{color:#c89b70}
+[data-theme=halloween] .page-heading h1{font-size:32px;letter-spacing:-.8px}
+[data-theme=halloween] .page-heading h1 em{color:#deb17f;font-style:italic}
+[data-theme=halloween] h1+p{color:#b8a7b4}
+[data-theme=halloween] .button{border-color:#684b56;color:#ead5bf}
+[data-theme=halloween] .button:hover{background:#49303e}
+[data-theme=halloween] .button.primary{color:#2e2029;background:linear-gradient(110deg,#efc392,#d99b5d);border-color:#e5b47f;box-shadow:0 4px 18px #bf763d19;font-weight:600}
+[data-theme=halloween] .button.primary:hover{background:#f2cc9b}
+[data-theme=halloween] .text-button,[data-theme=halloween] .reset-button{color:#c3a5b9}
+[data-theme=halloween] .hero{min-height:333px;background:#281c26;border-color:#795039;border-radius:16px;box-shadow:0 14px 55px #140e192d}
+[data-theme=halloween] .hero-copy{padding:38px 37px;flex:none;width:56%}
+[data-theme=halloween] .hero-tag{color:#ddae7e;font-size:8px;letter-spacing:1.45px;white-space:nowrap}
+[data-theme=halloween] .hero h2{font-size:53px;line-height:1.04;letter-spacing:-1.5px;margin:22px 0 16px;color:#ffedd9;text-shadow:0 2px 20px #21121e}
+[data-theme=halloween] .hero h2 em{color:#e4ad73}
+[data-theme=halloween] .hero-copy p{color:#c7b0bd;font-size:11px;line-height:1.8;margin-bottom:23px}
+[data-theme=halloween] .hero-link{color:#f0c58f;font-size:11px;gap:15px}
+[data-theme=halloween] .hero-visual{display:none}
+[data-theme=halloween] .halloween-scene{position:absolute;inset:0;background:linear-gradient(90deg,#281c26 0%,#281c26ed 24%,#281c2677 46%,transparent 69%),url('assets/halloween-hero.png') center right/cover no-repeat;pointer-events:none}
+[data-theme=halloween] .moon-seal{position:absolute;right:26px;top:23px;width:61px;height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid #dba06b7a;border-radius:35px 35px 9px 9px;background:#281c2644;backdrop-filter:blur(8px);font:31px Georgia;color:#f1c394;box-shadow:0 0 0 4px #e4ad7310}
+[data-theme=halloween] .moon-seal small{font:7px 'Golos Text',sans-serif;letter-spacing:1px;margin-top:4px}
+[data-theme=halloween] .halloween-bats{position:absolute;right:115px;top:26px;width:150px;height:65px;fill:#d9ad75;stroke:none;opacity:.66}
+[data-theme=halloween] .scene-caption{position:absolute;right:26px;bottom:23px;font:italic 16px Georgia;color:#f1caa2;text-shadow:0 1px 10px #000}
+[data-theme=halloween] .collection-heading h2{color:#f0e2d3}
+[data-theme=halloween] .collection-heading h2 span{color:#e4ba8d;background:#44303c}
+[data-theme=halloween] .collection-hint{color:#b296ab}
+[data-theme=halloween] .search-box,[data-theme=halloween] .filter-button{background:#2d2231;border-color:#563d51}
+[data-theme=halloween] .search-box>svg{color:#c69570}
+[data-theme=halloween] .search-box input{color:#eee1d3}
+[data-theme=halloween] .search-box input::placeholder{color:#b4a0b0}
+[data-theme=halloween] .search-box kbd{color:#a68b9f;border-color:#5e4357}
+[data-theme=halloween] .search-box:focus-within{outline-color:#c39568}
+[data-theme=halloween] .filter-icon{color:#d0ad8c}
+[data-theme=halloween] .filter-button[aria-expanded=true]{background:#543644}
+[data-theme=halloween] .filter-button>span:last-child:not(.filter-icon){color:#2b1e2a}
+[data-theme=halloween] .filters{background:#2e2331;border-color:var(--line)}
+[data-theme=halloween] .filters label{color:#c4a7b9}
+[data-theme=halloween] .filters select{background:#231c29;border-color:#65485e;color:#ecd9c6}
+[data-theme=halloween] .chip{color:#c2a9be;border-color:#513b4f}
+[data-theme=halloween] .chip.active,[data-theme=halloween] .chip:hover{background:#48313d;border-color:#9a6a48;color:#f2c99b}
+[data-theme=halloween] .sort-label{color:#b89bae}
+[data-theme=halloween] .sort-label select{color:#e4bd94;background-color:transparent}
+[data-theme=halloween] select option{background:#302334;color:#f1dfcf}
+[data-theme=halloween] .view-switch{border-color:#513b4f}
+[data-theme=halloween] .view-switch button{color:#b799af}
+[data-theme=halloween] .view-switch button.active{background:#49323f;color:#e7b57d}
+[data-theme=halloween] .recipe-card{background:#2c222f;border-color:#51394a;border-radius:12px;box-shadow:0 6px 18px #160d1b22}
+[data-theme=halloween] .recipe-card:hover{border-color:#ac774d;box-shadow:0 12px 30px #150d1d55}
+[data-theme=halloween] .card-image{background:#3b2935}
+[data-theme=halloween] .card-image:after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,#2c222f30,transparent 50%);pointer-events:none}
+[data-theme=halloween] .card-title{color:#f2e4d4}
+[data-theme=halloween] .meal-badge{background:#2e2230ee;color:#ecd4b7;border:1px solid #b3865e55}
+[data-theme=halloween] .macro-label{color:#b39aaf}
+[data-theme=halloween] .card-ingredients,[data-theme=halloween] .card-methods{color:#c2a9bd}
+[data-theme=halloween] .recipe-tag{background:#413440;color:#c9b8cb}
+[data-theme=halloween] .recipe-tag.protein{background:#3f334e;color:#c5b3df}
+[data-theme=halloween] .recipe-tag.carbs{background:#4c372b;color:#e5b880}
+[data-theme=halloween] .recipe-tag.fat{background:#4a3039;color:#e2a7a5}
+[data-theme=halloween] .card-meta{border-color:#4d3748}
+[data-theme=halloween] .card-time{color:#e0b785}
+[data-theme=halloween] .card-macros{color:#b49cad}
+[data-theme=halloween] .card-macros b{color:#d5bdc9}
+[data-theme=halloween] .card-macros span:first-child b{color:#c5acdc}
+[data-theme=halloween] .card-macros span:last-child b{color:#d9b582}
+[data-theme=halloween] .favorite-button{background:#291e2de8;color:#f3d2a5;border:1px solid #e1b38060}
+[data-theme=halloween] .favorite-button.is-favorite,[data-theme=halloween] .favorite-button.is-favorite svg{color:#edb378;fill:#edb378}
+[data-theme=halloween] .collection-footer{color:#b498ad}
+[data-theme=halloween] .page-footer{border-color:var(--line);color:#dfb384}
+[data-theme=halloween] .page-footer span span,[data-theme=halloween] .page-footer button{color:#b99caf}
+[data-theme=halloween] .migration-banner{background:#392b3a;border-color:#614653}
+[data-theme=halloween] .migration-banner p{color:#c4aaba}
+[data-theme=halloween] dialog{background:#2a202e;border-color:#725040;box-shadow:0 30px 100px #10071399}
+[data-theme=halloween] dialog::backdrop{background:#100b16aa;backdrop-filter:blur(8px)}
+[data-theme=halloween] .dialog-heading,[data-theme=halloween] .dialog-footer{background:#2d2230;border-color:var(--line)}
+[data-theme=halloween] .icon-button{background:#3a2b3a;color:#e6c9b1;border-color:#68495d}
+[data-theme=halloween] .editor-navigation{background:#332635;border-color:var(--line)}
+[data-theme=halloween] .editor-navigation button,[data-theme=halloween] .step-number{color:#d4a474}
+[data-theme=halloween] .editor-navigation button span{color:#debfcd}
+[data-theme=halloween] .editor-heading p,[data-theme=halloween] .section-hint,[data-theme=halloween] .section-title small,[data-theme=halloween] .keyboard-hint,[data-theme=halloween] .field-hint,[data-theme=halloween] .form-body .field-hint,[data-theme=halloween] .editor-save-hint{color:#b99eb3}
+[data-theme=halloween] .form-body label,[data-theme=halloween] .ingredient-header{color:#d5b6c6}
+[data-theme=halloween] .form-body label>span{color:#d8a272}
+[data-theme=halloween] .form-body input:not([type=file]),[data-theme=halloween] .form-body textarea,[data-theme=halloween] .form-body select,[data-theme=halloween] .auth-card input{color:#f4e4d5;background:#221b28;border-color:#65465d}
+[data-theme=halloween] .form-body input::placeholder,[data-theme=halloween] .form-body textarea::placeholder{color:#aa8fa4}
+[data-theme=halloween] .section-title>span,[data-theme=halloween] .detail-nutrition{background:#45303e;color:#e3b281}
+[data-theme=halloween] .add-row-button{background:#352535;border-color:#845a4b;color:#edbd8c}
+[data-theme=halloween] .add-row-button:hover{background:#48303d}
+[data-theme=halloween] .photo-drop,[data-theme=halloween] .photo-drop:hover{background:#392936;border-color:#835948}
+[data-theme=halloween] .upload-caption{border-color:var(--line)}
+[data-theme=halloween] .upload-caption strong{color:#ebbc87}
+[data-theme=halloween] .upload-caption>span,[data-theme=halloween] .photo-section h3 small,[data-theme=halloween] .nutrition-section summary span{color:#b79caf}
+[data-theme=halloween] .form-body .method-option{background:#302232;border-color:#664757}
+[data-theme=halloween] .form-body .method-option:has(input:checked){background:#533747;border-color:#d29a67}
+[data-theme=halloween] .form-body .method-option>span{color:#e2c6b7}
+[data-theme=halloween] .step-actions button,[data-theme=halloween] .delete-ingredient{color:#c69cb4}
+[data-theme=halloween] .detail-stats,[data-theme=halloween] .detail-methods>span,[data-theme=halloween] .detail-nutrition span{color:#bfa1b6}
+[data-theme=halloween] .detail-methods>strong,[data-theme=halloween] .detail-ingredients li span:last-child{color:#e6bd8e}
+[data-theme=halloween] .detail-ingredients li{color:#d4b7ca;border-color:#574053}
+[data-theme=halloween] .detail-steps li{color:#d1b8c8}
+[data-theme=halloween] .detail-steps li:before{color:#d2a06f}
+[data-theme=halloween] .detail-photo>.icon-button{background:#352435}
+[data-theme=halloween] .connection-body>p,[data-theme=halloween] .install-instructions p{color:#cab0c1}
+[data-theme=halloween] .install-instructions strong,[data-theme=halloween] .connection-address code{color:#e8bc8c}
+[data-theme=halloween] .connection-address{background:#382936;border-color:#65494f}
+[data-theme=halloween] .toast{background:#edc392;color:#2b1c2a;border:1px solid #f4d4ae}
+[data-theme=halloween] .auth-screen{background:radial-gradient(ellipse at 16% 5%,#55304477,transparent 60%),radial-gradient(ellipse at 90% 90%,#89522e33,transparent 50%),#211a24}
+[data-theme=halloween] .auth-card{background:#2b202fe8;border-color:#77523d;box-shadow:0 24px 100px #130b1955}
+[data-theme=halloween] .auth-card>p,[data-theme=halloween] .auth-card label{color:#c4a9bc}
+[data-theme=halloween] .auth-card>small{color:#b29baa}
+[data-theme=halloween] .theme-option[aria-pressed=true]{border-color:#cf995f;background:#43303c}
+[data-theme=halloween] .theme-toggle:hover{background:#48313d}
+[data-theme=halloween] button:focus-visible,[data-theme=halloween] a:focus-visible,[data-theme=halloween] input:focus,[data-theme=halloween] select:focus,[data-theme=halloween] textarea:focus{outline-color:#e0b07e}
+@media(max-width:1200px){[data-theme=halloween] .page-heading h1{font-size:28px}[data-theme=halloween] .hero-copy{padding:32px 28px}[data-theme=halloween] .hero h2{font-size:48px}[data-theme=halloween] .hero-tag{font-size:6px;letter-spacing:1px}}
+@media(max-width:960px){[data-theme=halloween] .hero{min-height:305px}[data-theme=halloween] .hero h2{font-size:43px}[data-theme=halloween] .hero-copy{padding:30px 25px;width:64%}[data-theme=halloween] .hero-tag{font-size:5.5px}[data-theme=halloween] .halloween-scene{background-position:center right 18%}[data-theme=halloween] .halloween-bats{right:55px;top:5px;width:100px}[data-theme=halloween] .moon-seal{right:16px;width:45px;height:57px;font-size:25px;top:18px}[data-theme=halloween] .moon-seal small{font-size:5px}[data-theme=halloween] .scene-caption{font-size:12px;right:16px}}
+@media(max-width:680px){[data-theme=halloween] .sidebar{background:transparent}[data-theme=halloween] .nav-item.active{background:transparent}[data-theme=halloween] .nav-item.active:after{background:#dda366}[data-theme=halloween] .nav-item:hover{background:transparent}[data-theme=halloween] .page-heading h1{font-size:36px;line-height:1.13}[data-theme=halloween] .page-heading .eyebrow{font-size:7px;letter-spacing:1.2px}[data-theme=halloween] .page-heading p{font-size:11px;max-width:300px}[data-theme=halloween] .hero{min-height:420px;border-radius:14px;margin-bottom:32px}[data-theme=halloween] .hero-copy{width:100%;padding:26px 24px;align-self:flex-start}[data-theme=halloween] .hero h2{font-size:43px;margin:16px 0 12px;line-height:1.06}[data-theme=halloween] .hero-tag{font-size:6px;letter-spacing:.85px}[data-theme=halloween] .hero-copy p{font-size:10px;margin-bottom:15px}[data-theme=halloween] .hero-link{font-size:10px;margin-top:0}[data-theme=halloween] .halloween-scene{background:linear-gradient(180deg,#281c26 0%,#281c26f5 20%,#281c2677 44%,transparent 70%),url('assets/halloween-hero.png') bottom right/auto 330px no-repeat}[data-theme=halloween] .moon-seal{right:18px;top:auto;bottom:20px;background:#281c26aa}[data-theme=halloween] .halloween-bats{top:160px;right:12px;width:105px;opacity:.5}[data-theme=halloween] .scene-caption{bottom:21px;left:23px;right:auto;font-size:14px}[data-theme=halloween] .card-macros{font-size:9px}[data-theme=halloween] .theme-toggle{border-color:#65485a}}
+@media(max-width:360px){[data-theme=halloween] .page-heading h1{font-size:32px}[data-theme=halloween] .hero-copy{padding:24px 18px}[data-theme=halloween] .hero-tag{font-size:5px}[data-theme=halloween] .hero h2{font-size:39px}[data-theme=halloween] .hero{min-height:410px}}
+@media(prefers-reduced-motion:reduce){[data-theme=halloween] .recipe-card,[data-theme=halloween] .card-image>:is(img,.food-photo){transition:none}}
+
+[data-theme=halloween] .editor-dialog .cooking-methods>.field-hint{color:#baa4b6}
+[data-theme=halloween] .filters label{color:#d1b9c8}
+[data-theme=halloween] .preparation-tag{background:#4b3547;color:#f2c590}
+[data-theme=halloween] :is(button,a,summary,input,select,textarea):focus-visible{outline-color:#e7ad70}
+@media(max-width:680px){[data-theme=halloween] .card-macros{font-size:10px}}

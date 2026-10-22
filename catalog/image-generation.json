@@ -1,0 +1,982 @@
+{
+  "recipes-001": {
+    "source": "exec-820b3630-d421-4f64-a339-088589a3a2d1.png",
+    "sha256": "39745aebaf244be6f9443f7fbd58ce41b8ee1addcbff62ce945c48afab108b5a",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 206542,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-003": {
+    "source": "exec-bbd8e403-7323-488c-9427-c6affa0b0b43.png",
+    "sha256": "e93237e1170925f95de3ce34f5589edc6784955702d710f1c7bb3956e11cfd02",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 247704,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-008": {
+    "source": "exec-c2417ed1-9040-45d0-99da-75b61d31e718.png",
+    "sha256": "7358472ef692d78ad408d8d15eadbf63b0ab712f73346283df421f50941f8601",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 219080,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-007": {
+    "source": "exec-b9f4136d-2b90-4883-ae8a-964572cfb539.png",
+    "sha256": "f455551169624cd4166085b68a945ce91937d26998f0329d46a0166097c2f4fc",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 218796,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-005": {
+    "source": "exec-3bb9750a-824f-4369-8115-408fd4dbb98d.png",
+    "sha256": "8ade519e3c2a897c31c72891c6cdaf6820309ea6a05b2ea042795a6368f18b45",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 212674,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-010": {
+    "source": "exec-22bd4bc4-b6d8-427a-a259-ab1b7e30a0a4.png",
+    "sha256": "350f30f98de7b445e7a0b1250c63768c5f393822a7fb4a1062d631ff41391680",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 216218,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-009": {
+    "source": "exec-4debb607-13fa-4482-932a-f874c0bacf71.png",
+    "sha256": "95b4bc8df55c51ed40da1afe76bd56841c319b4bb4e05c5b801eb6f20f05a040",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 232790,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-002": {
+    "source": "exec-5ceff9b6-f780-4008-9531-f3c284425afb.png",
+    "sha256": "69d96fb38a70564c2737e314f10c2bf0c1abbc3813453ab6702355b33271e63a",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 191920,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-004": {
+    "source": "exec-2976c718-9565-4d5c-a123-8b1d9155fe9c.png",
+    "sha256": "72e7a5065a6c6a9470deb11b86fd849f3c7245d3154451ad5549dffd75354bd0",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 223066,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-006": {
+    "source": "exec-5b73f0bc-4a66-41a8-8a56-0d75d19927f2.png",
+    "sha256": "d7fb4181ee4f21be19fe934d1e2362ec91b16505683e3ad0c9c5f2af26a835fe",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 234018,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-012": {
+    "source": "exec-886c379f-f043-418c-9b74-9cd4c43bb5dd.png",
+    "sha256": "c4d2d8a63980fccece9301625e2849c0d997661ed893a3f57aee30b389767d2f",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 248124,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-017": {
+    "source": "exec-f98b6165-035e-436c-9753-aed5e30d36f3.png",
+    "sha256": "8998c8dcb2cc698e817b64cbaaab4c590e0575f891a90e13fc50e08f28349656",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 219402,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-014": {
+    "source": "exec-29ef2905-4348-4393-9062-15dc75eca4e2.png",
+    "sha256": "4415e82b1a0d0f2a26119d8e15211453df10b31f40f15329ce867e918a76fa72",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 198128,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-013": {
+    "source": "exec-e09cbca6-76a9-4118-bb68-08402725ac7e.png",
+    "sha256": "8297142d40e3384ddd10da010c28dc3447d64c22288970adbea6cad051c9f521",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 203626,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-011": {
+    "source": "exec-6ba3dd7c-08ae-4004-89d4-2c40e86fb831.png",
+    "sha256": "b46a221d25a2a828a57a640e1c71e8180deb8e3a87b4d2729d66395ec8461b9f",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 241428,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-015": {
+    "source": "exec-c4c88616-7e5a-4d95-951b-c418d4d6a3f3.png",
+    "sha256": "8cadd13832b6287a25d0e7ea71a59d8303560b0caf6b2d834e507861635b1bf0",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 260946,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-016": {
+    "source": "exec-84d863aa-b899-4cad-9b26-cee354f882bb.png",
+    "sha256": "33e32794daefc7560eb38b449a82a408aa0c1b1fcd58ca6b4414485ff86ab2b0",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 232346,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-018": {
+    "source": "exec-4ac91766-fd38-4df8-8c93-2bb455ca299b.png",
+    "sha256": "26076ed45fd60ae3818374fa91d9faab178f5c86b8e3ae40e0bbf5b0241db338",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 223232,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-020": {
+    "source": "exec-417fdf6c-32e9-4ef1-b8a0-b7c1b5eb4261.png",
+    "sha256": "244d0d6444be4eed7310f8b4e8dbf99a07efdefa4f203b7290dda1823f0dbf53",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 222478,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-024": {
+    "source": "exec-cffa5bf9-8688-4dc8-aa9b-3c67c12b5d1c.png",
+    "sha256": "a64cb595d892f913f2202e76f1e69c316d44879d072ddf726cc4ed52ca0f9bde",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 217734,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-019": {
+    "source": "exec-df9a4e45-9e7e-4abb-938f-552bdf8001f7.png",
+    "sha256": "f73a8c437c5c24abe6c5647ac07e9c90c38541532b5393f57e9f7be3a106bd4e",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 231694,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-023": {
+    "source": "exec-9120bc9b-b298-4d1a-8780-5dfb0ce1a62d.png",
+    "sha256": "3baa46ae1f25434092ff93151879f4ac7f50f32e4a6487ccbaa786f3b52cb137",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 222928,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-021": {
+    "source": "exec-f205a075-cca0-4dfb-8ddc-591a979899d6.png",
+    "sha256": "7a4f1a93f5389c019a3c5cb822c6a4018e95099f399aa0392b724da5eeda84f2",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 207892,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-027": {
+    "source": "exec-b2d0bebf-ddae-4769-8a98-368df5f03d93.png",
+    "sha256": "8f1576c4f4e6447d8af5beadd458e6bf0810ab1068ab2e5419cf44a1e9557e4a",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 200868,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-025": {
+    "source": "exec-1e27761c-44af-462f-8d7f-f822da12d5e0.png",
+    "sha256": "b93e386eea61c15877cfcf650b8d55a4892db992c082c747d645d6e5a5300f58",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 222762,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-022": {
+    "source": "exec-f54d659d-ff47-4518-a92a-c9b8b1d6bfd2.png",
+    "sha256": "debbc046f2807d46ebb330274caefdaf7467b8b73fa11c6304873084c8e1c5b5",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 230400,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-026": {
+    "source": "exec-bb38de02-79ee-41b0-af0c-8ab562abd7c0.png",
+    "sha256": "8bd0e5735bcb97e2989096c327dacf4e41cc22426fb38c69a17a9e0988f79e26",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 211158,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-028": {
+    "source": "exec-5eaa7618-8bb2-441f-9731-3cfd22360fc8.png",
+    "sha256": "bf081fe8984226168989763e81da181a3741e838391d1e2b588a55c7cbe2f6ba",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 203596,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-031": {
+    "source": "exec-7a3df204-abc5-4dc8-9773-e67e2456e584.png",
+    "sha256": "59a58e1a721a5f8849247869cc25bd9a78149c243d0f9c5cd167ce5c08d0e839",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 209254,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-037": {
+    "source": "exec-6802425e-e62d-4103-9f1b-0e0bff00dba0.png",
+    "sha256": "ef5026b24a48af8fad72da72724cb4dfcb13703a55b25026e163ba8da842b7d5",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 240920,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-030": {
+    "source": "exec-53deed1e-5a37-427a-b277-51ffe7b30157.png",
+    "sha256": "b7198871659d0678ba48594d5b8dbb1756be8732b87d1d6bc8a658902d288684",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 211428,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-038": {
+    "source": "exec-ceaebd32-89cd-4556-975a-e5d0f43ad33c.png",
+    "sha256": "e858274db965de2eb1e61e628a47acb2f1b9b489a026ef29a291608f75ed6979",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 240126,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-032": {
+    "source": "exec-b763f8f8-e2b2-4858-89e5-15d36070cf16.png",
+    "sha256": "b3b9be4e9e1f87663b6313e8ff8a23c9487f9734fc0714813b5bec7d4e27de69",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 246664,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-033": {
+    "source": "exec-032a68ea-44b4-41fe-aed0-90ff9359d5d2.png",
+    "sha256": "6898bc2853ab5c048c7a1e169e28fda1bbcacbc0d9278a5b4bde04ae8980898c",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 231238,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-041": {
+    "source": "exec-85728689-7297-4b6a-bc2b-5679a6ba7271.png",
+    "sha256": "ae9a6531da389a840d8de5a16b5a52dfc35b6a2365f09f1e2e3d061704c634de",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 223626,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-039": {
+    "source": "exec-fdbc080e-ed30-4ee0-b54c-b5e65e9a4380.png",
+    "sha256": "e761b3becf5062a3705246e2fd823943e786d8e9cdb194875e96a9a74d2c7bcc",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 230344,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-035": {
+    "source": "exec-86865ec8-bf10-4cb7-82b5-9a0206c72a45.png",
+    "sha256": "fdda2258cc9a8f1680df3b32f1ead16672a280195bf42dd4de650e13bc0f9a31",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 219158,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-029": {
+    "source": "exec-8c1f9892-96ee-4fb8-88ec-30925bcb76dd.png",
+    "sha256": "d4a0028b4ecdb271699e88938c5941243c1f088d713d01d9991e9016145eee67",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 214176,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-036": {
+    "source": "exec-0755a5e8-a207-493c-aadb-4b4575561514.png",
+    "sha256": "b530f2c1da3fb0598b068d71b8d64753876dd2044eb0657d803dde6e7feab89a",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 233474,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-045": {
+    "source": "exec-d854d56c-619a-4a53-9135-cd4c30eb1e2a.png",
+    "sha256": "b931118a943b71f929e99ab99842ec2dfff2c7df797f70eb50da0b20f95da933",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 242128,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-043": {
+    "source": "exec-970f4802-1518-49b0-a150-a9e1a0671d80.png",
+    "sha256": "d46e31a07199b3716fae00d9b988839ca6bc0982d78230397770939189469412",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 258242,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-040": {
+    "source": "exec-cbd05954-4cd1-43d6-9bc6-adfd8721722c.png",
+    "sha256": "088599aa0496371d632479a9a8827943b968bfd401af6c2047240d5e1d0851bb",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 250006,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-044": {
+    "source": "exec-ba816a81-bc83-4f3f-94a0-5506fa0e1d50.png",
+    "sha256": "85596ea991df57c23abb7a7c6392ef4621eab1abad4f2042089d2bd5d0034b63",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 223092,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-034": {
+    "source": "exec-7c1a5521-0184-4238-940c-228ecb1de361.png",
+    "sha256": "4671e066d4506eab72c929aa2c4b7075df61c1d28b4e0f1a95eeda26015a911d",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 221688,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-042": {
+    "source": "exec-72ab8aaf-41a8-4336-9ab2-c43f1c805a16.png",
+    "sha256": "ca60cc3f473a38d63500fa5e8432977c526390d9b08df3699c680c1bc940dda2",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 243798,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-050": {
+    "source": "exec-cad4291d-7562-438d-a303-a25370c33534.png",
+    "sha256": "8af4235f987f9a95cc7a27a772f4e2984eed0fae4bd0c83eda8fb2f2632c4f78",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 212220,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-054": {
+    "source": "exec-5433d4b8-8eef-4adb-911d-07e5d70b359c.png",
+    "sha256": "b94d17c75994bae4a15d4724ec465547ee37a7003958410ac491a5e4bc1700b8",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 212792,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-047": {
+    "source": "exec-a9134d8c-7a8e-4552-a392-fbfb3d75eefa.png",
+    "sha256": "42c0b041551dd2a1d0779f84f1b8bd82110b3782d484852fcb8525730493790e",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 224940,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-046": {
+    "source": "exec-55102b7f-0c72-48f4-b4b2-389fabdab7c2.png",
+    "sha256": "82834abebf540ee9846596df59038a6920f140abeb1d8062446984856118dd14",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 253530,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-051": {
+    "source": "exec-27e949c7-685e-450d-8090-ce8e3fbd9406.png",
+    "sha256": "6615fdf2249f5d8386ef78c499dccb0982c029607347690b315524d57979be99",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 247180,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-049": {
+    "source": "exec-ff6653b6-a8ff-45c3-ac67-a7335c1ab71d.png",
+    "sha256": "001911beef15780b50a77470b8ba25a95ace45c3567c2add9ec19b86cbc2d1a9",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 231050,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-059": {
+    "source": "exec-30cf20bf-8d50-45af-b09e-dfa6d6c5a0b2.png",
+    "sha256": "05620112347406b09e8d34bbd6a985736415275d0853d38cf15506ba8d5583cf",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 223468,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-056": {
+    "source": "exec-f05905a5-a4ea-4e22-a2c2-62896003ab52.png",
+    "sha256": "07a90b2b7fee4641fccae33dc047eafe8f83f155d6795f213d620e33e3cb1158",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 221564,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-053": {
+    "source": "exec-7f40bd92-ba5f-46cb-97c2-832591098b99.png",
+    "sha256": "cebecff8352fe6cbc85d610340a77e67573ee9373b3957005c3c624a1c3b36ab",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 227570,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-057": {
+    "source": "exec-0b405a4c-4578-447e-a7c1-33f05ae77fb3.png",
+    "sha256": "46e04b3dd85382bd8b3f67a206c15ac346c8cfab8c60946de3a19bd2f09a29cf",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 231860,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-060": {
+    "source": "exec-4a6b5326-f331-49d4-aa4e-b213bb642566.png",
+    "sha256": "2d6a608dfa44c234a8c9dc67e1a9e5433fb7491131ae0cde02888eb64a69a1bb",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 235348,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-052": {
+    "source": "exec-b2dcbb80-86ea-43d8-a4eb-e36ade8a998f.png",
+    "sha256": "35acb5e7ee6cec4b575f468e7e8f4417c4d02acada55915065a1049f38f5b81c",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 201844,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-048": {
+    "source": "exec-6ee90de1-7600-40e8-8405-2e0f11e286db.png",
+    "sha256": "f6f8d699178ee42c3a41e1814a2579a224d4c5cb816b9c123682675b2c2af41f",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 240644,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-055": {
+    "source": "exec-ea0321cf-61be-49b4-860b-12aa3ceed6bf.png",
+    "sha256": "3007c677a5a6c7bda4c2fd3b721b18c8d5228ae5bddd1acb6ab9f5c1bcf406d2",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 233022,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-062": {
+    "source": "exec-878d131d-c9e1-4d80-a18f-4fddbe01fba8.png",
+    "sha256": "85a1c21b5bd2633f0820d04f69d40eac25b39cb3066d8e4dd413c3c134dda818",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 202978,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-068": {
+    "source": "exec-2e1bca77-7c90-4d0f-9b2e-6a44e29328c3.png",
+    "sha256": "1b5446b303dce249b44df12fe32db044e041d1cb14697cdebce3cb2ea3c63653",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 226410,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-064": {
+    "source": "exec-9020a3fc-fec5-4c07-97aa-6371e87f8657.png",
+    "sha256": "a1bf88a1934bdb3f5863a0b0d25066ff15b0ab8ac568d83df3aea8756eb5b3ef",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 214310,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-069": {
+    "source": "exec-2d96dc92-5717-4b52-9820-28e654fc7ad3.png",
+    "sha256": "e500c8831859753c2e10e3e0169bee5772f2ca6088178d9d8fa2939380d744f4",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 219682,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-066": {
+    "source": "exec-ac4d700f-2f41-411a-a83b-880190b316d1.png",
+    "sha256": "517e410e04ff60215c2d58f766acdd6ff93a042ce79163acc259351fa730e359",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 240108,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-065": {
+    "source": "exec-e4ffa001-06dd-4821-9cd9-4f85c7d40732.png",
+    "sha256": "3c5e3a8b4810d7b8e83ad362d38d4f9533bc54584f81d91727973a857c66aaff",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 252910,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-063": {
+    "source": "exec-703a8e59-a50b-4021-9aff-bfef888d640d.png",
+    "sha256": "d06ed1c90cbc9fc9ff30c55843a8e09a4fa60b071d059255bc1c69efff206023",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 244076,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-070": {
+    "source": "exec-05516009-c353-44a9-8921-d33a3d0a7c6e.png",
+    "sha256": "7164b23e3fd802c964f33d7f3b98c3fa2358f8b8fa11c48bcdb745be73c41f11",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 236360,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-072": {
+    "source": "exec-c5131738-34ba-4a66-b70e-36bca4736f80.png",
+    "sha256": "eb61360f2e7f87f06045f0978fafdc9c6385109d2f0f0cb92bee973bd20a916c",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 226044,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-071": {
+    "source": "exec-aed45cd3-a6ff-403c-9193-00b325cfbcfa.png",
+    "sha256": "797cb986c7bcec431bd10aa84ba0d62cdb2a8dbccd67f8767b5939f6e8ce36a6",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 273966,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-067": {
+    "source": "exec-4948d11e-caf3-43d2-b41d-835234e816f5.png",
+    "sha256": "2f4dfd833099026a1fd589e066e7ce168ba969df707bc8ddbb5fc92f0b2f26d0",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 250646,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-061": {
+    "source": "exec-f520df29-b6dd-4734-8dd2-a9d8812a46f9.png",
+    "sha256": "f59cbd577dd9137323cda2ac4791d1e602d28bd5bdec63a5e10748792a42fc56",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 221184,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-058": {
+    "source": "exec-0cf9c64c-5632-4b84-9799-291affe1dabd.png",
+    "sha256": "5ead15b2d6ac856895118ff974938a1577acecdf6db876b598f5f1b787894f28",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 221072,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-076": {
+    "source": "exec-efaa4c85-9663-4999-b583-ff0fd7f8e1b0.png",
+    "sha256": "4c6d32e52424fcafe1bbc12744c6d3d719f84d7080425540312df3a946fa25af",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 212108,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-074": {
+    "source": "exec-6c5ab8c5-1673-4643-bad4-6c6e644b3f71.png",
+    "sha256": "11b3100919c01916230d7da85fce20b5d6e4f2448c09f1a3d1733e34598b38a8",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 235358,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-081": {
+    "source": "exec-aaeef502-3632-4299-83fe-c56c5b2b93c9.png",
+    "sha256": "6f738993a7f43e109f8483bc44d6bfb90214817173b585afb0871088c7c7825d",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 213782,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-077": {
+    "source": "exec-39baed51-0388-4dd1-bba0-2ecb5bdbf703.png",
+    "sha256": "f16eb18f6a432347d29264cd87c48e0bd687897a8abfcd2a3d67138b499f7c45",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 230914,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-075": {
+    "source": "exec-b3ffc080-5671-488b-80c7-618053f211a7.png",
+    "sha256": "df3412f397c4244a6d14c6463bae380ba78df50e53033a5a6186f08032c0734a",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 242088,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-082": {
+    "source": "exec-458b3871-8c29-4268-af04-42c31ef414b6.png",
+    "sha256": "e34731875865f033b91b9a810b96213ee4cb83a2508e1cbea7b0a8d62393a2c7",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 242000,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-084": {
+    "source": "exec-dfe96cf5-851e-463a-a76f-ebf02c961a0c.png",
+    "sha256": "7352b96b6f0a053f755e0abc3f93854c93a553d25ab49dc5c17be96d093a422c",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 232226,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-079": {
+    "source": "exec-ae09fec4-137b-4593-94be-e661de303e79.png",
+    "sha256": "94ccdfdde14c75ebacd61f6c5a4019205c6ae78b079d906c29e6fa454ca7bd8b",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 247936,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-085": {
+    "source": "exec-db2ae340-2ab6-4eaf-85d9-13b3d108c246.png",
+    "sha256": "3cc46ae7d4538578b788af4fc94f9c407040c02c78b60350da24efddb78dd89a",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 218046,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-073": {
+    "source": "exec-10bb3fce-f519-4707-b4f5-363ec75dae41.png",
+    "sha256": "9bcab64ba0fd190ed72b3947a75b9b7f6ee1cf47005d05c00d0e566fd7980996",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 202758,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-080": {
+    "source": "exec-bcea11aa-eaca-4a62-bd09-469ddc4a9b9a.png",
+    "sha256": "058f0914fb661423a25cbd57c17d7174f53eb315bd049e7767b28c8fae1983f0",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 232834,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-088": {
+    "source": "exec-e078167f-0f38-46a5-a511-8042579a1041.png",
+    "sha256": "665fca93ab946b93ae70f9a4cd40efd87f5255f08bcced76827a7685eff90301",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 242290,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-086": {
+    "source": "exec-3b5b2120-87be-4d6d-a68f-e07406f0c223.png",
+    "sha256": "8eebee162b5df15109364c7b8c4de7fe84de58b5bae6f5da6f47357d78673b8d",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 240678,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-089": {
+    "source": "exec-e933e039-fea4-4e8e-a60c-a720f31bac76.png",
+    "sha256": "2f3027cd050c6742256670b295d436e4b6479ee87ee7fb74adb41908cb6de1e3",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 241168,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-090": {
+    "source": "exec-59c5d860-bf8d-479c-869a-4924d2199b6e.png",
+    "sha256": "5609439eb038cdc602d2edd086a4b9110fffe6a605b7e0802257ba0c04fd727a",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 254472,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-078": {
+    "source": "exec-81456585-772d-4ee1-af7f-8731b119a791.png",
+    "sha256": "27ca7c5f65835171f8c393b7df8c498b6749c747c823f776a4f4f0af75e8d2c8",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 227692,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-083": {
+    "source": "exec-ac3b5807-4b79-4f2e-8f3f-e9493eeea6bc.png",
+    "sha256": "7e9c4d8a4a623545f4eb7ca96bbaa8388a9299dc94828e9e5cae9025c8341a0c",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 265522,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-094": {
+    "source": "exec-c386db00-3b4e-4863-8030-d5cac7017d47.png",
+    "sha256": "b9eda85c708f67a2ba5f4690d5912f553be42b2d7d13d82835a3b4eac38c74b9",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 257716,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-087": {
+    "source": "exec-810e87c6-b439-43e9-a1c5-9b608bfd336d.png",
+    "sha256": "d7852a17f52405e027a42be33166e62d68a073781f39274da75946eee3f3659f",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 243078,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-095": {
+    "source": "exec-328b15b5-8543-433e-97f4-4d2eada24093.png",
+    "sha256": "f9e68452f8a1e954b89e18c288d3ba497f4a09d0f9510691408a05a327a1da08",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 247450,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-098": {
+    "source": "exec-370c2697-ae0e-4b76-a2be-8e22fd3aabd6.png",
+    "sha256": "308a44629a3f6482f48ad32a6792c817a55f0456306260a2c2cc9d734158a0a6",
+    "recipes": 15,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 126178,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-091": {
+    "source": "exec-1e377ad2-b59f-4b7a-9d5a-49dd6fee48a7.png",
+    "sha256": "744d2c202cbe3987cb5f32ef7287c63447979752439ae2baf9ddf7dff0a28471",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 274514,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-092": {
+    "source": "exec-95a1336d-f64d-4e47-9dea-d11fd2806e57.png",
+    "sha256": "6a57975d2777d1750d79a9105d911748d0d7317eaba94a22467e8905660a003e",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 246868,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-093": {
+    "source": "exec-cc4fc826-04dd-42c1-a60f-760fcae59b5c.png",
+    "sha256": "de9e084e9d7aa871ecdd782a9c051be900515b7a5f61fd49ebb2df2ca7677e60",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 220048,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-096": {
+    "source": "exec-0ed8bbd0-6bee-4aea-9ade-fcdf42b09811.png",
+    "sha256": "ec920a5dafa60d201932718df37901988f7382c0556c9138061da6734ca87054",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 156080,
+    "quality": 60,
+    "cropVersion": 2
+  },
+  "recipes-097": {
+    "source": "exec-667043da-3700-4fee-904b-8acf91e33c37.png",
+    "sha256": "cec319f107b0ee695c461db41c432fe56bb574aaf63b15bf13caee74735ccba8",
+    "recipes": 16,
+    "width": 1536,
+    "height": 1024,
+    "bytes": 93124,
+    "quality": 60,
+    "cropVersion": 2
+  }
+}

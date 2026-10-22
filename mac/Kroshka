@@ -1,0 +1,14 @@
+#!/bin/sh
+TASK_PLIST="$HOME/Library/LaunchAgents/dev.kroshka.recipes.plist"
+TASK_DOMAIN="gui/$(id -u)"
+if ! /bin/launchctl print "$TASK_DOMAIN/dev.kroshka.recipes" >/dev/null 2>&1; then
+  /bin/launchctl bootstrap "$TASK_DOMAIN" "$TASK_PLIST" >/dev/null 2>&1 || true
+fi
+for TASK_ATTEMPT in 1 2 3 4 5 6 7 8 9 10; do
+  if /usr/bin/curl --silent --fail --max-time 1 http://localhost:3847/healthz >/dev/null; then
+    /usr/bin/open 'http://localhost:3847'
+    exit 0
+  fi
+  sleep 0.5
+done
+/usr/bin/osascript -e 'display dialog "Книга пока не запустилась. Повторите установку через файл «Установить Крошку.command». Ваши рецепты сохранятся." with title "Крошка" buttons {"Хорошо"} default button 1' >/dev/null 2>&1

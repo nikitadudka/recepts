@@ -1,0 +1,135 @@
+/* Clear, contextual empty collections in either appearance. */
+.empty-state{background:var(--mint);border:1px dashed #b7c8a9;border-radius:14px;padding:43px 24px 40px;max-width:100%;margin-bottom:20px}
+.empty-state>svg{width:36px;height:36px;color:var(--green)}
+.empty-state h3{margin:20px auto 12px;color:var(--ink);font-size:29px;line-height:1.25;max-width:620px}
+.empty-state p{color:#536a49;line-height:1.8;max-width:560px;margin:0 auto 24px;font-size:12px}
+.empty-actions{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.empty-state .button{min-height:43px;font-size:12px}
+[data-theme=halloween] .empty-state{background:radial-gradient(ellipse at 50% 0,#71453933,transparent 75%),#2d2130;border-color:#785244}
+[data-theme=halloween] .empty-state h3{color:#f0decb}
+[data-theme=halloween] .empty-state p{color:#c8adbf}
+.image-placeholder{color:#8fa47d}
+[data-theme=halloween] .image-placeholder{background:linear-gradient(135deg,#48303e,#2f2434);color:#b99174}
+.source-note{font-size:10px;line-height:1.7;color:#65735e;padding-top:15px;border-top:1px solid var(--line);margin:22px 0 0;overflow-wrap:anywhere}
+.source-note a{color:var(--green);text-decoration:underline;text-underline-offset:3px}
+.method-options .method-option:last-child:nth-child(odd){grid-column:1/-1}
+.catalog-dialog{width:1060px;height:88dvh;max-height:940px;border-radius:17px}
+.catalog-dialog[open]{display:flex;flex-direction:column}
+.catalog-dialog>*{flex-shrink:0}
+.catalog-heading{padding:24px 30px;background:var(--paper)}
+.catalog-heading h2{font-size:32px}
+.catalog-intro{margin:0;padding:16px 30px 0;color:var(--muted);font-size:12px;line-height:1.7}
+.catalog-tools{display:flex;gap:14px;padding:20px 30px 13px;align-items:flex-end}
+.catalog-tools .search-box{height:46px;min-width:0}
+.catalog-tools input{font-size:12px}
+.catalog-kind-label{display:block;min-width:220px;font-size:10px;color:var(--muted)}
+.catalog-kind-label>span{display:none}
+.catalog-kind-label select{width:100%;height:46px;background:#f8faf4;color:var(--ink);border:1px solid var(--line);border-radius:8px;font-size:11px;padding:0 10px}
+.catalog-summary{font-size:10px;line-height:1.7;min-height:32px;color:var(--muted);padding:0 30px 13px;border-bottom:1px solid var(--line)}
+#catalog-content{flex:1;flex-shrink:1;min-height:0;overflow:auto;overscroll-behavior:contain}
+.catalog-recipe{padding:29px 30px 24px}
+.catalog-recipe-heading{display:flex;align-items:center;gap:17px}
+.catalog-emblem{display:grid;place-items:center;width:63px;height:73px;border-radius:36px 36px 12px 12px;background:#e8efdf;border:1px solid #d3dec7;color:#78936a;flex-shrink:0}
+.catalog-emblem svg{width:29px;height:29px;stroke-width:1.2}
+.catalog-recipe-kind{font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:#8fa27c;margin:0 0 10px}
+.catalog-recipe h3{font:32px/1.2 var(--serif);letter-spacing:-.6px;color:var(--ink);margin:0;overflow-wrap:anywhere}
+.catalog-recipe-stats{display:flex;align-items:center;gap:13px 24px;flex-wrap:wrap;padding:21px 0;margin:0 0 18px;border-bottom:1px solid var(--line);font-size:11px;color:#839772}
+.catalog-recipe-stats>span{display:flex;align-items:center;gap:6px;line-height:1.7}
+.catalog-recipe-stats svg{width:15px;height:15px}
+.catalog-columns{display:grid;grid-template-columns:38% minmax(0,1fr);gap:36px}
+.catalog-columns section{min-width:0}
+.catalog-columns h4{font:24px var(--serif);color:var(--ink);margin:8px 0 18px}
+.catalog-columns .detail-ingredients li{align-items:baseline;gap:10px;line-height:1.7;font-size:12px}
+.catalog-columns .detail-ingredients li>span:last-child{white-space:nowrap;flex-shrink:0;text-align:right}
+.catalog-columns .detail-steps{margin-top:0}
+.catalog-columns .detail-steps li{font-size:12px;line-height:1.9}
+.catalog-recipe-note{font-size:10px;line-height:1.8;color:var(--muted);margin:12px 0 0}
+.catalog-footer{position:static;padding:17px 30px;justify-content:space-between;gap:12px;background:#f3f7ed}
+.catalog-footer .button{font-size:12px;min-height:43px}
+.catalog-loading,.catalog-empty{padding:45px 25px;text-align:center;color:var(--muted);font-size:13px;line-height:1.8}
+.catalog-empty>svg{width:36px;height:36px;color:var(--green)}
+.catalog-empty h3{font:28px var(--serif);color:var(--ink)}
+.catalog-empty p{font-size:12px}
+[data-theme=halloween] .catalog-heading{background:#2d2230}
+[data-theme=halloween] .catalog-kind-label select{background:#231c29;border-color:#65485e;color:#ecd9c6}
+[data-theme=halloween] .catalog-emblem{background:linear-gradient(145deg,#533741,#39283a);border-color:#8c6146;color:#e9ba84}
+[data-theme=halloween] .catalog-recipe-kind{color:#c89c74}
+[data-theme=halloween] .catalog-recipe-stats{color:#c6a8bc}
+[data-theme=halloween] .catalog-footer{background:#302330}
+@media(max-width:680px){
+ .empty-state{padding:34px 20px;border-radius:12px}
+ .empty-state h3{font-size:26px;margin-top:18px}
+ .empty-state p{font-size:11px}
+ .empty-actions{flex-direction:column;gap:9px}
+ .empty-actions .button{width:100%;max-width:260px}
+ .catalog-dialog{width:100%;height:100dvh;max-width:100%;max-height:100dvh;border:0;border-radius:0;inset:0;margin:0}
+ .catalog-heading{padding:20px;gap:12px}
+ .catalog-heading h2{font-size:27px}
+ .catalog-heading .eyebrow{font-size:6px;letter-spacing:1.2px}
+ .catalog-intro{padding:13px 20px 0;font-size:10px}
+ .catalog-tools{padding:15px 20px 12px;display:grid;grid-template-columns:minmax(0,1fr);gap:9px}
+ .catalog-tools .search-box{height:43px;min-width:0;width:100%}
+ .catalog-tools input{font-size:16px}
+ .catalog-tools input::placeholder{font-size:11px}
+ .catalog-kind-label{min-width:0;width:100%}
+ .catalog-kind-label select{height:41px;font-size:13px}
+ .catalog-summary{padding:0 20px 12px;font-size:9px;min-height:28px}
+ .catalog-recipe{padding:24px 20px}
+ .catalog-recipe-heading{gap:12px;align-items:flex-start}
+ .catalog-emblem{width:46px;height:57px;border-radius:25px 25px 9px 9px}
+ .catalog-emblem svg{width:25px;height:25px}
+ .catalog-recipe-kind{font-size:7px;letter-spacing:.7px;line-height:1.5;margin:0 0 7px}
+ .catalog-recipe h3{font-size:26px}
+ .catalog-recipe-stats{gap:10px 17px;padding:18px 0;font-size:10px;margin-bottom:16px}
+ .catalog-recipe-stats>span:last-child:not(:nth-child(2)){flex-basis:100%}
+ .catalog-columns{grid-template-columns:minmax(0,1fr);gap:20px}
+ .catalog-columns h4{font-size:24px}
+ .catalog-columns .detail-ingredients li{font-size:12px}
+ .catalog-columns .detail-steps li{font-size:12px}
+ .catalog-footer{padding:13px 16px calc(13px + env(safe-area-inset-bottom));gap:8px}
+ .catalog-footer .button{font-size:11px;min-height:45px;padding:0 12px}
+ .catalog-footer .primary{flex:1}
+ .catalog-footer .button svg{width:14px;height:14px}
+ .source-note{font-size:10px}
+}
+@media(max-width:360px){.catalog-footer .button{font-size:10px;padding:0 10px}.catalog-heading h2{font-size:25px}.catalog-recipe h3{font-size:24px}}
+
+.catalog-intro,.catalog-summary,.catalog-recipe-note{color:#65735e}
+[data-theme=halloween] :is(.catalog-intro,.catalog-summary,.catalog-recipe-note,.source-note){color:#c0a8bb}
+.catalog-save-actions{display:flex;gap:10px;align-items:center}
+.trial-card-actions{display:flex;gap:8px;align-items:center;border-top:1px solid var(--line);padding:12px 15px;background:var(--mint)}
+.trial-card-actions .button{flex:1;min-width:0;padding:0 10px;font-size:11px;min-height:36px}
+.trial-delete{flex-shrink:0;width:34px;height:36px;border:1px solid var(--line);border-radius:7px;background:transparent;display:grid;place-items:center;color:var(--muted)}
+.trial-delete svg{width:15px;height:15px}
+.trial-detail-note{font-size:11px;line-height:1.7;color:var(--green);padding:11px 14px;background:var(--mint);border-radius:7px;margin:18px 0 0}
+[data-theme=halloween] .trial-card-actions{background:#382838}
+[data-theme=halloween] .trial-delete{color:#dcafad;border-color:#725061}
+@media(max-width:680px){
+ .sidebar>nav[aria-label="Коллекция"]{gap:0;display:grid;grid-template-columns:1fr 1fr 1.32fr}
+ .sidebar>nav[aria-label="Коллекция"] .nav-item{width:100%;justify-content:center;min-width:0;padding:13px 4px 15px;gap:4px;font-size:10px;white-space:nowrap}
+ .sidebar>nav[aria-label="Коллекция"] .nav-item svg{width:13px;height:13px}
+ .sidebar>nav[aria-label="Коллекция"] .nav-count{margin-left:0;font-size:8px;padding:2px 4px}
+ .catalog-footer{flex-wrap:wrap}
+ .catalog-footer #catalog-next{width:100%;min-height:33px}
+ .catalog-save-actions{width:100%;display:grid;grid-template-columns:.85fr 1.3fr;gap:8px}
+ .catalog-save-actions .button{min-width:0;white-space:normal;line-height:1.3}
+ .trial-card-actions{padding:10px 8px;gap:5px}
+ .trial-card-actions .button{font-size:10px;padding:0 5px;white-space:normal;line-height:1.4;min-height:38px}
+ .trial-delete{width:26px;height:38px}
+ #recipe-dialog .dialog-footer:has([data-promote-trial]){flex-wrap:wrap}
+ #recipe-dialog .dialog-footer [data-promote-trial]{flex:1}
+}
+@media(max-width:399px){.sidebar>nav[aria-label="Коллекция"] .nav-item{font-size:9px}.sidebar>nav[aria-label="Коллекция"] .nav-item svg{display:none}.sidebar>nav[aria-label="Коллекция"] .nav-count{font-size:7px;padding:2px 3px}}
+
+.catalog-recipe-art{position:relative;height:260px;margin:-29px -30px 27px;overflow:hidden;background:var(--mint)}
+.catalog-recipe-art>.food-photo{width:100%;height:100%}.catalog-recipe-art>span{position:absolute;right:14px;bottom:12px;color:#fff7eb;background:#241c27bf;padding:6px 9px;border-radius:5px;font-size:9px}
+@media(max-width:680px){.catalog-recipe-art{height:205px;margin:-24px -20px 23px}}
+
+.recipe-card:has(.trial-card-actions){display:flex;flex-direction:column}.recipe-card:has(.trial-card-actions) .card-open{flex:1}.trial-card-actions{margin-top:auto}
+.recipe-grid:not(.list-view) .recipe-card:has(.trial-card-actions) .card-open{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start}
+.recipe-grid:not(.list-view) .recipe-card:has(.trial-card-actions) .card-image{flex-shrink:0}
+@media(max-width:360px){[data-theme=halloween] .hero h2{font-size:34px}}
+
+:is(.catalog-drink-art,.drink-detail-photo)>.generated-food-photo{width:auto;height:100%;max-width:100%;aspect-ratio:var(--art-ratio);margin:0 auto}
+:is(.catalog-drink-art,.drink-detail-photo){background:radial-gradient(ellipse,#f1e9db,#e1d9ca)}
+[data-theme=halloween] :is(.catalog-drink-art,.drink-detail-photo){background:radial-gradient(ellipse,#63493e,#352637)}
