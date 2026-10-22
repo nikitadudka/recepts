@@ -8,7 +8,7 @@
 
 1. [Baseline 1](https://github.com/nikitadudka/recepts/actions/runs/39807812539/job/119925630257): syntax checks, 2 Node, 1 Pillow, 8 групп JSON API и smoke 01–13 проходят. В 15:47:36 UTC первый traceback полного набора — `subprocess.TimeoutExpired` на `tests/smoke.py:289`: `cls.server.wait(timeout=10)` в `test_14_server_restart_keeps_recipes_and_login`. Это ожидание **остановки старого** процесса, не готовности нового. До `Popen` нового сервера выполнение не дошло.
 2. SIGTERM вызывает в приложении `server.close()`: listener закрывается, процесс ждёт завершения HTTP-соединений. Оставшиеся 31 smoke-тест получают `ECONNREFUSED` в setUp при входе на прежний порт. Это следствие прерванного перезапуска.
-3. `BlockingIOError` возникает позднее в `unittest.result.printErrorList → stream.writeln → write` при печати накопленных traceback. Это ошибка вывода каскада, а не первый сбой сервера. Причина перехода конкретного runner FD в неблокирующий режим логом не установлена; отдельное изменение stdout/stderr без доказательства не вносилось.
+3. `BlockingIOError` возникает позднее в `unittest.result.printErrorList → stream.writeln → write` при печати накопленных traceback. Это ошибка вывода каскада, а не первый сбой сервера. Изолированный локальный опыт с отдельным stderr PIPE показал: запуск драйвера Playwright меняет O_NONBLOCK stderr с false на true, после stop флаг восстановился. Это подтверждает возможность неблокирующего вывода при работе драйвера, но состояние конкретного FD исторической job не записано; отдельное изменение stdout/stderr без доказательства необходимости не вносилось.
 4. До тестов в Baseline 1 есть `Task was destroyed but it is pending` / `TargetClosedError` при выходе из шага выбора пути Chromium. Шаг завершился success; затем фактический Chromium успешно запущен и проходят API и smoke 01–13. Это отдельная диагностическая аномалия, причинная связь с тайм-аутом остановки не доказана.
 
 Подтверждённый дефект **тестовой инфраструктуры**: три сценария перезапуска обходили существующий `stop_server()` и предполагали, что graceful shutdown при живом браузере всегда завершится за 10 секунд. В cleanup уже был предусмотрен ограниченный TERM → ожидание → KILL → wait. Поведение A22 и JSON API не является причиной этого traceback. Свидетельств повреждения книги или ошибки обработки JSON нет.
@@ -54,10 +54,21 @@ Matrix запускается на независимых runner; общей Б�
 | `CHROMIUM_EXECUTABLE=/usr/bin/chromium python3 tests/browser_environment.py` | Прошёл; фактический Chromium 154.0.8037.57 |
 | `CHROMIUM_EXECUTABLE=/usr/bin/chromium python3 tests/ci_failure_checks.py` | Прошёл: новая регрессия и прежние ошибки отсутствующего Chromium / Node sentinel; процессы и временные БД очищены |
 | `git diff --check` | Прошёл |
-| GitHub Actions нового PR | Ожидает публикации ветки; итог будет зафиксирован перед передачей |
+| GitHub Actions нового PR | **Success в обеих job** run 39814468495 на `08abd66`; полный набор и регрессия проверены по логам и окончательным статусам API |
+
+## GitHub Actions на реализации
+
+[PR №14](https://github.com/nikitadudka/recepts/pull/14), commit `08abd66432e10ea4164bf581c2884db1b4f116de`, [run 39814468495](https://github.com/nikitadudka/recepts/actions/runs/39814468495). Полные логи получены для обеих job; повторный запуск не выполнялся. В обеих фактический bundled Chromium **151.0.7922.34 / build 1234**.
+
+| Job | Образ runner | Проверки по логу |
+| --- | --- | --- |
+| [Baseline 1](https://github.com/nikitadudka/recepts/actions/runs/39814468495/job/119949218819) | ubuntu24 `20261018.339.1` | Syntax checks; 56 тестов, 8 API за 10.872 s, smoke 92.783 s; новая регрессия 13.115 s с явным KILL после grace; обе негативные проверки и cleanup прошли; job success |
+| [Baseline 2](https://github.com/nikitadudka/recepts/actions/runs/39814468495/job/119949218449) | ubuntu24 `20261021.345.10` | Syntax checks; 56 тестов, 8 API за 11.202 s, smoke 88.212 s; все шаги/cleanup прошли; job success |
+
+Оба образа runner проходят исправление, в том числе образ исходной неуспешной Baseline 1. Предупреждение выбора пути Chromium остаётся неблокирующим. Актуальные статусы финального head — [PR №14/checks](https://github.com/nikitadudka/recepts/pull/14/checks).
 
 ## Риски и передача
 
 KILL применяется только к изолированному тестовому процессу после ожидания graceful shutdown; сохранность уже подтверждённой записи и сессии проверяется после открытия той же SQLite/WAL. Это проверка управляемого прерывания тестового сервера, не гарантия штатного graceful shutdown приложения при любых соединениях. Долгий graceful shutdown при незавершённом HTTP-запросе остаётся поведением приложения; изменять production shutdown для исправления harness не требуется. Новая регрессия добавляет примерно 15 секунд к Baseline 1, в том числе существующие 10 секунд grace.
 
-Без нагрузочной сертификации, macOS/launchctl, реальных iOS/Safari/Android и независимого QA. Warning выбора Chromium и устойчивость вывода больших каскадов ошибок отдельно не исправляются. Для окончательной передачи нужны зелёные обе job Tests на head PR и проверка свежего main/конфликтов с открытым PR №13. Откат — revert только тестового исправления; данные восстанавливать не нужно. Следующий ответственный — владелец для review; merge, auto-merge и деплой не выполняются.
+Без нагрузочной сертификации, macOS/launchctl, реальных iOS/Safari/Android и независимого QA. Warning выбора Chromium и устойчивость вывода больших каскадов ошибок отдельно не исправляются. Перед финализацией повторно получен main: по-прежнему `b135dfb`; head открытого PR №13 — `397c5f39d31ca37e99641ecda88fbee969bc6de0`. Проверка `git merge-tree --write-tree` с этим head проходит без конфликтов; код A04 в ветку не включён. Обе job Tests на реализации `08abd66` завершились success. Последующий коммит меняет только этот отчёт; код/тесты/workflow остаются проверенными. Рекомендация самопроверки: **изменение готово к review и безопасно для объединения после зелёных checks финального head**; актуальные checks приведены выше. Откат — revert только тестового исправления; данные восстанавливать не нужно. Следующий ответственный — владелец для review; merge, auto-merge и деплой не выполняются.
