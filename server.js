@@ -47,10 +47,38 @@ function login(res) {
   db.prepare('INSERT INTO sessions VALUES (?,?)').run(createHash('sha256').update(token).digest('hex'),Date.now()+2592000000);
   cookie(res,token); json(res,200,{authenticated:true});
 }
-async function body(req,max=64*1024*1024) {
-  let length=0; const chunks=[];
-  for await (const chunk of req) { length+=chunk.length; if (length>max) { const error=new Error('Слишком большой запрос. Уменьшите размер фотографий.'); error.status=413; throw error; } chunks.push(chunk); }
-  try { return JSON.parse(Buffer.concat(chunks).toString('utf8')); } catch { const error=new Error('Не удалось прочитать данные.'); error.status=400; throw error; }
+function jsonContentType(value='') {
+  const [type,...parameters]=value.split(';').map(part=>part.trim().toLowerCase());
+  return type==='application/json' && parameters.every(part=>!/^charset\s*(?:=|$)/.test(part) || /^charset\s*=\s*(?:utf-8|"utf-8")$/.test(part));
+}
+function body(req,max=64*1024*1024,allowEmpty=false) {
+  return new Promise((resolve,reject)=>{
+    let length=0,failed=false; const chunks=[];
+    const fail=(status,message)=>{
+      if(failed)return;
+      failed=true;chunks.length=0;
+      const error=new Error(message);error.status=status;reject(error);
+    };
+    // Keep draining an oversized request so the client can receive the JSON 413.
+    // Breaking an async iterator would destroy the socket before the response.
+    req.on('data',chunk=>{
+      if(failed)return;
+      length+=chunk.length;
+      if(length>max)return fail(413,'Слишком большой запрос. Уменьшите размер фотографий.');
+      chunks.push(chunk);
+    });
+    req.on('end',()=>{
+      if(failed)return;
+      if(!length && allowEmpty)return resolve({});
+      let input;
+      try { input=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(Buffer.concat(chunks))); }
+      catch { return fail(400,'Не удалось прочитать JSON. Проверьте данные запроса.'); }
+      if(input===null || typeof input!=='object' || Array.isArray(input))return fail(400,'Ожидается объект JSON. Данные не изменены.');
+      resolve(input);
+    });
+    req.on('error',()=>fail(400,'Не удалось прочитать запрос. Данные не изменены.'));
+    req.on('aborted',()=>fail(400,'Запрос прерван. Данные не изменены.'));
+  });
 }
 function validRecipe(r) {
   if (!r || typeof r!=='object' || typeof r.id!=='string' || !/^[\w-]{1,100}$/.test(r.id) || typeof r.title!=='string' || !r.title.trim() || r.title.length>100 || typeof r.instructions!=='string' || !r.instructions.trim() || r.instructions.length>15000) return false;
@@ -116,7 +144,7 @@ const server=http.createServer(async(req,res)=>{
       if (!['GET','HEAD'].includes(req.method)) {
         let origin; try { origin=req.headers.origin ? new URL(req.headers.origin).host : null; } catch { return json(res,403,{error:'Недопустимый источник запроса.'}); }
         if (origin && origin!==req.headers.host && req.headers.origin!==process.env.PUBLIC_URL) return json(res,403,{error:'Запрос с другого сайта запрещён.'});
-        if (!(req.headers['content-type'] || '').startsWith('application/json')) return json(res,415,{error:'Ожидаются данные JSON.'});
+        if (!jsonContentType(req.headers['content-type'])) return json(res,415,{error:'Ожидаются данные application/json в кодировке UTF-8.'});
       }
       if (url.pathname==='/api/session' && req.method==='GET') return json(res,200,{authenticated:session(req),needsSetup:!getSetting('password'),canSetup:setupAllowed(req)});
       if (url.pathname==='/api/setup' && req.method==='POST') {
@@ -141,6 +169,7 @@ const server=http.createServer(async(req,res)=>{
       }
       if (!session(req)) return json(res,401,{error:'Войдите в семейную книгу.'});
       if (url.pathname==='/api/logout' && req.method==='POST') {
+        await body(req,4096,true);
         const token=(req.headers.cookie || '').split(';').map(c=>c.trim()).find(c=>c.startsWith('kroshka_session='))?.slice(16);
         if (token) db.prepare('DELETE FROM sessions WHERE token=?').run(createHash('sha256').update(token).digest('hex'));
         cookie(res,'',true); return json(res,200,{ok:true});
@@ -230,7 +259,7 @@ const server=http.createServer(async(req,res)=>{
     if (!publicFiles.has(name) && !catalogSheetFiles.has(name)) return json(res,404,{error:'Страница не найдена.'});
     const content=await readFile(path.join(root,name));
     res.writeHead(200,{'Content-Type':mime[path.extname(name)] || 'application/octet-stream','Cache-Control':'no-cache'}); res.end(req.method==='HEAD'?undefined:content);
-  } catch(error) { if (!res.writableEnded) json(res,error.status || 500,{error:error.status?error.message:'Не удалось сохранить или прочитать книгу. Проверьте свободное место на Mac.'}); }
+  } catch(error) { if (!res.writableEnded && !res.destroyed) json(res,error.status || 500,{error:error.status?error.message:'Не удалось сохранить или прочитать книгу. Проверьте свободное место на Mac.'}); }
 });
 server.listen(port,process.env.HOST || '0.0.0.0',()=>console.log(`Крошка: http://localhost:${server.address().port}`));
 function shutdown() { server.close(()=>{db.close(); process.exit(0);}); }

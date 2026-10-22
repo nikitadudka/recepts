@@ -1,0 +1,83 @@
+# A22: обработка JSON и сохранность данных
+
+Дата: 22.10.2026. [Issue №5](https://github.com/nikitadudka/recepts/issues/5), [QA-02](../audits/QA_AUDIT.md#qa-02--p2-json-null-превращает-ошибку-входных-данных-в-http-500), [контракт stage1-v1](TECHNICAL_SPEC.md#a22-контролируемые-ошибки-json-на-всех-мутациях), решения D017/D018. Ведущая роль — Developer / Architect; QA выполнен тем же агентом: **самопроверка**, независимый QA не заявляется.
+
+## Допуск и границы
+
+Перед изменениями через GitHub проверено: PR №11 merged 22.10.2026, merge commit и актуальный `main` — `2be49ad4e8662da18e1a7899e87600495d5211bd`. Ветка `fix/a22-json-safety` создана именно от этой базы. Новое поручение владельца разрешает реализацию A22; повторное согласование уже разрешённого контракта не требуется. Связанные Issues №4 и №6 изучены; A04 в этот PR не входит.
+
+Из аудита подтверждён `null` → 500 в login/library. Дополнительно регрессия на базе выявила разыменовку `null` в catalog save, принятие необъектных тел trial-actions, отзыв сессии logout без проверки тела и принятие ложных JSON media types/чужого charset. Невалидные UTF-8 байты раньше заменялись символом замены при декодировании. Это дефекты отказа/контракта; исходный аудит не доказал потерю данных, и этот отчёт её не приписывает.
+
+Изменён только общий reader/Content-Type guard и проверка logout в `server.js`. Проверки выполняются до мутаций/транзакций. Reader ограничивает реальные байты, не уничтожает соединение до ответа 413, обрабатывает error/aborted без повторного ответа на закрытый сокет. Неправильные тела не превращаются в пустую книгу. Настоящие ошибки SQLite/IO по-прежнему 5xx. Поля и успешные DTO, guards, CAS/revision, транзакции, очередь клиента, форматы import/export и пустой logout сохранены. UI, HTML/CSS, схема БД, production-зависимости и миграции не менялись.
+
+## Инвентаризация JSON
+
+| Место | Чтение/запись и решение для A22 |
+| --- | --- |
+| `server.js`: `body`, семь route/method-пар setup/login/logout/catalog-save/trial-promote/trial-delete/library-put | Общее чтение UTF-8 object; 400/413/415 по контракту ARCHITECTURE. Ошибки до изменения пароля/сессии/книги |
+| `server.js`: `json`, `library`, catalog/trial SQL и `PUT` | Ответы и JSON в `recipes.content`; успешная сериализация и транзакции сохранены. Проверены 500 на повреждённой строке и rollback при реальной SQL-ошибке |
+| `server.js`: seeds и две startup-миграции | JSON читается до заполнения/в транзакциях с rollback; fallback на пустые данные отсутствует. Startup-ремонт повреждённой БД/поставки не входит в A22 |
+| `catalog.js`: recipes/cocktails/image-index | Read-only файлы поставки. Не перезаписываются; отсутствие/повреждение по-прежнему блокирует запуск. Новая автоподмена/генерация не добавлена |
+| `app.js`: `api`, `persist`, polling, catalog/trial actions | Разбор ответов и отправка JSON. На реальном 400 проверены неизменная книга/revision, сохранённые форма/фото и успешный повтор. Production-клиент не менялся |
+| `app.js`: import/export, legacy IndexedDB/localStorage и migration fingerprints | Импорт разбирает файл до записи, добавляет/копирует записи; экспорт сериализует рецепты с фото. Проверены отказы импорта и прежний round-trip/legacy. Исходные данные браузера не удаляются |
+| `scripts/build-catalog.py`, `build-cocktails.py`, `register-image-sheet.py` | Подготовка справочников/индексов/журналов, не обработка пользовательской синхронизации. Не запускались и не менялись |
+
+## Автоматические регрессии
+
+`tests/json_api_test.py` — 8 групп standard-library API-тестов с literal bytes, собственными процессами Node и временными БД. Для setup каждый отказ проверяется на новой книге, затем выполняется успешный setup. Login успешно сбрасывает limiter между cases; 429 проверяется отдельно с новым процессом после серии. Catalog ID фиксирован первым fixture поставки, trial ID реально создаётся.
+
+Перед **каждым** отклонённым API-запросом снимаются `recipes`, `settings`, `sessions` (read-only SQLite connection); после сравниваются все значения, включая сырые строки JSON, пароль/сессии, revision, ID, обе полки, фото и источники. При доступной сессии дополнительно сверяется полный GET книги. Синтетические фото и источники внесены в fixture до матрицы отказов. Никакой пользовательской БД/`.env` не используется.
+
+| Критерий | Покрытие |
+| --- | --- |
+| Корректный JSON | Все семь мутаций, последующий успешный запрос; `{}` для операций без обязательных полей; неизвестные ключи; регистр media type и quoted UTF-8 |
+| Повреждённый JSON/структура | Для каждого маршрута `null`, `[]`, `[{}]`, строка, 0/42, true/false, `{`, trailing comma, два object подряд, invalid UTF-8; неверные поля library |
+| Пустые данные/нет файла | Нулевое тело, whitespace; пустой logout и `{}` отзывают сессию. Browser: пустой файл, отсутствие выбранного файла и имитация File.text `NotFoundError`/`NotReadableError` |
+| Media type/байты | Нет Content-Type, text/plain, jsonx/jsonp, чужой charset → 415; все семь маршрутов на limit−1/limit/limit+1, включая реальный 64 МиБ, UTF-8 padding и chunked без Content-Length |
+| Сохранность/ошибки хранения | Полный SQLite snapshot до/после каждого отказа; прерванный HTTP-body; повреждённая `recipes.content` → 500 без подмены; SQLite trigger вызывает отказ записи после DELETE, транзакция полностью откатывается, исправный запрос после снятия fixture проходит |
+| Совместимость | Legacy без `steps`/`shelf`, старые cookingMethods, data URL, sample/art, source fields и restart; прежние browser export/import/legacy/migrations tests |
+| Guards/синхронизация | Приоритет Origin 403 → media 415 → auth/setup/login/catalog guards; 401/404/409/429; две сессии, CAS, stale trial delete. Реальный JSON 400 сохраняет draft/photo; повтор создаёт ровно одну запись и одну новую revision |
+
+`tests/smoke.py`: добавлены №44 (отказы импорта без единого PUT, следующий legacy import успешен) и №45 (подмена исходящего PUT literal `null`, реальный 400 от сервера, форма/фото сохранены, повтор успешен). Все прежние 43 сценария оставлены. `package.json` включает API-регрессии в существующий `npm test`; workflow A10.1 запускает их автоматически, без изменения CI или зависимостей.
+
+## Выполненные проверки
+
+Среда: Linux x86_64, Node 24.19.0, Python 3.12.14, Pillow 12.3.0, Playwright 1.62.0. Локально явно выбран системный Chromium **154.0.8037.57**; это отличается от bundled **151.0.7922.34/build 1234**, который выбирает существующий CI. Для сокетов/дочерних процессов использован разрешённый механизм сетевого доступа песочницы; первоначальный отказ запуска без него не является результатом проверки приложения.
+
+| Команда/опыт | Результат |
+| --- | --- |
+| На исходном server.js: `python3 -m unittest tests/json_api_test.py -k test_all_other_mutations_matrix_and_preservation` | Exit 1, 61 failing subcase: дефектная версия не проходит новую регрессию |
+| После исправления: `python3 tests/json_api_test.py` | 8 групп прошли; покрытие таблицы выше |
+| `CHROMIUM_EXECUTABLE=/usr/bin/chromium python3 tests/smoke.py RecipeBookTests.test_44_invalid_json_import_and_unreadable_file_keep_book RecipeBookTests.test_45_json_rejection_preserves_draft_photo_and_allows_retry` | Exit 0, обе новые browser-регрессии прошли |
+| `npm run check` | Exit 0, пять прежних syntax checks |
+| `CHROMIUM_EXECUTABLE=/usr/bin/chromium npm test` | Exit 0: **2 Node + 1 Pillow + 8 API + 45 smoke = 56**, без skips; smoke 113.647 s |
+| `CHROMIUM_EXECUTABLE=/usr/bin/chromium python3 tests/browser_environment.py` | Exit 0; фактический системный браузер 154.0.8037.57 |
+| `CHROMIUM_EXECUTABLE=/usr/bin/chromium python3 tests/ci_failure_checks.py` | Exit 0: отсутствующий браузер и намеренно падающий Node-тест дают failure; процессы и временные БД очищены |
+| Python AST parsing обоих изменённых test-файлов; `git diff --check` | Exit 0 |
+
+Первый полный прогон: прежние 46 и API-регрессии прошли, №45 прошёл, №44 упал из-за ошибки test-fixture `page.evaluate` (Playwright вызывал присвоенную функцию). Fixture обёрнут в функцию без возвращаемого значения; приложение и assertions не ослаблялись. Обе новые browser-регрессии после исправления прошли; финальный полный прогон после исправления также прошёл (56 тестов).
+
+## GitHub Actions
+
+Реализация `df69d096f498c232ea66b0bdbd1a92121438a114`, [PR №12](https://github.com/nikitadudka/recepts/pull/12), [run 39802903009](https://github.com/nikitadudka/recepts/actions/runs/39802903009): **success**, обе чистые job без перезапуска. Node 24.19.0/Python 3.12.14, фактически запущен bundled Chromium **151.0.7922.34/build 1234**.
+
+| Job | Образ runner | Результаты |
+| --- | --- | --- |
+| [Baseline 1](https://github.com/nikitadudka/recepts/actions/runs/39802903009/job/119908297863) | ubuntu24 `20261012.334.1` | Syntax checks; **56 тестов** (8 API за 12.384 s, 45 smoke за 96.475 s); обе негативные проверки и cleanup — success |
+| [Baseline 2](https://github.com/nikitadudka/recepts/actions/runs/39802903009/job/119908298162) | ubuntu24 `20261018.339.1` | Syntax checks; **56 тестов** (8 API за 11.489 s, 45 smoke за 96.489 s) — success; отдельный негативный шаг намеренно не запускается по прежнему matrix-условию A10.1 |
+
+Долгая подготовка runner связана с загрузкой системных пакетов Ubuntu (в Baseline 2 — 25.9 MB за 9 min 14 s), а не тестами A22. В обеих job прежний шаг определения пути bundled browser вывел warning Playwright cleanup `TargetClosedError` при exit 0; следующий шаг реально запустил Chromium, и полный suite прошёл без skips. Workflow и test-инструменты ради предупреждения/скорости не менялись.
+
+Последующий коммит фиксации этого отчёта меняет только документацию; runtime, тесты и workflow соответствуют проверенному `df69d09`. Актуальные checks head и итог повторной автоматической проверки доступны в [PR №12](https://github.com/nikitadudka/recepts/pull/12/checks) и его описании.
+
+## Ограничения, риски и откат
+
+Это самопроверка. Реальные macOS/launchctl/Gatekeeper/Bonjour, iOS/Safari и Android/Chrome, физический диск без места и потеря питания не проверялись. File.text errors имитировались в браузере; реальное удаление файла между выбором и чтением не проверялось. Ошибка SQL воспроизводится реальным SQLite trigger в тестовой БД, а не исчерпанием диска. Восстановление всей SQLite/WAL и рабочей семейной книги не заявляется.
+
+Повреждённые файлы поставки или строки, встреченные startup-миграцией, по-прежнему могут блокировать старт; A22 не вводит ремонт или fallback на пустые данные. Уже работающий процесс при повреждённой строке отвечает 500 без перезаписи источника. На физически оборванном сокете нельзя гарантировать доставку JSON-ошибки. Полный снимок library по-прежнему может явно удалить отсутствующие ID при корректном запросе со свежей revision — этот контракт не менялся. Проверки `limit` используют JSON object с пробельным padding, не обещают загрузку 64 МиБ полезных фото.
+
+Неверные trial/logout тела и внешние клиенты с ложным media type/чужим charset теперь получают 4xx. Корректные старые клиенты и пустой logout совместимы. A04 (отложенная перерисовка карточек) остаётся отдельной задачей.
+
+Откат после отдельного решения владельца: revert commit A22 и обычное обновление файлов приложения. Схема и данные не мигрировали; **не восстанавливать старую SQLite/JSON-копию поверх новых пользовательских записей**. Проверить вход, GET книги, корректный PUT и revision на изолированной копии; откат возвращает прежние дефекты JSON-контракта.
+
+Рекомендация самопроверки: **A22 готов к рассмотрению владельцем**; следующий ответственный — владелец для review PR №12. Merge, auto-merge и деплой не выполняются; следующая задача не запускается.
