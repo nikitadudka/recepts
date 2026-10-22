@@ -25,6 +25,40 @@ let authState;
 let formDirty = false;
 let editingSnapshot = null;
 let syncing = false;
+let libraryRenderPending = false;
+let libraryFocusTarget = null;
+let viewedRecipe = null;
+function cardFocusTarget(element) {
+  const button = element?.closest('[data-open], [data-favorite], [data-promote-trial], [data-delete-trial]');
+  if (!button?.closest('#recipe-grid')) return null;
+  const attribute = [...button.attributes].find(attribute => ['data-open','data-favorite','data-promote-trial','data-delete-trial'].includes(attribute.name));
+  return {attribute:attribute.name,id:attribute.value};
+}
+function applyPendingLibraryRender() {
+  if (document.querySelector('dialog[open]')) return;
+  const target = cardFocusTarget(document.activeElement) || libraryFocusTarget;
+  const {scrollX,scrollY} = window;
+  if (libraryRenderPending) render();
+  if (target) {
+    const button = $(`[${target.attribute}="${CSS.escape(target.id)}"]`, $('#recipe-grid'));
+    const fallback = $('#collection-title');
+    fallback.tabIndex = -1;
+    (button || fallback).focus({preventScroll:true});
+    window.scrollTo(scrollX,scrollY);
+  }
+  libraryFocusTarget = null;
+}
+function updateRecipeSyncNotice() {
+  if (!viewedRecipe || !$('#recipe-dialog').open) return;
+  const current = recipes.find(recipe => recipe.id === viewedRecipe.id);
+  const changed = JSON.stringify(current) !== JSON.stringify(viewedRecipe);
+  $('#recipe-sync-notice').hidden = !changed;
+  $('#recipe-sync-message').textContent = !changed ? '' : current ? 'Рецепт изменён на другом устройстве' : 'Этот рецепт удалён на другом устройстве';
+  $('#recipe-sync-action').textContent = current ? 'Обновить просмотр' : 'Вернуться к книге';
+  $$('[data-edit], [data-delete], [data-favorite], [data-delete-trial], [data-promote-trial]', $('#recipe-detail')).forEach(button => {
+    button.disabled = !current || (button.matches('[data-delete-trial], [data-promote-trial]') && current.shelf !== 'trial');
+  });
+}
 async function api(url,options={}) {
   let response;
   try { response = await fetch(url,{...options,headers:{'Content-Type':'application/json',...options.headers},cache:'no-store'}); }
@@ -36,7 +70,10 @@ async function api(url,options={}) {
 }
 async function refreshLibrary(force=false) {
   const result=await api('/api/library'+(force?'':`?revision=${revision}`));
-  if (!result.unchanged) { recipes=result.recipes; revision=result.revision; if (!document.querySelector('dialog[open]')) render(); }
+  if (!result.unchanged) {
+    recipes=result.recipes; revision=result.revision; libraryRenderPending=true;
+    updateRecipeSyncNotice();updateCatalogSave();applyPendingLibraryRender();
+  }
   $('#connection-status').textContent='Семейная книга · всё сохранено';
 }
 async function connect() {
@@ -217,6 +254,7 @@ function filteredRecipes() {
     });
 }
 function render() {
+  libraryRenderPending = false;
   const visible = filteredRecipes();
   $('.recipe-section').dataset.collectionView=state.collection;
   $('.collection-hint').textContent=state.collection==='trial'?'Идеи, которые хочется приготовить':document.documentElement.dataset.theme==='halloween'?'Проверенные семейные заклинания':'Маленькая коллекция больших удовольствий';
@@ -247,11 +285,21 @@ function resetFilters() { $$('.filters select').forEach(el => el.value = ''); st
 async function toggleFavorite(id) {
   if (await persist(current => current.map(r => r.id === id ? {...r,favorite:!r.favorite} : r))) {
     render();
-    if ($('#recipe-dialog').open) { const r = recipes.find(r => r.id === id); const button = $('[data-favorite]', $('#recipe-dialog')); if (button && r) button.outerHTML = favoriteButton(r); }
+    if ($('#recipe-dialog').open) {
+      const r = recipes.find(r => r.id === id), button = $('[data-favorite]', $('#recipe-dialog'));
+      if (button && r && viewedRecipe?.id === id) {
+        button.outerHTML = favoriteButton(r);
+        viewedRecipe = {...viewedRecipe,favorite:r.favorite};
+        updateRecipeSyncNotice();
+      }
+    }
   }
 }
 function showRecipe(id) {
   const r = recipes.find(r => r.id === id); if (!r) return;
+  viewedRecipe = r;
+  $('#recipe-sync-notice').hidden = true;
+  $('#recipe-sync-message').textContent = '';
   $('#recipe-detail').innerHTML = `<div class="detail-photo ${r.recipeKind&&r.recipeKind!=='dish'?'drink-detail-photo':''}">${photo(r.image,r.title,'eager',r.recipeKind)}<button class="icon-button close-dialog" aria-label="Закрыть">${icon('close')}</button></div><div class="detail-body"><div class="detail-heading"><h2>${escapeHTML(r.title)}</h2>${favoriteButton(r)}</div>${r.shelf==='trial'?'<p class="trial-detail-note">Блюдо на пробу · ещё не в основной книге</p>':''}<div class="detail-categories">${[r.meal,r.size,r.macro,r.meat,...(r.isPreparation?['Заготовка']:[]),...(r.recipeKind==='cocktail'?['Алкогольный коктейль']:r.recipeKind==='mocktail'?['Безалкогольный коктейль']:[])].map(tag => `<span class="recipe-tag ${tag === r.macro ? macroClass(r.macro) : ''}">${escapeHTML(tag)}</span>`).join('')}</div><p class="detail-methods"><span>Способ приготовления</span><strong>${escapeHTML(recipeMethods(r).join(' · ')||'Не указан')}</strong></p>${recipeEquipment(r).length?`<p class="detail-methods"><span>Инвентарь</span><strong>${escapeHTML(recipeEquipment(r).join(' · '))}</strong></p>`:''}<div class="detail-stats"><span>${icon('clock')}${format(r.time)} мин</span><span>${icon('bowl')}Порций: ${format(r.servings)}</span></div><h3>Ингредиенты</h3><ul class="detail-ingredients">${r.ingredients.map(i => `<li><span>${escapeHTML(i.name)}</span><span>${escapeHTML(i.amount)} ${escapeHTML(i.unit)}</span></li>`).join('')}</ul><h3>Готовим с удовольствием</h3><ol class="detail-steps">${(Array.isArray(r.steps)?r.steps:r.instructions.split('\n')).filter(s => s.trim()).map(s => `<li>${escapeHTML(s)}</li>`).join('')}</ol><h3>На 100 г готового блюда</h3><div class="detail-nutrition">${[['calories','ккал'],['protein','белки, г'],['fat','жиры, г'],['carbs','углеводы, г']].map(([key,label]) => `<div><strong>${format(r[key])}</strong><span>${label}</span></div>`).join('')}</div><p class="field-hint" style="margin-top:12px">Значения указаны автором рецепта, автоматически не рассчитываются.</p>${sourceNote(r)}</div><div class="dialog-footer"><button class="detail-delete" ${r.shelf==='trial'?'data-delete-trial':'data-delete'}="${escapeHTML(r.id)}">${r.shelf==='trial'?'Убрать из списка':'Удалить рецепт'}</button><button class="button ${r.shelf==='trial'?'':'primary'}" data-edit="${escapeHTML(r.id)}">${icon('edit')}Редактировать</button>${r.shelf==='trial'?`<button class="button primary" data-promote-trial="${escapeHTML(r.id)}">В книгу рецептов</button>`:''}</div>`;
   if (!$('#recipe-dialog').open) $('#recipe-dialog').showModal();
   $('#recipe-dialog').scrollTop = 0;
@@ -324,7 +372,26 @@ document.addEventListener('click',async event => {
   const edit = event.target.closest('[data-edit]'); if (edit) { openEditor(edit.dataset.edit); return; }
   const remove = event.target.closest('[data-delete]'); if (remove && confirm('Удалить рецепт из вашей книги? Это действие нельзя отменить.')) { if (await persist(current => current.filter(r => r.id !== remove.dataset.delete))) { $('#recipe-dialog').close(); render(); toast('Рецепт удалён'); } }
 });
-$$('dialog').forEach(dialog => dialog.addEventListener('click',event => { const rect = dialog.getBoundingClientRect(); if (event.target === dialog && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) {if(dialog.id==='editor-dialog')closeEditor();else dialog.close();} }));
+document.addEventListener('focusin',event => {
+  const target = cardFocusTarget(event.target);
+  if (target) libraryFocusTarget = target;
+  else if (!document.querySelector('dialog[open]')) libraryFocusTarget = null;
+});
+$$('dialog').forEach(dialog => {
+  dialog.addEventListener('close',() => {
+    if (dialog.id === 'recipe-dialog' && !dialog.open) viewedRecipe = null;
+    applyPendingLibraryRender();
+  });
+  dialog.addEventListener('click',event => { const rect = dialog.getBoundingClientRect(); if (event.target === dialog && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) {if(dialog.id==='editor-dialog')closeEditor();else dialog.close();} });
+});
+$('#recipe-sync-action').addEventListener('click',() => {
+  const current = recipes.find(recipe => recipe.id === viewedRecipe?.id);
+  if (!current) { $('#recipe-dialog').close(); return; }
+  const dialog = $('#recipe-dialog'), scrollTop = dialog.scrollTop;
+  showRecipe(current.id);
+  const heading = $('#recipe-detail h2');heading.tabIndex = -1;heading.focus({preventScroll:true});
+  dialog.scrollTop = scrollTop;
+});
 $('#editor-dialog').addEventListener('close',() => {imageRevision++;});
 $('#editor-dialog').addEventListener('cancel',event=>{event.preventDefault();closeEditor();});
 document.addEventListener('keydown',event => { if (event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName) && !document.querySelector('dialog[open]')) { event.preventDefault(); $('#search').focus(); } });
