@@ -1008,8 +1008,11 @@ class RecipeBookTests(unittest.TestCase):
                 self.page.locator('#filter-meat').select_option('Без мяса')
                 self.page.locator('#' + view + '-view').click()
                 self.page.locator('[data-open="lentil-soup"]').scroll_into_view_if_needed()
-                scroll_y = self.page.evaluate('window.scrollY')
                 self.page.locator('[data-open="lentil-soup"]').click()
+                # Native focus may scroll the card on click; compare the actual
+                # reading position before remote sync, not the pre-click offset.
+                expect(self.page.locator('#recipe-dialog')).to_be_visible()
+                scroll_y = self.page.evaluate('window.scrollY')
                 old_title = self.page.locator('#recipe-detail h2').inner_text()
                 for index in range(2):
                     title = f'Чечевица {theme} {close} {index}'
