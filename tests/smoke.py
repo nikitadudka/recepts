@@ -1426,6 +1426,14 @@ class RecipeBookTests(unittest.TestCase):
         self.tab_to('#filter-meat')
         self.page.keyboard.press('End')
         expect(self.page.locator('#filter-meat')).to_have_value('С мясом')
+        # Additional meal conditions do not change the collection being searched.
+        self.page.locator('#filter-meal').select_option('Завтрак')
+        expect(self.page.locator('[data-collection=all]').first).to_have_attribute('aria-pressed', 'true')
+        self.tab_to('[data-collection=favorites]')
+        self.page.keyboard.press('Enter')
+        self.page.locator('#filter-meal').select_option('Завтрак')
+        expect(self.page.locator('[data-collection=favorites]').first).to_have_attribute('aria-pressed', 'true')
+        expect(self.page.locator('[data-collection=all]').first).to_have_attribute('aria-pressed', 'false')
 
     def test_59_linked_field_errors_and_save_failure_retry_announcements(self):
         form = self.fill_recipe('   ')

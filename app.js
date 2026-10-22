@@ -301,7 +301,10 @@ function render() {
   const filterCount = $$('.filters select').filter(el => el.value).length;
   $('#filter-count').textContent = filterCount;
   $('#filter-count').hidden = !filterCount;
-  $$('[data-collection]').forEach(el => selectButton(el,el.dataset.collection === state.collection && (!meal||state.collection==='trial')));
+  $$('[data-collection]').forEach(el => {
+    el.classList.toggle('active',el.dataset.collection === state.collection && (!meal||state.collection==='trial'));
+    el.setAttribute('aria-pressed',String(el.dataset.collection === state.collection));
+  });
   $$('[data-meal]').forEach(el => selectButton(el,state.collection!=='trial'&&el.dataset.meal === meal));
   $$('[data-quick]').forEach(el => selectButton(el,el.dataset.quick === state.quick));
   scheduleResultsAnnouncement(visible);
