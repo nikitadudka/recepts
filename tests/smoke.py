@@ -25,11 +25,15 @@ class RecipeBookTests(unittest.TestCase):
         environment = os.environ.copy()
         environment['PORT'] = str(port)
         cls.data_dir = tempfile.TemporaryDirectory(prefix='kroshka-test-')
+        cls.addClassCleanup(cls.data_dir.cleanup)
         environment['DATA_DIR'] = cls.data_dir.name
+        environment['HOST'] = '127.0.0.1'
+        environment.pop('PUBLIC_URL', None)
         environment['KROSHKA_HOSTNAME'] = 'kroshka-test.local'
         environment.pop('FAMILY_PASSWORD', None)
         cls.environment = environment
         cls.server = subprocess.Popen(['node', 'server.js'], cwd=ROOT, env=environment, stdout=subprocess.DEVNULL)
+        cls.addClassCleanup(cls.stop_server)
         for _ in range(50):
             try:
                 urllib.request.urlopen(cls.url, timeout=1).close()
@@ -37,28 +41,34 @@ class RecipeBookTests(unittest.TestCase):
             except OSError:
                 time.sleep(.1)
         else:
-            cls.server.terminate()
             raise RuntimeError('Test server did not start')
         cls.playwright = sync_playwright().start()
+        cls.addClassCleanup(cls.playwright.stop)
         executable = os.environ.get('CHROMIUM_EXECUTABLE') or shutil.which('chromium') or shutil.which('google-chrome')
         cls.browser = cls.playwright.chromium.launch(headless=True, **({'executable_path': executable} if executable else {}))
+        cls.addClassCleanup(cls.browser.close)
         cls.password = 'test-family-password'
         context = cls.browser.new_context()
-        response = context.request.post(cls.url + '/api/setup', data={'password': cls.password})
-        assert response.status == 200, response.text()
-        context.close()
+        try:
+            response = context.request.post(cls.url + '/api/setup', data={'password': cls.password})
+            assert response.status == 200, response.text()
+        finally:
+            context.close()
         cls.seeds = json.loads((ROOT / 'recipes.seed.json').read_text())
 
     @classmethod
-    def tearDownClass(cls):
-        cls.browser.close()
-        cls.playwright.stop()
-        cls.server.terminate()
-        cls.server.wait(timeout=10)
-        cls.data_dir.cleanup()
+    def stop_server(cls):
+        if cls.server.poll() is None:
+            cls.server.terminate()
+            try:
+                cls.server.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                cls.server.kill()
+                cls.server.wait(timeout=10)
 
     def setUp(self):
         self.context = self.browser.new_context(viewport={'width': 1440, 'height': 1000})
+        self.addCleanup(self.context.close)
         response = self.context.request.post(self.url + '/api/login', data={'password': self.password})
         self.assertEqual(response.status, 200)
         snapshot = self.context.request.get(self.url + '/api/library').json()
@@ -71,7 +81,6 @@ class RecipeBookTests(unittest.TestCase):
 
     def tearDown(self):
         self.assertEqual(self.errors, [])
-        self.context.close()
 
     def titles(self):
         return self.page.locator('.card-title').all_text_contents()
