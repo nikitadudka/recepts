@@ -23,7 +23,6 @@ jobs:
       matrix:
         run: [1, 2]
     env:
-      PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/kroshka-browsers
       PIP_DISABLE_PIP_VERSION_CHECK: '1'
       PIP_NO_CACHE_DIR: '1'
     steps:
@@ -38,6 +37,8 @@ jobs:
           python-version: '3.12.14'
       - name: Prepare isolated test tools
         run: |
+          export PLAYWRIGHT_BROWSERS_PATH="$RUNNER_TEMP/kroshka-browsers"
+          echo "PLAYWRIGHT_BROWSERS_PATH=$PLAYWRIGHT_BROWSERS_PATH" >> "$GITHUB_ENV"
           python -m venv "$RUNNER_TEMP/kroshka-venv"
           echo "$RUNNER_TEMP/kroshka-venv/bin" >> "$GITHUB_PATH"
           "$RUNNER_TEMP/kroshka-venv/bin/python" -m pip install --require-hashes --only-binary=:all: -r tests/requirements.txt
