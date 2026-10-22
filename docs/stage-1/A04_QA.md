@@ -37,10 +37,21 @@ Linux, Node 24.19.0, Python 3.12.14, системный Chromium 154.0.8037.57; 
 - `npm run check`: пройдено после исправления.
 - `npm test`: **exit 0, все 63 теста без skip** (2 Node + 1 Pillow + 8 API за 17.051 s + 52 smoke за 179.793 s), прежние 56 сохранены.
 - `python3 tests/ci_failure_checks.py`: exit 0, обе намеренные ошибки обнаружены, процессы и временные БД очищены. `CHROMIUM_EXECUTABLE=/usr/bin/chromium python3 tests/browser_environment.py`: exit 0, Chromium 154.0.8037.57; без обязательной переменной диагностическая команда первоначально дала KeyError, штатный smoke сам находит системный браузер. `git diff --check`: exit 0.
-- GitHub Actions: штатный Tests (`pull_request` → main), две чистые job Baseline 1/2; запуск и результаты будут внесены после создания PR.
+- GitHub Actions: штатный [Tests run 39810159103](https://github.com/nikitadudka/recepts/actions/runs/39810159103), `pull_request` → main, проверяемый commit `84fa76ccbeef375d35d8f7c3535ff6eb9e2e879f`. [PR №13](https://github.com/nikitadudka/recepts/pull/13).
+
+| Job | Результат и окружение |
+| --- | --- |
+| [Baseline 1](https://github.com/nikitadudka/recepts/actions/runs/39810159103/job/119933929310) | **success**; ubuntu24 `20261021.345.10`, Node 24.19.0/Python 3.12.14/Chromium 151.0.7922.34; check и все 63 теста (8 API за 11.197 s, 52 smoke за 105.739 s), обе негативные проверки и cleanup — success |
+| [Baseline 2](https://github.com/nikitadudka/recepts/actions/runs/39810159103/job/119933929565) | **success**; ubuntu24 `20261021.345.10`, Node 24.19.0/Python 3.12.14/Chromium 151.0.7922.34; check и все 63 теста (8 API за 8.203 s, 52 smoke за 98.690 s). Негативный шаг пропущен по существующему matrix-условию A10.1 |
+
+Обе job завершились успешно; медленная установка инструментов в Baseline 1 предшествовала запуску тестов. В шаге выбора bundled Chromium присутствует прежнее предупреждение Playwright cleanup `TargetClosedError` при exit 0 (такое же отмечено в A22). Следующий шаг реально запускает браузер, все тесты выполняются без skip. Workflow и инструменты ради предупреждения не менялись.
 
 ## Ограничения и откат
 
 Самопроверка не заменяет независимый review. Реальные macOS/launchctl/Gatekeeper/Bonjour, iOS/Safari и Android/Chrome, screen reader и нестабильная домашняя сеть не проверены. Мобильные viewport и Chromium не подтверждают поведение реального Safari. Замеры производительности на 1000/10000 рецептах не выполнялись; формат полного snapshot, интервал polling и серверные гарантии сохранены. Восстановление рабочей SQLite/WAL и физические сбои носителя не заявляются.
 
 Откат после решения владельца: revert коммита A04 и обычное обновление файлов приложения. Перезапуск миграций/замена данных не требуются этим исправлением. Не восстанавливать старый JSON/SQLite поверх новых пользовательских записей. На изолированной книге проверить вход, GET, edit/save и revision; учесть возвращение дефекта устаревших карточек. Деплой, merge и auto-merge не выполняются.
+
+Последующий коммит меняет только этот отчёт и вводный абзац ARCHITECTURE; код, тесты и workflow после успешного `84fa76c` не меняются. Автоматические проверки итогового head — в [PR №13/checks](https://github.com/nikitadudka/recepts/pull/13/checks).
+
+Рекомендация самопроверки: **A04 готов к рассмотрению владельцем**. Все пять критериев Issue №6 пройдены в описанном окружении; ограничения реальных устройств остаются. Следующий ответственный — владелец для review PR №13; слияние и деплой не выполняются.
