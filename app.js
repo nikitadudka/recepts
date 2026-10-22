@@ -52,9 +52,11 @@ function updateRecipeSyncNotice() {
   if (!viewedRecipe || !$('#recipe-dialog').open) return;
   const current = recipes.find(recipe => recipe.id === viewedRecipe.id);
   const changed = JSON.stringify(current) !== JSON.stringify(viewedRecipe);
-  $('#recipe-sync-notice').hidden = !changed;
-  $('#recipe-sync-message').textContent = !changed ? '' : current ? 'Рецепт изменён на другом устройстве' : 'Этот рецепт удалён на другом устройстве';
-  $('#recipe-sync-action').textContent = current ? 'Обновить просмотр' : 'Вернуться к книге';
+  if ($('#recipe-sync-notice').hidden !== !changed) $('#recipe-sync-notice').hidden = !changed;
+  const message = !changed ? '' : current ? 'Рецепт изменён на другом устройстве' : 'Этот рецепт удалён на другом устройстве';
+  if ($('#recipe-sync-message').textContent !== message) $('#recipe-sync-message').textContent = message;
+  const action = current ? 'Обновить просмотр' : 'Вернуться к книге';
+  if ($('#recipe-sync-action').textContent !== action) $('#recipe-sync-action').textContent = action;
   $$('[data-edit], [data-delete], [data-favorite], [data-delete-trial], [data-promote-trial]', $('#recipe-detail')).forEach(button => {
     button.disabled = !current || (button.matches('[data-delete-trial], [data-promote-trial]') && current.shelf !== 'trial');
   });
@@ -126,15 +128,20 @@ let editingShelf = 'main';
 let draftImage = '';
 let toastTimer;
 let imageRevision = 0;
-function toast(message) { $('#toast').textContent = message; $('#toast').classList.add('visible'); clearTimeout(toastTimer); toastTimer = setTimeout(() => $('#toast').classList.remove('visible'), 4000); }
+function announce(message) {
+  const dialog = $$('dialog[open]').at(-1);
+  const region = dialog ? $('[data-announcement]',dialog) : $('#announcements');
+  region.textContent = message;
+}
+function toast(message) { announce(message); $('#toast').textContent = message; $('#toast').classList.add('visible'); clearTimeout(toastTimer); toastTimer = setTimeout(() => $('#toast').classList.remove('visible'), 4000); }
 let writeQueue=Promise.resolve();
 function persist(update) {
   const operation=writeQueue.then(async()=>{
     const next=typeof update==='function'?update(recipes):update;
     $('#connection-status').textContent='Сохраняем…';
     try { const result=await api('/api/library',{method:'PUT',body:JSON.stringify({revision,recipes:next})}); recipes=next;revision=result.revision;lastSaveError='';$('#connection-status').textContent='Семейная книга · всё сохранено';return true; }
-    catch(error) { lastSaveError=error.message; if(error.status===409) await refreshLibrary(true); else if(error.status===401) {authState=await api('/api/session');showAuth();} $('#connection-status').textContent='Изменения не сохранены';toast(lastSaveError);return false; }
-  }).catch(error=>{lastSaveError=error.message;toast(lastSaveError);return false;});
+    catch(error) { lastSaveError=error.message; if(error.status===409) await refreshLibrary(true); else if(error.status===401) {authState=await api('/api/session');showAuth();} $('#connection-status').textContent='Изменения не сохранены';if (!$('#editor-dialog').open) toast(lastSaveError);return false; }
+  }).catch(error=>{lastSaveError=error.message;if (!$('#editor-dialog').open) toast(lastSaveError);return false;});
   writeQueue=operation.then(()=>{});return operation;
 }
 function normalized(text) { return String(text).toLowerCase().replaceAll('ё','е').replace(/[^\p{L}\p{N}\s]/gu,' ').replace(/\s+/g,' ').trim(); }
@@ -253,6 +260,23 @@ function filteredRecipes() {
       return bv - av;
     });
 }
+let resultsTimer;
+let resultsSignature = '';
+function scheduleResultsAnnouncement(visible) {
+  clearTimeout(resultsTimer);
+  const signature = JSON.stringify([state.collection,state.query,state.quick,$$('.filters select').map(el=>el.value),visible.map(r=>r.id)]);
+  resultsTimer = setTimeout(() => {
+    if (signature === resultsSignature || document.querySelector('dialog[open]')) return;
+    resultsSignature = signature;
+    const message = `Найдено рецептов: ${visible.length}${state.query ? `. Поиск: ${state.query}` : ''}`;
+    const region = $('#search-results-status');
+    if (region.textContent !== message) region.textContent = message;
+  },400);
+}
+function selectButton(button,selected) {
+  button.classList.toggle('active',selected);
+  button.setAttribute('aria-pressed',String(selected));
+}
 function render() {
   libraryRenderPending = false;
   const visible = filteredRecipes();
@@ -277,9 +301,13 @@ function render() {
   const filterCount = $$('.filters select').filter(el => el.value).length;
   $('#filter-count').textContent = filterCount;
   $('#filter-count').hidden = !filterCount;
-  $$('[data-collection]').forEach(el => el.classList.toggle('active',el.dataset.collection === state.collection && (!meal||state.collection==='trial')));
-  $$('[data-meal]').forEach(el => el.classList.toggle('active',state.collection!=='trial'&&el.dataset.meal === meal));
-  $$('[data-quick]').forEach(el => el.classList.toggle('active',el.dataset.quick === state.quick));
+  $$('[data-collection]').forEach(el => {
+    el.classList.toggle('active',el.dataset.collection === state.collection && (!meal||state.collection==='trial'));
+    el.setAttribute('aria-pressed',String(el.dataset.collection === state.collection));
+  });
+  $$('[data-meal]').forEach(el => selectButton(el,state.collection!=='trial'&&el.dataset.meal === meal));
+  $$('[data-quick]').forEach(el => selectButton(el,el.dataset.quick === state.quick));
+  scheduleResultsAnnouncement(visible);
 }
 function resetFilters() { $$('.filters select').forEach(el => el.value = ''); state.quick = 'all'; render(); }
 async function toggleFavorite(id) {
@@ -288,11 +316,13 @@ async function toggleFavorite(id) {
     if ($('#recipe-dialog').open) {
       const r = recipes.find(r => r.id === id), button = $('[data-favorite]', $('#recipe-dialog'));
       if (button && r && viewedRecipe?.id === id) {
-        button.outerHTML = favoriteButton(r);
+        const updated = document.createElement('template');updated.innerHTML = favoriteButton(r);
+        for (const name of ['class','aria-label','aria-pressed']) button.setAttribute(name,updated.content.firstElementChild.getAttribute(name));
         viewedRecipe = {...viewedRecipe,favorite:r.favorite};
         updateRecipeSyncNotice();
       }
     }
+    applyPendingLibraryRender();
   }
 }
 function showRecipe(id) {
@@ -300,7 +330,7 @@ function showRecipe(id) {
   viewedRecipe = r;
   $('#recipe-sync-notice').hidden = true;
   $('#recipe-sync-message').textContent = '';
-  $('#recipe-detail').innerHTML = `<div class="detail-photo ${r.recipeKind&&r.recipeKind!=='dish'?'drink-detail-photo':''}">${photo(r.image,r.title,'eager',r.recipeKind)}<button class="icon-button close-dialog" aria-label="Закрыть">${icon('close')}</button></div><div class="detail-body"><div class="detail-heading"><h2>${escapeHTML(r.title)}</h2>${favoriteButton(r)}</div>${r.shelf==='trial'?'<p class="trial-detail-note">Блюдо на пробу · ещё не в основной книге</p>':''}<div class="detail-categories">${[r.meal,r.size,r.macro,r.meat,...(r.isPreparation?['Заготовка']:[]),...(r.recipeKind==='cocktail'?['Алкогольный коктейль']:r.recipeKind==='mocktail'?['Безалкогольный коктейль']:[])].map(tag => `<span class="recipe-tag ${tag === r.macro ? macroClass(r.macro) : ''}">${escapeHTML(tag)}</span>`).join('')}</div><p class="detail-methods"><span>Способ приготовления</span><strong>${escapeHTML(recipeMethods(r).join(' · ')||'Не указан')}</strong></p>${recipeEquipment(r).length?`<p class="detail-methods"><span>Инвентарь</span><strong>${escapeHTML(recipeEquipment(r).join(' · '))}</strong></p>`:''}<div class="detail-stats"><span>${icon('clock')}${format(r.time)} мин</span><span>${icon('bowl')}Порций: ${format(r.servings)}</span></div><h3>Ингредиенты</h3><ul class="detail-ingredients">${r.ingredients.map(i => `<li><span>${escapeHTML(i.name)}</span><span>${escapeHTML(i.amount)} ${escapeHTML(i.unit)}</span></li>`).join('')}</ul><h3>Готовим с удовольствием</h3><ol class="detail-steps">${(Array.isArray(r.steps)?r.steps:r.instructions.split('\n')).filter(s => s.trim()).map(s => `<li>${escapeHTML(s)}</li>`).join('')}</ol><h3>На 100 г готового блюда</h3><div class="detail-nutrition">${[['calories','ккал'],['protein','белки, г'],['fat','жиры, г'],['carbs','углеводы, г']].map(([key,label]) => `<div><strong>${format(r[key])}</strong><span>${label}</span></div>`).join('')}</div><p class="field-hint" style="margin-top:12px">Значения указаны автором рецепта, автоматически не рассчитываются.</p>${sourceNote(r)}</div><div class="dialog-footer"><button class="detail-delete" ${r.shelf==='trial'?'data-delete-trial':'data-delete'}="${escapeHTML(r.id)}">${r.shelf==='trial'?'Убрать из списка':'Удалить рецепт'}</button><button class="button ${r.shelf==='trial'?'':'primary'}" data-edit="${escapeHTML(r.id)}">${icon('edit')}Редактировать</button>${r.shelf==='trial'?`<button class="button primary" data-promote-trial="${escapeHTML(r.id)}">В книгу рецептов</button>`:''}</div>`;
+  $('#recipe-detail').innerHTML = `<div class="detail-photo ${r.recipeKind&&r.recipeKind!=='dish'?'drink-detail-photo':''}">${photo(r.image,r.title,'eager',r.recipeKind)}<button class="icon-button close-dialog" aria-label="Закрыть">${icon('close')}</button></div><div class="detail-body"><div class="detail-heading"><h2 id="recipe-title" tabindex="-1" autofocus>${escapeHTML(r.title)}</h2>${favoriteButton(r)}</div>${r.shelf==='trial'?'<p class="trial-detail-note">Блюдо на пробу · ещё не в основной книге</p>':''}<div class="detail-categories">${[r.meal,r.size,r.macro,r.meat,...(r.isPreparation?['Заготовка']:[]),...(r.recipeKind==='cocktail'?['Алкогольный коктейль']:r.recipeKind==='mocktail'?['Безалкогольный коктейль']:[])].map(tag => `<span class="recipe-tag ${tag === r.macro ? macroClass(r.macro) : ''}">${escapeHTML(tag)}</span>`).join('')}</div><p class="detail-methods"><span>Способ приготовления</span><strong>${escapeHTML(recipeMethods(r).join(' · ')||'Не указан')}</strong></p>${recipeEquipment(r).length?`<p class="detail-methods"><span>Инвентарь</span><strong>${escapeHTML(recipeEquipment(r).join(' · '))}</strong></p>`:''}<div class="detail-stats"><span>${icon('clock')}${format(r.time)} мин</span><span>${icon('bowl')}Порций: ${format(r.servings)}</span></div><h3>Ингредиенты</h3><ul class="detail-ingredients">${r.ingredients.map(i => `<li><span>${escapeHTML(i.name)}</span><span>${escapeHTML(i.amount)} ${escapeHTML(i.unit)}</span></li>`).join('')}</ul><h3>Готовим с удовольствием</h3><ol class="detail-steps">${(Array.isArray(r.steps)?r.steps:r.instructions.split('\n')).filter(s => s.trim()).map(s => `<li>${escapeHTML(s)}</li>`).join('')}</ol><h3>На 100 г готового блюда</h3><div class="detail-nutrition">${[['calories','ккал'],['protein','белки, г'],['fat','жиры, г'],['carbs','углеводы, г']].map(([key,label]) => `<div><strong>${format(r[key])}</strong><span>${label}</span></div>`).join('')}</div><p class="field-hint" style="margin-top:12px">Значения указаны автором рецепта, автоматически не рассчитываются.</p>${sourceNote(r)}</div><div class="dialog-footer"><button class="detail-delete" ${r.shelf==='trial'?'data-delete-trial':'data-delete'}="${escapeHTML(r.id)}">${r.shelf==='trial'?'Убрать из списка':'Удалить рецепт'}</button><button class="button ${r.shelf==='trial'?'':'primary'}" data-edit="${escapeHTML(r.id)}">${icon('edit')}Редактировать</button>${r.shelf==='trial'?`<button class="button primary" data-promote-trial="${escapeHTML(r.id)}">В книгу рецептов</button>`:''}</div>`;
   if (!$('#recipe-dialog').open) $('#recipe-dialog').showModal();
   $('#recipe-dialog').scrollTop = 0;
 }
@@ -333,7 +363,7 @@ function renumberSteps() { $$('.step-row').forEach((row,index,rows)=>{ $('.step-
 function closeEditor() { if(formDirty&&!confirm('Закрыть рецепт без сохранения изменений?'))return; $('#editor-dialog').close(); }
 function openEditor(id=null) {
   const recipe=recipes.find(r=>r.id===id);editingShelf=recipe?.shelf??(state.collection==='trial'?'trial':'main');editingId=recipe?id:null;editingSnapshot=recipe?JSON.stringify(recipe):null;imageRevision++;
-  $('#recipe-form').reset();$('#form-error').textContent='';$('#save-copy').hidden=true;
+  $('#recipe-form').reset();clearFieldErrors();$('#photo-error').textContent='';$('[data-announcement]',$('#editor-dialog')).textContent='';$('#form-error').textContent='';$('#save-copy').hidden=true;
   $('#editor-title').textContent=recipe?'Редактировать рецепт':'Новый рецепт';
   $('#ingredient-rows').replaceChildren();$('#step-rows').replaceChildren();
   if(recipe){for(const key of ['title','time','servings','meal','size','macro','meat','calories','protein','fat','carbs'])$('#recipe-form').elements[key].value=recipe[key]??'';recipe.ingredients.forEach(addIngredientRow);(Array.isArray(recipe.steps)?recipe.steps:recipe.instructions.split('\n')).filter(step=>step.trim()).forEach(addStep);}
@@ -395,6 +425,17 @@ $('#recipe-sync-action').addEventListener('click',() => {
 $('#editor-dialog').addEventListener('close',() => {imageRevision++;});
 $('#editor-dialog').addEventListener('cancel',event=>{event.preventDefault();closeEditor();});
 document.addEventListener('keydown',event => { if (event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName) && !document.querySelector('dialog[open]')) { event.preventDefault(); $('#search').focus(); } });
+function clearFieldErrors() {
+  $$('#recipe-form [aria-invalid]').forEach(field => {
+    field.removeAttribute('aria-invalid');
+    field.removeAttribute('aria-describedby');
+  });
+}
+$('#recipe-form').addEventListener('input',event => {
+  if (event.target.hasAttribute('aria-invalid')) {
+    event.target.removeAttribute('aria-invalid');event.target.removeAttribute('aria-describedby');
+  }
+});
 $('#recipe-form').addEventListener('submit',async event => {
   event.preventDefault();
   const form = event.currentTarget;
@@ -402,7 +443,13 @@ $('#recipe-form').addEventListener('submit',async event => {
   const steps=$$('.step-text').map(input=>input.value.trim()).filter(Boolean);
   const instructions=steps.join('\n');
   const ingredients = readIngredients();
-  if (!title || !instructions || ingredients.some(i => !i.name)) { $('#form-error').textContent = 'Заполните название, ингредиенты и описание приготовления.'; return; }
+  clearFieldErrors();$('#form-error').textContent = '';
+  const emptyFields = [form.elements.title,...$$('.ingredient-name'),...$$('.step-text')].filter(field => !field.value.trim());
+  if (emptyFields.length) {
+    $('#form-error').textContent = 'Заполните название, ингредиенты и описание приготовления.';
+    emptyFields.forEach(field => {field.setAttribute('aria-invalid','true');field.setAttribute('aria-describedby','form-error');});
+    emptyFields[0].focus();return;
+  }
   const existing = recipes.find(r => r.id === editingId);
   if(editingId&&(!existing||JSON.stringify(existing)!==editingSnapshot)){ $('#form-error').textContent='Этот рецепт изменили на другом устройстве. Сохраните свою версию как копию, чтобы сохранить оба варианта.';$('#save-copy').hidden=false;return;}
   const recipe = {id:editingId || (crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(36).slice(2)}`),title,instructions,steps,ingredients,image:draftImage,favorite:existing?.favorite || false,createdAt:existing?.createdAt || Date.now()};
@@ -420,9 +467,11 @@ $('#recipe-form').addEventListener('submit',async event => {
   else $('#form-error').textContent = lastSaveError||'Рецепт не сохранён. Проверьте соединение с Mac и попробуйте ещё раз.';
   saveButton.disabled = false;
 });
+$('#choose-image').addEventListener('click',() => $('#image-upload').click());
 $('#image-upload').addEventListener('change',async event => {
   const file = event.target.files[0]; if (!file) return;
-  if (!['image/jpeg','image/png','image/webp'].includes(file.type) || file.size > 15 * 1024 * 1024) { toast('Выберите JPG, PNG или WebP размером до 15 МБ'); event.target.value = ''; return; }
+  $('#photo-error').textContent = '';
+  if (!['image/jpeg','image/png','image/webp'].includes(file.type) || file.size > 15 * 1024 * 1024) { $('#photo-error').textContent = 'Выберите JPG, PNG или WebP размером до 15 МБ'; event.target.value = ''; return; }
   const revision = ++imageRevision;
   try {
     const bitmap = await createImageBitmap(file);
@@ -430,10 +479,11 @@ $('#image-upload').addEventListener('change',async event => {
     const canvas = document.createElement('canvas'); canvas.width = Math.round(bitmap.width * scale); canvas.height = Math.round(bitmap.height * scale);
     canvas.getContext('2d').drawImage(bitmap,0,0,canvas.width,canvas.height); bitmap.close();
     if (revision !== imageRevision || !$('#editor-dialog').open) return;
-    draftImage = canvas.toDataURL('image/jpeg',.8);formDirty=true;updateImagePreview();
-  } catch { toast('Не удалось открыть изображение'); }
+    draftImage = canvas.toDataURL('image/jpeg',.8);formDirty=true;updateImagePreview();announce('Фотография добавлена');
+  } catch { if (revision === imageRevision && $('#editor-dialog').open) $('#photo-error').textContent = 'Не удалось открыть изображение'; }
+  finally { event.target.value = ''; }
 });
-$('#remove-image').addEventListener('click',() => { imageRevision++;formDirty=true;draftImage = ''; $('#image-upload').value = ''; updateImagePreview(); });
+$('#remove-image').addEventListener('click',() => { imageRevision++;formDirty=true;draftImage = ''; $('#image-upload').value = ''; updateImagePreview();$('#photo-error').textContent='';$('#choose-image').focus();announce('Фотография удалена'); });
 $('#export-data').addEventListener('click',() => {
   const blob = new Blob([JSON.stringify({version:1,exportedAt:new Date().toISOString(),recipes},null,2)],{type:'application/json'});
   const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = 'kroshka-recipes.json'; link.click(); setTimeout(() => URL.revokeObjectURL(url),1000); toast('Книга рецептов скачана');
