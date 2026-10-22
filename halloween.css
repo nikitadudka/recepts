@@ -127,8 +127,8 @@
 [data-theme=halloween] .editor-navigation button,[data-theme=halloween] .step-number{color:#d4a474}
 [data-theme=halloween] .editor-navigation button span{color:#debfcd}
 [data-theme=halloween] .editor-heading p,[data-theme=halloween] .section-hint,[data-theme=halloween] .section-title small,[data-theme=halloween] .keyboard-hint,[data-theme=halloween] .field-hint,[data-theme=halloween] .form-body .field-hint,[data-theme=halloween] .editor-save-hint{color:#b99eb3}
-[data-theme=halloween] .form-body label,[data-theme=halloween] .ingredient-header{color:#d5b6c6}
-[data-theme=halloween] .form-body label>span{color:#d8a272}
+[data-theme=halloween] .form-body label,[data-theme=halloween] .form-body .photo-drop,[data-theme=halloween] .ingredient-header{color:#d5b6c6}
+[data-theme=halloween] .form-body label>span,[data-theme=halloween] .form-body .photo-drop>span{color:#d8a272}
 [data-theme=halloween] .form-body input:not([type=file]),[data-theme=halloween] .form-body textarea,[data-theme=halloween] .form-body select,[data-theme=halloween] .auth-card input{color:#f4e4d5;background:#221b28;border-color:#65465d}
 [data-theme=halloween] .form-body input::placeholder,[data-theme=halloween] .form-body textarea::placeholder{color:#aa8fa4}
 [data-theme=halloween] .section-title>span,[data-theme=halloween] .detail-nutrition{background:#45303e;color:#e3b281}

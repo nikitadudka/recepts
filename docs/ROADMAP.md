@@ -1,5 +1,7 @@
 # «Крошка»: план развития
 
+A05.1 от 22.10.2026: после объединённых PR №13/№14 владелец разрешил только keyboard/semantics/dialog и QA в отдельном PR, база `45909b5`. [Самопроверка](stage-1/A05_1_QA.md), решение D020. A05.2/A06/A07 не начинаются; следующий шаг — review владельца, без merge/auto-merge/деплоя.
+
 ## Актуальное решение владельца
 
 22.10.2026 владелец явно разрешил **stage1-v1** из [PR №10](https://github.com/nikitadudka/recepts/pull/10), commit `dddcc2fae078ca054feedf222af77c9638a011c1`, только в объёме **A10.1 → A22 → A04**, QA и технических улучшений этих задач. A10.1 включает установку закреплённых существующих test-инструментов и CI. Каждая задача — отдельная ветка/PR, Developer → QA → одобрение владельца **до начала следующей**. Новые UX/UI-макеты, визуальный стиль, цвета и компоновка, смена стека, миграция БД, деплой и merge/auto-merge не разрешены. Тесты только на синтетических данных и временных `DATA_DIR`. A05/A06/A07 не запускаются. Источник — прямое поручение владельца в рабочем чате; [фиксация PM в PR №10](https://github.com/nikitadudka/recepts/pull/10#issuecomment-6342478089), [Issue №4](https://github.com/nikitadudka/recepts/issues/4), [№5](https://github.com/nikitadudka/recepts/issues/5), [№6](https://github.com/nikitadudka/recepts/issues/6).

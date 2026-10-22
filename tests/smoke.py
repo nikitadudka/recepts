@@ -1187,5 +1187,314 @@ class RecipeBookTests(unittest.TestCase):
         expect(self.page.locator('[data-collection=favorites]').first).to_have_class('nav-item active')
         self.assertEqual(self.context.request.get(self.url + '/api/library').json()['revision'], revision)
 
+    def tab_to(self, selector, backwards=False):
+        target = self.page.locator(selector).first
+        for _ in range(160):
+            if target.evaluate('(element) => element === document.activeElement'):
+                return target
+            self.page.keyboard.press('Shift+Tab' if backwards else 'Tab')
+        self.fail(f'Keyboard cannot reach {selector}')
+
+    def keyboard_text(self, text):
+        self.page.keyboard.press('Control+a')
+        self.page.keyboard.insert_text(text)
+
+    def test_53_keyboard_create_edit_photo_and_focus_in_both_themes(self):
+        # Arm interception before raw keyboard events; unlike locator.click(),
+        # keyboard.press() has no actionability wait while interception starts.
+        self.page.on('filechooser', lambda chooser: None)
+        for theme, width in [('classic', 1440), ('halloween', 390)]:
+            with self.subTest(theme=theme, width=width):
+                self.page.evaluate('(theme) => localStorage.setItem("kroshka-appearance",theme)', theme)
+                self.page.set_viewport_size({'width': width, 'height': 1000})
+                self.page.reload(wait_until='networkidle')
+                self.tab_to('#add-recipe')
+                self.page.keyboard.press('Enter')
+                expect(self.page.get_by_role('dialog', name='Новый рецепт')).to_be_visible()
+                expect(self.page.locator('[name=title]')).to_be_focused()
+                title = 'Клавиатурный суп ' + theme
+                self.page.keyboard.insert_text(title)
+                self.tab_to('[name=time]')
+                self.keyboard_text('22')
+                self.tab_to('.ingredient-name')
+                self.page.keyboard.insert_text('Синтетическая чечевица')
+                self.page.keyboard.press('Tab')
+                self.page.keyboard.insert_text('200')
+                self.tab_to('#add-ingredient')
+                self.page.keyboard.press('Enter')
+                expect(self.page.locator('.ingredient-name').nth(1)).to_be_focused()
+                self.page.keyboard.insert_text('Тестовый лук')
+                self.page.keyboard.press('Tab')
+                self.page.keyboard.insert_text('50')
+                self.tab_to('.step-text')
+                self.page.keyboard.insert_text('Промыть ингредиенты.')
+                self.tab_to('#add-step')
+                self.page.keyboard.press('Space')
+                expect(self.page.locator('.step-text').nth(1)).to_be_focused()
+                self.page.keyboard.insert_text('Сварить суп.')
+                self.tab_to('#choose-image')
+                expect(self.page.get_by_role('button', name='Добавить фотографию', exact=True)).to_be_focused()
+                with self.page.expect_file_chooser() as chooser:
+                    self.page.keyboard.press('Enter')
+                chooser.value.set_files(ROOT / 'assets/food-grid.png')
+                expect(self.page.locator('#image-preview img')).to_be_visible()
+                expect(self.page.locator('#editor-dialog [data-announcement]')).to_have_text('Фотография добавлена')
+                self.tab_to('#save-recipe')
+                self.page.keyboard.press('Enter')
+                expect(self.page.locator('#editor-dialog')).not_to_be_visible()
+                expect(self.page.locator('#add-recipe')).to_be_focused()
+                expect(self.page.locator('#announcements')).to_have_text('Рецепт добавлен в вашу книгу')
+                stored = self.context.request.get(self.url + '/api/library').json()['recipes']
+                recipe = next(r for r in stored if r['title'] == title)
+                self.assertEqual([i['name'] for i in recipe['ingredients']], ['Синтетическая чечевица', 'Тестовый лук'])
+                self.assertEqual(recipe['steps'], ['Промыть ингредиенты.', 'Сварить суп.'])
+                self.assertTrue(recipe['image'].startswith('data:image/jpeg;base64,'))
+                opener = f'[data-open="{recipe["id"]}"]'
+                self.tab_to(opener)
+                self.page.keyboard.press('Enter')
+                expect(self.page.get_by_role('dialog', name=title, exact=True)).to_be_visible()
+                expect(self.page.locator('#recipe-title')).to_be_focused()
+                self.tab_to('#recipe-dialog [data-edit]')
+                self.page.keyboard.press('Space')
+                expect(self.page.locator('[name=title]')).to_be_focused()
+                self.keyboard_text(title + ' изменён')
+                self.tab_to('#save-recipe')
+                self.page.keyboard.press('Enter')
+                expect(self.page.locator('#editor-dialog')).not_to_be_visible()
+                expect(self.page.locator(opener)).to_be_focused()
+                expect(self.page.locator('#announcements')).to_have_text('Изменения сохранены')
+                self.page.reload(wait_until='networkidle')
+                expect(self.page.locator(f'[data-id="{recipe["id"]}"] .card-title')).to_have_text(title + ' изменён')
+
+    def test_54_photo_space_cancel_remove_and_retry_same_file(self):
+        self.page.on('filechooser', lambda chooser: None)
+        self.fill_recipe('Фото A05.1')
+        self.tab_to('#choose-image')
+        for key in ['Space', 'Enter']:
+            expect(self.page.locator('#choose-image')).to_be_focused()
+            with self.page.expect_file_chooser() as chooser:
+                self.page.keyboard.press(key)
+            chooser.value.set_files(ROOT / 'assets/food-grid.png')
+            expect(self.page.locator('#image-preview img')).to_be_visible()
+            photo = self.page.locator('#image-preview img').get_attribute('src')
+            expect(self.page.locator('#choose-image')).to_be_focused()
+            with self.page.expect_file_chooser() as chooser:
+                self.page.keyboard.press(key)
+            # Headless cancellation surrogate; native OS chooser remains manual QA.
+            chooser.value.set_files([])
+            self.assertEqual(self.page.locator('#image-preview img').get_attribute('src'), photo)
+            self.tab_to('#remove-image')
+            self.page.keyboard.press('Enter')
+            expect(self.page.locator('#choose-image')).to_be_focused()
+            expect(self.page.locator('#image-preview img')).to_have_count(0)
+            expect(self.page.locator('#editor-dialog [data-announcement]')).to_have_text('Фотография удалена')
+            expect(self.page.locator('#choose-image')).to_have_accessible_name('Добавить фотографию')
+        self.page.locator('#image-upload').set_input_files(ROOT / 'assets/food-grid.png')
+        expect(self.page.locator('#image-preview img')).to_be_visible()
+        self.save(self.page.locator('#recipe-form'))
+        snapshot = self.context.request.get(self.url + '/api/library').json()
+        recipe = next(r for r in snapshot['recipes'] if r['title'] == 'Фото A05.1')
+        self.tab_to(f'[data-open="{recipe["id"]}"]')
+        self.page.keyboard.press('Enter')
+        self.tab_to('#recipe-dialog [data-edit]')
+        self.page.keyboard.press('Enter')
+        self.tab_to('#choose-image')
+        with self.page.expect_file_chooser() as chooser:
+            self.page.keyboard.press('Space')
+        chooser.value.set_files([])
+        self.assertEqual(self.page.locator('#image-preview img').get_attribute('src'), recipe['image'])
+        self.assertEqual(self.context.request.get(self.url + '/api/library').json(), snapshot)
+
+    def test_55_photo_failures_keep_draft_and_existing_photo(self):
+        form = self.fill_recipe('Ошибки фото A05.1')
+        upload = self.page.locator('#image-upload')
+        upload.set_input_files(ROOT / 'assets/food-grid.png')
+        expect(self.page.locator('#image-preview img')).to_be_visible()
+        photo = self.page.locator('#image-preview img').get_attribute('src')
+        before = self.context.request.get(self.url + '/api/library').json()
+        for file, message in [
+            ({'name': 'bad.txt', 'mimeType': 'text/plain', 'buffer': b'bad'}, 'Выберите JPG, PNG или WebP размером до 15 МБ'),
+            ({'name': 'large.png', 'mimeType': 'image/png', 'buffer': b'x' * (15 * 1024 * 1024 + 1)}, 'Выберите JPG, PNG или WebP размером до 15 МБ'),
+            ({'name': 'broken.png', 'mimeType': 'image/png', 'buffer': b'not an image'}, 'Не удалось открыть изображение')
+        ]:
+            upload.set_input_files(file)
+            expect(self.page.locator('#photo-error')).to_have_text(message)
+            expect(self.page.locator('#photo-error')).to_have_attribute('role', 'alert')
+            expect(self.page.locator('#choose-image')).to_have_attribute('aria-describedby', 'photo-hint photo-error')
+            self.assertEqual(self.page.locator('#image-preview img').get_attribute('src'), photo)
+            expect(form.locator('[name=title]')).to_have_value('Ошибки фото A05.1')
+            expect(form.locator('.ingredient-name').first).to_have_value('Чечевица')
+            expect(form.locator('.step-text').nth(1)).to_have_value('Добавить лук и варить до готовности.')
+            self.assertEqual(self.context.request.get(self.url + '/api/library').json(), before)
+        upload.set_input_files(ROOT / 'assets/food-grid.png')
+        expect(self.page.locator('#photo-error')).to_be_empty()
+        self.save(form)
+        saved = next(r for r in self.context.request.get(self.url + '/api/library').json()['recipes'] if r['title'] == 'Ошибки фото A05.1')
+        self.assertEqual(saved['image'], photo)
+
+    def test_56_all_native_dialog_names_focus_tab_escape_and_return(self):
+        cases = [
+            ('#add-recipe', '#editor-dialog', 'Новый рецепт', '[name=title]'),
+            ('[data-open=lentil-soup]', '#recipe-dialog', 'Чечевичный суп с овощами', '#recipe-title'),
+            ('#inspire', '#catalog-dialog', None, '#catalog-search'),
+            ('#open-connection', '#connection-dialog', 'Ваша кухня всегда рядом', '#connection-dialog .close-dialog'),
+            ('.topbar .theme-toggle', '#theme-dialog', 'Немного другой магии', '#close-theme')
+        ]
+        for theme, width in [('classic', 1440), ('halloween', 390)]:
+            self.page.evaluate('(theme) => localStorage.setItem("kroshka-appearance",theme)', theme)
+            self.page.set_viewport_size({'width': width, 'height': 1000})
+            self.page.reload(wait_until='networkidle')
+            for opener, selector, name, initial in cases:
+                with self.subTest(theme=theme, dialog=selector):
+                    self.tab_to(opener)
+                    self.page.keyboard.press('Enter')
+                    dialog = self.page.locator(selector)
+                    expect(dialog).to_be_visible()
+                    if selector == '#catalog-dialog':
+                        name = self.page.locator('#catalog-title').inner_text()
+                        expect(self.page.locator('#catalog-next')).to_be_enabled()
+                    expect(dialog).to_have_accessible_name(name)
+                    expect(self.page.locator(initial)).to_be_focused()
+                    # Walk more than one complete cycle in each direction.
+                    count = dialog.locator('button:visible:enabled, input:visible:enabled, select:visible:enabled, textarea:visible:enabled, a[href]:visible, summary:visible').count()
+                    for key in ['Tab', 'Shift+Tab']:
+                        for _ in range(count + 2):
+                            self.page.keyboard.press(key)
+                            # Chromium may visit browser chrome (activeElement=body)
+                            # at a cycle boundary. No background control may receive focus;
+                            # the next Tab in the same direction must re-enter this modal.
+                            if self.page.evaluate('document.activeElement === document.body'):
+                                self.page.keyboard.press(key)
+                            self.assertTrue(dialog.evaluate('(dialog) => dialog.contains(document.activeElement)'), key + ' focused background outside ' + selector)
+                    self.page.keyboard.press('Escape')
+                    expect(dialog).not_to_be_visible()
+                    expect(self.page.locator(opener).first).to_be_focused()
+
+    def test_57_dirty_keyboard_escape_cross_backdrop_and_confirm(self):
+        self.tab_to('#add-recipe')
+        self.page.keyboard.press('Enter')
+        self.page.keyboard.insert_text('Не терять черновик')
+        for close in ['escape', 'cross', 'backdrop']:
+            self.page.once('dialog', lambda dialog: dialog.dismiss())
+            if close == 'escape':
+                self.page.keyboard.press('Escape')
+            elif close == 'cross':
+                self.tab_to('#editor-dialog .icon-button.close-dialog', backwards=True)
+                self.page.keyboard.press('Enter')
+            else:
+                self.page.mouse.click(1, 1)
+            expect(self.page.locator('#editor-dialog')).to_be_visible()
+            expect(self.page.locator('[name=title]')).to_have_value('Не терять черновик')
+            self.assertTrue(self.page.locator('#editor-dialog').evaluate('(dialog) => dialog.contains(document.activeElement)'))
+        self.page.once('dialog', lambda dialog: dialog.accept())
+        self.page.keyboard.press('Escape')
+        expect(self.page.locator('#editor-dialog')).not_to_be_visible()
+        expect(self.page.locator('#add-recipe')).to_be_focused()
+        expect(self.page.locator('.recipe-card')).to_have_count(8)
+
+    def test_58_selected_states_and_favorite_keyboard_focus(self):
+        for selector in ['[data-collection=all]', '[data-quick=all]', '#grid-view']:
+            expect(self.page.locator(selector).first).to_have_attribute('aria-pressed', 'true')
+        for selector in ['[data-collection=favorites]', '[data-quick=fast]', '#list-view', '[data-meal="Завтрак"]']:
+            self.tab_to(selector)
+            self.page.keyboard.press('Enter')
+            expect(self.page.locator(selector).first).to_have_attribute('aria-pressed', 'true')
+            expect(self.page.locator(selector).first).to_be_focused()
+        self.tab_to('[data-meal="Завтрак"]')
+        self.page.keyboard.press('Enter')
+        expect(self.page.locator('[data-meal="Завтрак"]')).to_have_attribute('aria-pressed', 'false')
+        expect(self.page.locator('[data-collection=all]').first).to_have_attribute('aria-pressed', 'true')
+        self.tab_to('[data-quick=all]')
+        self.page.keyboard.press('Enter')
+        self.tab_to('[data-favorite=lentil-soup]')
+        self.page.keyboard.press('Enter')
+        favorite = self.page.locator('[data-favorite=lentil-soup]')
+        expect(favorite).to_have_attribute('aria-pressed', 'true')
+        expect(favorite).to_be_focused()
+        self.tab_to('[data-open=lentil-soup]', backwards=True)
+        self.page.keyboard.press('Enter')
+        self.tab_to('#recipe-dialog [data-favorite]')
+        self.page.keyboard.press('Space')
+        expect(self.page.locator('#recipe-dialog [data-favorite]')).to_have_attribute('aria-pressed', 'false')
+        expect(self.page.locator('#recipe-dialog [data-favorite]')).to_be_focused()
+        self.page.keyboard.press('Escape')
+        expect(self.page.locator('[data-open=lentil-soup]')).to_be_focused()
+        self.tab_to('#filter-toggle')
+        self.page.keyboard.press('Space')
+        expect(self.page.locator('#filter-toggle')).to_have_attribute('aria-expanded', 'true')
+        expect(self.page.locator('#filter-toggle')).to_have_attribute('aria-controls', 'filters')
+        self.tab_to('#filter-meat')
+        self.page.keyboard.press('End')
+        expect(self.page.locator('#filter-meat')).to_have_value('С мясом')
+
+    def test_59_linked_field_errors_and_save_failure_retry_announcements(self):
+        form = self.fill_recipe('   ')
+        before = self.context.request.get(self.url + '/api/library').json()
+        form.locator('[type=submit]').click()
+        expect(form.locator('[name=title]')).to_have_attribute('aria-invalid', 'true')
+        expect(form.locator('[name=title]')).to_have_attribute('aria-describedby', 'form-error')
+        expect(form.locator('[name=title]')).to_be_focused()
+        expect(self.page.locator('#form-error')).to_contain_text('Заполните название')
+        self.keyboard_text('Сохранение A05.1')
+        expect(form.locator('[name=title]')).not_to_have_attribute('aria-invalid', 'true')
+
+        def reject(route):
+            if route.request.method == 'PUT':
+                route.fulfill(status=503, content_type='application/json', body=json.dumps({'error': 'Тестовая ошибка сохранения'}))
+            else:
+                route.continue_()
+
+        self.page.route('**/api/library', reject)
+        form.locator('[type=submit]').click()
+        expect(self.page.locator('#form-error')).to_have_text('Тестовая ошибка сохранения')
+        expect(self.page.locator('#form-error')).to_have_attribute('role', 'alert')
+        expect(self.page.locator('#editor-dialog [data-announcement]')).to_be_empty()
+        expect(form.locator('[name=title]')).to_have_value('Сохранение A05.1')
+        self.assertEqual(self.context.request.get(self.url + '/api/library').json(), before)
+        self.page.unroute('**/api/library', reject)
+        self.save(form)
+        expect(self.page.locator('#announcements')).to_have_text('Рецепт добавлен в вашу книгу')
+        expect(self.page.locator('#announcements')).to_have_attribute('role', 'status')
+        # A toast inside a modal needs a live region in that modal's accessible subtree.
+        self.page.locator('#inspire').click()
+        expect(self.page.locator('#catalog-save')).to_be_enabled()
+        self.page.locator('#catalog-save').click()
+        expect(self.page.locator('#catalog-dialog [data-announcement]')).to_contain_text('Рецепт добавлен')
+        expect(self.page.locator('#catalog-dialog [data-announcement]')).to_have_attribute('role', 'status')
+
+    def test_60_search_and_remote_notice_do_not_repeat_on_polling(self):
+        expect(self.page.locator('#search-results-status')).to_have_text('Найдено рецептов: 8')
+        self.page.evaluate('''() => {
+            window.resultAnnouncements = [];
+            new MutationObserver(() => resultAnnouncements.push(document.querySelector('#search-results-status').textContent))
+                .observe(document.querySelector('#search-results-status'), {childList:true,subtree:true,characterData:true});
+        }''')
+        self.page.keyboard.press('/')
+        self.page.keyboard.type('чечевица', delay=20)
+        expect(self.page.locator('#search-results-status')).to_have_text('Найдено рецептов: 2. Поиск: чечевица')
+        self.assertEqual(self.page.evaluate('resultAnnouncements'), ['Найдено рецептов: 2. Поиск: чечевица'])
+        expect(self.page.locator('#search')).to_be_focused()
+        with self.page.expect_response(lambda r: '/api/library?' in r.url and r.json().get('unchanged')):
+            self.page.evaluate("window.dispatchEvent(new Event('online'))")
+        self.assertEqual(self.page.evaluate('resultAnnouncements'), ['Найдено рецептов: 2. Поиск: чечевица'])
+        self.tab_to('[data-open=lentil-soup]')
+        self.page.keyboard.press('Enter')
+        other = self.remote_context()
+        revision = self.remote_update(other, lambda recipes: next(r for r in recipes if r['id'] == 'lentil-soup').update(title='Суп A05.1 из другой сессии'))
+        self.receive_revision(revision)
+        expect(self.page.locator('#recipe-sync-message')).to_have_text('Рецепт изменён на другом устройстве')
+        self.page.evaluate('''() => {
+            window.syncAnnouncements = 0;
+            new MutationObserver(() => syncAnnouncements++)
+                .observe(document.querySelector('#recipe-sync-message'), {childList:true,subtree:true,characterData:true});
+        }''')
+        revision = self.remote_update(other, lambda recipes: next(r for r in recipes if r['id'] == 'salmon').update(title='Другая запись A05.1'))
+        self.receive_revision(revision)
+        self.assertEqual(self.page.evaluate('syncAnnouncements'), 0)
+        expect(self.page.locator('#recipe-title')).to_be_focused()
+        self.page.keyboard.press('Escape')
+        expect(self.page.locator('[data-open=lentil-soup]')).to_be_focused()
+        expect(self.page.locator('[data-id=lentil-soup] .card-title')).to_have_text('Суп A05.1 из другой сессии')
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)
