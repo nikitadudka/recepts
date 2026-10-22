@@ -935,6 +935,38 @@ class RecipeBookTests(unittest.TestCase):
         saved = self.context.request.get(self.url + '/api/library').json()
         self.assertEqual(next(r for r in saved['recipes'] if r['id'] == incoming['id']), incoming)
 
+    def remote_context(self):
+        context = self.browser.new_context()
+        self.addCleanup(context.close)
+        self.assertEqual(context.request.post(self.url + '/api/login', data={'password': self.password}).status, 200)
+        return context
+
+    def remote_update(self, context, change):
+        snapshot = context.request.get(self.url + '/api/library').json()
+        change(snapshot['recipes'])
+        response = context.request.put(self.url + '/api/library', data=snapshot)
+        self.assertEqual(response.status, 200, response.text())
+        return response.json()['revision']
+
+    def receive_revision(self, revision, polling=False):
+        with self.page.expect_response(lambda response: '/api/library' in response.url
+                                       and response.request.method == 'GET'
+                                       and response.json().get('revision') == revision, timeout=10000):
+            if not polling:
+                self.page.evaluate("window.dispatchEvent(new Event('online'))")
+        # Let the real fetch continuation and DOM tasks finish before closing.
+        self.page.evaluate('() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))')
+
+    def test_46_remote_edit_refreshes_cards_on_close_without_another_poll(self):
+        other = self.remote_context()
+        self.page.locator('[data-open="lentil-soup"]').click()
+        revision = self.remote_update(other, lambda recipes: next(r for r in recipes if r['id'] == 'lentil-soup').update(title='Суп после синхронизации'))
+        self.receive_revision(revision, polling=True)
+        self.page.route('**/api/library*', lambda route: route.abort())
+        self.page.keyboard.press('Escape')
+        expect(self.page.locator('[data-id="lentil-soup"] .card-title')).to_have_text('Суп после синхронизации', timeout=1000)
+        expect(self.page.locator('[data-open="lentil-soup"]')).to_be_focused()
+
     def test_45_json_rejection_preserves_draft_photo_and_allows_retry(self):
         before = self.context.request.get(self.url + '/api/library').json()
         form = self.fill_recipe('A22 сохранение после ошибки')
@@ -963,6 +995,197 @@ class RecipeBookTests(unittest.TestCase):
         added = next(r for r in saved['recipes'] if r['title'] == 'A22 сохранение после ошибки')
         self.assertEqual(added['image'], photo)
         self.assertEqual([r for r in saved['recipes'] if r['id'] != added['id']], before['recipes'])
+
+    def test_47_sync_close_paths_keep_filters_view_focus_and_latest_snapshot(self):
+        other = self.remote_context()
+        for theme, view, close in [('classic', 'grid', 'cross'), ('halloween', 'list', 'backdrop'), ('classic', 'list', 'programmatic')]:
+            with self.subTest(theme=theme, view=view, close=close):
+                self.page.evaluate('(theme) => localStorage.setItem("kroshka-appearance", theme)', theme)
+                self.page.reload(wait_until='networkidle')
+                self.page.locator('#search').fill('чечевица')
+                self.page.locator('#sort').select_option('time')
+                self.page.locator('#filter-toggle').click()
+                self.page.locator('#filter-meat').select_option('Без мяса')
+                self.page.locator('#' + view + '-view').click()
+                self.page.locator('[data-open="lentil-soup"]').scroll_into_view_if_needed()
+                self.page.locator('[data-open="lentil-soup"]').click()
+                # Native focus may scroll the card on click; compare the actual
+                # reading position before remote sync, not the pre-click offset.
+                expect(self.page.locator('#recipe-dialog')).to_be_visible()
+                scroll_y = self.page.evaluate('window.scrollY')
+                old_title = self.page.locator('#recipe-detail h2').inner_text()
+                for index in range(2):
+                    title = f'Чечевица {theme} {close} {index}'
+                    revision = self.remote_update(other, lambda recipes: next(r for r in recipes if r['id'] == 'lentil-soup').update(title=title))
+                    self.receive_revision(revision)
+                expect(self.page.locator('#recipe-sync-notice')).to_be_visible()
+                expect(self.page.locator('#recipe-sync-message')).to_have_text('Рецепт изменён на другом устройстве')
+                expect(self.page.locator('#recipe-detail h2')).to_have_text(old_title)
+                # An unchanged response must not discard the pending render.
+                with self.page.expect_response(lambda response: '/api/library?' in response.url and response.json().get('unchanged')):
+                    self.page.evaluate("window.dispatchEvent(new Event('online'))")
+                if close == 'cross':
+                    self.page.locator('#recipe-dialog .close-dialog').click()
+                elif close == 'backdrop':
+                    self.page.mouse.click(1, 1)
+                else:
+                    self.page.locator('#recipe-dialog').evaluate('(dialog) => dialog.close()')
+                expect(self.page.locator('#recipe-dialog')).not_to_be_visible()
+                expect(self.page.locator('[data-id="lentil-soup"] .card-title')).to_have_text(title, timeout=1000)
+                expect(self.page.locator('[data-open="lentil-soup"]')).to_be_focused()
+                self.assertLessEqual(abs(self.page.evaluate('window.scrollY') - scroll_y), 2)
+                expect(self.page.locator('#search')).to_have_value('чечевица')
+                expect(self.page.locator('#sort')).to_have_value('time')
+                expect(self.page.locator('#filter-meat')).to_have_value('Без мяса')
+                expect(self.page.locator('#' + view + '-view')).to_have_attribute('aria-pressed', 'true')
+                self.assertEqual(self.page.locator('#recipe-grid').evaluate('(grid) => grid.classList.contains("list-view")'), view == 'list')
+                self.assertEqual(self.context.request.get(self.url + '/api/library').json()['revision'], revision)
+
+    def test_48_open_view_updates_explicitly_and_deleted_actions_are_disabled(self):
+        other = self.remote_context()
+        self.page.set_viewport_size({'width': 390, 'height': 844})
+        self.page.locator('[data-open="lentil-soup"]').click()
+        revision = self.remote_update(other, lambda recipes: next(r for r in recipes if r['id'] == 'lentil-soup').update(title='Новая версия супа', time=42))
+        self.receive_revision(revision)
+        expect(self.page.locator('#recipe-detail h2')).to_have_text('Чечевичный суп с овощами')
+        expect(self.page.locator('#recipe-sync-notice')).to_have_attribute('role', 'status')
+        scroll = self.page.locator('#recipe-dialog').evaluate('(dialog) => { dialog.scrollTop = 200; return dialog.scrollTop; }')
+        self.page.locator('#recipe-sync-action').evaluate('(button) => button.click()')
+        self.assertEqual(self.page.locator('#recipe-dialog').evaluate('(dialog) => dialog.scrollTop'), scroll)
+        expect(self.page.locator('#recipe-detail h2')).to_have_text('Новая версия супа')
+        expect(self.page.locator('#recipe-detail h2')).to_be_focused()
+        expect(self.page.locator('#recipe-sync-notice')).to_be_hidden()
+        expect(self.page.locator('.detail-stats')).to_contain_text('42 мин')
+        revision = self.remote_update(other, lambda recipes: recipes.__setitem__(slice(None), [r for r in recipes if r['id'] != 'lentil-soup']))
+        self.receive_revision(revision)
+        expect(self.page.locator('#recipe-sync-message')).to_have_text('Этот рецепт удалён на другом устройстве')
+        for selector in ['[data-edit]', '[data-delete]', '[data-favorite]']:
+            expect(self.page.locator('#recipe-detail ' + selector)).to_be_disabled()
+        self.page.locator('#recipe-sync-action').click()
+        expect(self.page.locator('[data-id="lentil-soup"]')).to_have_count(0)
+        expect(self.page.locator('#collection-title')).to_be_focused()
+        expect(self.page.locator('#result-count')).to_have_text('7')
+        self.assertEqual(self.context.request.get(self.url + '/api/library').json()['revision'], revision)
+
+    def test_49_dirty_editor_survives_sync_cancel_and_saves_conflict_as_copy(self):
+        other = self.remote_context()
+        self.page.locator('[data-open="lentil-soup"]').click()
+        self.page.locator('[data-edit]').click()
+        form = self.page.locator('#recipe-form')
+        form.locator('[name=title]').fill('Мой черновик A04')
+        form.locator('.ingredient-name').first.fill('Красная чечевица A04')
+        form.locator('.step-text').first.fill('Шаг A04')
+        self.page.locator('#image-upload').set_input_files(ROOT / 'assets/food-grid.png')
+        expect(self.page.locator('#image-preview img')).to_be_visible()
+        photo = self.page.locator('#image-preview img').get_attribute('src')
+        form.locator('.step-text').first.focus()
+        form.locator('.step-text').first.evaluate('(field) => field.setSelectionRange(2, 4)')
+        scroll = self.page.locator('#editor-dialog').evaluate('(dialog) => dialog.scrollTop')
+        revision = self.remote_update(other, lambda recipes: next(r for r in recipes if r['id'] == 'lentil-soup').update(title='Версия другой сессии A04'))
+        self.receive_revision(revision)
+        expect(form.locator('.step-text').first).to_be_focused()
+        self.assertEqual(form.locator('.step-text').first.evaluate('(field) => [field.selectionStart, field.selectionEnd]'), [2, 4])
+        self.assertEqual(self.page.locator('#editor-dialog').evaluate('(dialog) => dialog.scrollTop'), scroll)
+        self.page.once('dialog', lambda dialog: dialog.dismiss())
+        self.page.keyboard.press('Escape')
+        expect(self.page.locator('#editor-dialog')).to_be_visible()
+        expect(form.locator('[name=title]')).to_have_value('Мой черновик A04')
+        expect(form.locator('.ingredient-name').first).to_have_value('Красная чечевица A04')
+        expect(form.locator('.step-text').first).to_have_value('Шаг A04')
+        self.assertEqual(self.page.locator('#image-preview img').get_attribute('src'), photo)
+        form.locator('[type=submit]').click()
+        expect(self.page.locator('#save-copy')).to_be_visible()
+        self.assertEqual(self.context.request.get(self.url + '/api/library').json()['revision'], revision)
+        self.page.locator('#save-copy').click()
+        expect(self.page.locator('#editor-dialog')).not_to_be_visible()
+        stored = self.context.request.get(self.url + '/api/library').json()['recipes']
+        self.assertEqual(next(r for r in stored if r['id'] == 'lentil-soup')['title'], 'Версия другой сессии A04')
+        copy = next(r for r in stored if r['title'] == 'Мой черновик A04')
+        self.assertEqual(copy['image'], photo)
+        self.assertEqual(copy['ingredients'][0]['name'], 'Красная чечевица A04')
+        self.assertEqual(copy['steps'][0], 'Шаг A04')
+        self.assertEqual(len(stored), 9)
+
+    def test_50_sync_transition_to_editor_and_unrelated_save_keep_remote_fields(self):
+        other = self.remote_context()
+        self.page.locator('[data-open="lentil-soup"]').click()
+        with self.page.expect_response(lambda response: '/api/library' in response.url and response.request.method == 'PUT'):
+            self.page.locator('#recipe-detail [data-favorite]').click()
+        revision = self.remote_update(other, lambda recipes: next(r for r in recipes if r['id'] == 'salmon').update(title='Лосось A04'))
+        self.receive_revision(revision)
+        expect(self.page.locator('#recipe-sync-notice')).to_be_hidden()
+        self.page.locator('[data-edit]').click()
+        expect(self.page.locator('#editor-dialog')).to_be_visible()
+        expect(self.page.locator('#recipe-dialog')).not_to_be_visible()
+        # The queued close event must not render the library behind the new modal.
+        expect(self.page.locator('[data-id="salmon"] .card-title')).to_have_text('Лосось с овощами')
+        form = self.page.locator('#recipe-form')
+        form.locator('[name=title]').fill('Суп A04')
+        self.save(form)
+        expect(self.page.locator('[data-id="salmon"] .card-title')).to_have_text('Лосось A04')
+        stored = self.context.request.get(self.url + '/api/library').json()['recipes']
+        self.assertEqual(next(r for r in stored if r['id'] == 'salmon')['title'], 'Лосось A04')
+        self.assertEqual(next(r for r in stored if r['id'] == 'lentil-soup')['title'], 'Суп A04')
+        form = self.fill_recipe('Новый рецепт A04')
+        revision = self.remote_update(other, lambda recipes: next(r for r in recipes if r['id'] == 'salmon').update(title='Лосось после нового черновика'))
+        self.receive_revision(revision)
+        expect(form.locator('[name=title]')).to_have_value('Новый рецепт A04')
+        self.save(form)
+        expect(self.page.locator('[data-id="salmon"] .card-title')).to_have_text('Лосось после нового черновика')
+        expect(self.page.locator('.recipe-card')).to_have_count(9)
+
+    def test_51_catalog_other_dialogs_and_promoted_trial_apply_pending_sync(self):
+        other = self.remote_context()
+        for opener, dialog in [('#inspire', '#catalog-dialog'), ('#open-connection', '#connection-dialog'), ('.topbar .theme-toggle', '#theme-dialog')]:
+            with self.subTest(dialog=dialog):
+                self.page.locator(opener).first.click()
+                title = 'Суп A04 ' + dialog
+                revision = self.remote_update(other, lambda recipes: next(r for r in recipes if r['id'] == 'lentil-soup').update(title=title))
+                self.receive_revision(revision)
+                expect(self.page.locator(dialog)).to_be_visible()
+                self.page.keyboard.press('Escape')
+                expect(self.page.locator('[data-id="lentil-soup"] .card-title')).to_have_text(title, timeout=1000)
+        self.assertEqual(other.request.post(self.url + '/api/catalog/mojito/save', data={'destination': 'trial'}).status, 201)
+        self.receive_revision(other.request.get(self.url + '/api/library').json()['revision'])
+        self.page.locator('[data-collection=trial]').first.click()
+        self.page.locator('[data-open="catalog-mojito"]').click()
+        before = other.request.get(self.url + '/api/library').json()
+        self.assertEqual(other.request.post(self.url + '/api/trials/catalog-mojito/promote', data={}).status, 200)
+        promoted = other.request.get(self.url + '/api/library').json()
+        self.receive_revision(promoted['revision'])
+        expect(self.page.locator('#recipe-detail [data-delete-trial]')).to_be_disabled()
+        expect(self.page.locator('#recipe-detail [data-promote-trial]')).to_be_disabled()
+        self.assertEqual(other.request.delete(self.url + '/api/trials/catalog-mojito', data={}).status, 409)
+        self.page.locator('#recipe-sync-action').click()
+        expect(self.page.locator('.trial-detail-note')).to_have_count(0)
+        expect(self.page.locator('#recipe-detail [data-delete]')).to_be_enabled()
+        self.page.keyboard.press('Escape')
+        expect(self.page.locator('#recipe-grid .recipe-card')).to_have_count(0)
+        expect(self.page.locator('#collection-title')).to_be_focused()
+        expect(self.page.locator('#trial-count')).to_have_text('0')
+        expect(self.page.locator('#all-count')).to_have_text('9')
+        prior = next(r for r in before['recipes'] if r['id'] == 'catalog-mojito')
+        after = next(r for r in promoted['recipes'] if r['id'] == 'catalog-mojito')
+        self.assertGreaterEqual(after['createdAt'], prior['createdAt'])
+        self.assertEqual({**prior, 'shelf': 'main', 'createdAt': after['createdAt']}, after)
+        self.assertEqual(other.request.get(self.url + '/api/library').json(), promoted)
+
+    def test_52_filtered_out_card_and_stacked_dialogs_restore_focus_safely(self):
+        other = self.remote_context()
+        self.page.locator('[data-collection=favorites]').first.click()
+        self.page.locator('[data-open="avocado-toast"]').click()
+        revision = self.remote_update(other, lambda recipes: next(r for r in recipes if r['id'] == 'avocado-toast').update(favorite=False))
+        self.receive_revision(revision)
+        self.page.locator('#theme-dialog').evaluate('(dialog) => dialog.showModal()')
+        self.page.locator('#recipe-dialog').evaluate('(dialog) => dialog.close()')
+        self.page.evaluate('() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))')
+        expect(self.page.locator('#theme-dialog')).to_be_visible()
+        expect(self.page.locator('#recipe-grid .recipe-card')).to_have_count(2)
+        self.page.keyboard.press('Escape')
+        expect(self.page.locator('#recipe-grid .recipe-card')).to_have_count(1)
+        expect(self.page.locator('#collection-title')).to_be_focused()
+        expect(self.page.locator('[data-collection=favorites]').first).to_have_class('nav-item active')
+        self.assertEqual(self.context.request.get(self.url + '/api/library').json()['revision'], revision)
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
