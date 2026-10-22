@@ -133,13 +133,13 @@ npm test
 ```sh
 python3 -m venv /tmp/kroshka-qa-venv
 . /tmp/kroshka-qa-venv/bin/activate
-python -m pip install playwright Pillow
-python -m playwright install chromium
+python -m pip install --require-hashes --only-binary=:all: -r tests/requirements.txt
+python -m playwright install --with-deps chromium
 ```
 
 При нехватке системных библиотек Chromium подготовьте окружение средствами своей платформы. Эти команды не нужны пользователю установленного приложения. В Linux минимальных образах могут требоваться дополнительные пакеты ОС. `tests/smoke.py` использует `CHROMIUM_EXECUTABLE`, системный `chromium`/`google-chrome` или браузер Playwright.
 
-`check` проверяет синтаксис пяти JS-файлов, не является линтером и не покрывает `sw.js`. Тесты: 2 проверки установщика/генератора plist, 1 проверка геометрии листов и 43 API/браузерных сценария: поиск, редактор, безопасность, две сессии, конфликты, перезапуск, перенос, темы, каталог, пробы и миграции. Настоящие службы macOS и реальные Safari/iOS/Android ими не проверяются. CI в исходном дереве не настроен.
+`check` проверяет синтаксис пяти JS-файлов, не является линтером и не покрывает `sw.js`. Тесты: 2 проверки установщика/генератора plist, 1 проверка геометрии листов и 43 API/браузерных сценария: поиск, редактор, безопасность, две сессии, конфликты, перезапуск, перенос, темы, каталог, пробы и миграции. Настоящие службы macOS и реальные Safari/iOS/Android ими не проверяются. CI добавлен в A10.1; конфигурация и границы — ниже.
 
 При обследовании 22 октября 2026 года в Linux на Node.js 24.19.0 выполнены `npm run check` и `npm test`: синтаксис и все 46 проверок прошли. Для тестов потребовалось разрешить дочерние процессы и локальные сокеты за пределами ограниченной песочницы; код и тесты ради окружения не менялись.
 
@@ -147,3 +147,35 @@ python -m playwright install chromium
 
 На базе `main` `6aa62ee` после PR №1 и №2 подготовлены [TECH_AUDIT](audits/TECH_AUDIT.md) со сравнением стеков и предварительным runbook PostgreSQL и [QA_AUDIT](audits/QA_AUDIT.md) с новым прогоном 46 проверок и двумя дополнительными воспроизводимыми дефектами. Архитектура приложения не изменялась; миграция и восстановление рабочей базы не выполнялись. Предложения ожидают review владельца.
 
+
+## Воспроизводимый baseline A10.1
+
+Одобрение — [D017](DECISIONS.md#d017-частично-одобренная-реализация-stage1-v1), база `main` `631c3b1`. Runtime и визуальный интерфейс не меняются. `.github/workflows/tests.yml` запускает `npm run check` и прежний полный `npm test` на PR в `main` и push в `main`. Две matrix job выполняются на отдельных чистых `ubuntu-24.04` x86_64 runner без cache и retry: Node 24.19.0, Python 3.12.14, отдельный venv. Actions закреплены SHA опубликованных checkout v4.2.2, setup-node v4.4.0, setup-python v5.6.0; checkout не сохраняет credentials. Только `contents: read`, без секретов, deployment и auto-merge. Branch protection не изменяется.
+
+`tests/requirements.txt` фиксирует прямые и транзитивные инструменты с SHA-256 **Linux x86_64 / CPython 3.12 wheels**: Playwright 1.62.0, Pillow 12.3.0, greenlet 3.5.6, pyee 13.0.1, typing_extensions 4.16.0. Это test-зависимости; production/npm dependencies не добавлены. Для macOS/другой архитектуры этот manifest намеренно не обещает совместимость: нужны проверенные wheels/хеши отдельным изменением, не отключение hash-check.
+
+На Linux с указанными Node/Python из корня checkout:
+
+```sh
+python3 -m venv /tmp/kroshka-qa-venv
+. /tmp/kroshka-qa-venv/bin/activate
+python -m pip install --require-hashes --only-binary=:all: -r tests/requirements.txt
+export PLAYWRIGHT_BROWSERS_PATH=/tmp/kroshka-qa-browsers
+python -m playwright install --with-deps chromium
+export CHROMIUM_EXECUTABLE="$(python - <<'PY'
+from playwright.sync_api import sync_playwright
+with sync_playwright() as p:
+    print(p.chromium.executable_path)
+PY
+)"
+python tests/browser_environment.py
+npm run check
+npm test
+python tests/ci_failure_checks.py
+```
+
+Установка системных библиотек Chromium может требовать административных прав; GitHub runner поддерживает её. Playwright закрепляет Chromium **151.0.7922.34, revision 1234**. CI явно передаёт bundled executable: fallback на случайный системный браузер исключён. `browser_environment.py` проверяет наличие/запуск и пишет фактическую версию. Отсутствие инструмента/браузера — ошибка job. До установки и в логах доступны image version/ОС, Node/Python/pip и все Python-пакеты. GitHub OS image и apt-пакеты меняются; побайтовая идентичность ОС не заявляется. В log сохраняются версии, artifacts с БД/cookie/exports не выгружаются.
+
+Smoke запускает `node server.js` без чтения `.env`, на loopback с новым временным `DATA_DIR`; игнорирует унаследованные FAMILY_PASSWORD/PUBLIC_URL. Очистка класса зарегистрирована сразу после создания каждого ресурса и срабатывает даже при ошибке setup/запуска Chromium; закрываются browser/Playwright/актуальный процесс после restart и временная БД. Каждый browser context очищается и при провале setUp/tearDown. `ci_failure_checks.py` в отдельной временной копии проверяет ненулевой exit `npm test` при отсутствующем Chromium и намеренно падающем Node-тесте, а также отсутствие оставшихся процессов/БД. Исходный checkout не ломается; ожидаемые отрицательные опыты не заменяют обязательный полный зелёный прогон.
+
+Обновление: отдельным PR проверить upstream release/action SHA, скачать wheels с PyPI в чистую среду, сверить и записать хеши всех зависимостей, обновить версии и browser build, повторить оба чистых baseline и негативные проверки. Не ослаблять проверки и не обновлять runtime автоматически. Регрессии A22/A04 приходят с их отдельными исправлениями. Результаты и ограничения конкретного прогона — [A10.1 QA](stage-1/A10_1_QA.md); Linux не подтверждает macOS и реальные iOS/Android.
