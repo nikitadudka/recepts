@@ -894,5 +894,74 @@ class RecipeBookTests(unittest.TestCase):
         saved=next(r for r in self.context.request.get(self.url+'/api/library').json()['recipes'] if r['id']=='salmon')
         self.assertEqual(saved,{**recipe,'cookingMethods':['Жарить','Запекать','Варить']})
 
+    def test_44_invalid_json_import_and_unreadable_file_keep_book(self):
+        before = self.context.request.get(self.url + '/api/library').json()
+        writes = []
+        self.page.on('request', lambda request: writes.append(request.url)
+                     if request.method == 'PUT' and request.url.endswith('/api/library') else None)
+        for payload in [b'', b'{broken', b'null', b'42', b'{}', b'{"recipes":null}', b'{"recipes":[null]}']:
+            with self.subTest(payload=payload):
+                self.page.locator('#import-file').set_input_files({
+                    'name': 'a22.json', 'mimeType': 'application/json', 'buffer': payload})
+                expect(self.page.locator('#toast')).to_contain_text(
+                    'Не удалось прочитать файл' if payload in (b'', b'{broken', b'null')
+                    else 'В файле нет подходящих рецептов')
+                expect(self.page.locator('#import-file')).to_have_value('')
+                self.assertEqual(self.context.request.get(self.url + '/api/library').json(), before)
+        # No selected file (cancel/missing selection) leaves the book alone.
+        self.page.locator('#import-file').set_input_files([])
+        self.page.locator('#import-file').dispatch_event('change')
+        # Simulate missing/unreadable files after selection, without changing app code.
+        self.page.evaluate('() => { window.a22FileText = File.prototype.text; }')
+        try:
+            for error_name in ['NotFoundError', 'NotReadableError']:
+                self.page.evaluate("name => { File.prototype.text = async () => { throw new DOMException('Synthetic read failure', name); }; }", error_name)
+                self.page.locator('#import-file').set_input_files({
+                    'name': 'unreadable.json', 'mimeType': 'application/json', 'buffer': b'{}'})
+                expect(self.page.locator('#toast')).to_contain_text('Не удалось прочитать файл')
+                expect(self.page.locator('#import-file')).to_have_value('')
+        finally:
+            self.page.evaluate('() => { File.prototype.text = window.a22FileText; delete window.a22FileText; }')
+        self.assertEqual(writes, [])
+        self.assertEqual(self.context.request.get(self.url + '/api/library').json(), before)
+        # A valid legacy import still works after every refusal.
+        incoming = {**self.seeds[0], 'id': 'a22-import', 'title': 'A22 после ошибки импорта'}
+        self.page.once('dialog', lambda dialog: dialog.accept())
+        self.page.locator('#import-file').set_input_files({
+            'name': 'legacy.json', 'mimeType': 'application/json',
+            'buffer': json.dumps([incoming]).encode()})
+        expect(self.page.locator('.recipe-card')).to_have_count(9)
+        saved = self.context.request.get(self.url + '/api/library').json()
+        self.assertEqual(next(r for r in saved['recipes'] if r['id'] == incoming['id']), incoming)
+
+    def test_45_json_rejection_preserves_draft_photo_and_allows_retry(self):
+        before = self.context.request.get(self.url + '/api/library').json()
+        form = self.fill_recipe('A22 сохранение после ошибки')
+        self.page.locator('#image-upload').set_input_files(ROOT / 'assets/food-grid.png')
+        expect(self.page.locator('#image-preview img')).to_be_visible()
+        photo = self.page.locator('#image-preview img').get_attribute('src')
+
+        def corrupt_body(route):
+            route.continue_(post_data='null') if route.request.method == 'PUT' else route.continue_()
+
+        self.page.route('**/api/library', corrupt_body)
+        with self.page.expect_response(lambda response: response.request.method == 'PUT'
+                                       and response.url.endswith('/api/library')) as response:
+            form.locator('[type=submit]').click()
+        self.assertEqual(response.value.status, 400)
+        expect(self.page.locator('#form-error')).to_contain_text('Ожидается объект JSON')
+        expect(self.page.locator('#editor-dialog')).to_be_visible()
+        expect(form.locator('[name=title]')).to_have_value('A22 сохранение после ошибки')
+        self.assertEqual(self.page.locator('#image-preview img').get_attribute('src'), photo)
+        self.assertEqual(self.context.request.get(self.url + '/api/library').json(), before)
+        self.page.unroute('**/api/library', corrupt_body)
+        self.save(form)
+        expect(self.page.locator('.recipe-card')).to_have_count(9)
+        saved = self.context.request.get(self.url + '/api/library').json()
+        self.assertEqual(saved['revision'], before['revision'] + 1)
+        added = next(r for r in saved['recipes'] if r['title'] == 'A22 сохранение после ошибки')
+        self.assertEqual(added['image'], photo)
+        self.assertEqual([r for r in saved['recipes'] if r['id'] != added['id']], before['recipes'])
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)

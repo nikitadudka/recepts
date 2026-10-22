@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node --env-file-if-exists=.env server.js",
     "check": "node --check app.js && node --check theme.js && node --check server.js && node --check catalog.js && node --check mac/write-launch-agent.js",
-    "test": "node --test tests/install.test.js && python3 tests/images_test.py && python3 tests/smoke.py"
+    "test": "node --test tests/install.test.js && python3 tests/images_test.py && python3 tests/json_api_test.py && python3 tests/smoke.py"
   },
   "engines": {
     "node": ">=22.13"

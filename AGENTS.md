@@ -52,7 +52,7 @@ npm run check
 npm test
 ```
 
-`npm test` последовательно запускает `tests/install.test.js`, `tests/images_test.py`, `tests/smoke.py`. Нужны Python 3, Pillow, Python Playwright и Chromium; `CHROMIUM_EXECUTABLE` может задавать путь к браузеру. Тесты используют временные базы. Подготовку окружения описывает [ARCHITECTURE](docs/ARCHITECTURE.md).
+`npm test` последовательно запускает `tests/install.test.js`, `tests/images_test.py`, `tests/json_api_test.py`, `tests/smoke.py`. Нужны Python 3, Pillow, Python Playwright и Chromium; `CHROMIUM_EXECUTABLE` может задавать путь к браузеру. Тесты используют временные базы. Подготовку окружения описывает [ARCHITECTURE](docs/ARCHITECTURE.md).
 
 - Для изменений поведения выполните `npm run check`, соответствующие существующие проверки и перед готовностью PR — `npm test`. Для исправленного дефекта добавляйте содержательную регрессионную проверку; не пишите тест, повторяющий реализацию.
 - Для изменений только документации проверьте факты, ссылки и `git diff --check`; новый тест или полный браузерный прогон не обязателен.
