@@ -1,1 +1,143 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1650" height="1370" viewBox="0 0 1650 1370" role="img" aria-labelledby="title desc"><title id="title">A06.1 — поведение меню, фильтров и состояний</title><desc id="desc">Схемы для согласования A06.1. Не реализация. Вымышленные данные, текущая кошка не изменена.</desc><style>text{font-family:Arial,sans-serif}</style><rect x="0" y="0" width="1650" height="1370" rx="0" fill="#e7e7e2" stroke="none"/><text x="20" y="36" font-size="24" fill="#2f4235" >Крошка · A06.1 · раскрытия, компактный список и состояния</text><text x="20" y="65" font-size="16" fill="#2f4235" >Схемы в потоке страницы: нет новых модальных sheet, fixed footer или offline-очереди.</text><text x="20" y="105" font-size="18" fill="#2f4235" >«Ещё» · ширина 320</text><rect x="20" y="124" width="320" height="420" rx="8" fill="#fbfcf9" stroke="#65745e"/><rect x="36" y="140" width="112" height="69" rx="8" fill="#edf2e9" stroke="#65745e"/><text x="92" y="165" font-size="9" fill="#53634e" text-anchor="middle">МЕСТО КОШКИ</text><text x="92" y="191" font-size="24" fill="#2f4235" text-anchor="middle" font-family="Georgia">крошка.</text><rect x="264" y="152" width="60" height="44" rx="8" fill="#edf2e9" stroke="#65745e"/><text x="294" y="179" font-size="14" fill="#2f4235" text-anchor="middle">Ещё</text><rect x="36" y="224" width="288" height="48" rx="8" fill="#fff" stroke="#65745e"/><text x="50" y="254" font-size="16" fill="#2f4235" >Немного вдохновения</text><rect x="36" y="280" width="288" height="48" rx="8" fill="#fff" stroke="#65745e"/><text x="50" y="310" font-size="16" fill="#2f4235" >Открыть на телефоне</text><rect x="36" y="336" width="288" height="48" rx="8" fill="#fff" stroke="#65745e"/><text x="50" y="366" font-size="16" fill="#2f4235" >Загрузить рецепты</text><rect x="36" y="392" width="288" height="48" rx="8" fill="#fff" stroke="#65745e"/><text x="50" y="422" font-size="16" fill="#2f4235" >Скачать рецепты</text><rect x="36" y="448" width="288" height="48" rx="8" fill="#fff" stroke="#65745e"/><text x="50" y="478" font-size="16" fill="#2f4235" >Выйти</text><text x="20" y="574" font-size="14" fill="#2f4235" >Раскрытие сдвигает контент вниз.</text><text x="20" y="599" font-size="14" fill="#2f4235" >Escape → закрыть и вернуть фокус.</text><text x="20" y="624" font-size="14" fill="#2f4235" >Dialog закрыт → фокус на «Ещё».</text><text x="370" y="105" font-size="18" fill="#2f4235" >Фильтры · ширина 375</text><rect x="370" y="124" width="375" height="1190" rx="8" fill="#fbfcf9" stroke="#65745e"/><rect x="386" y="140" width="343" height="44" rx="8" fill="#edf2e9" stroke="#65745e"/><text x="398" y="168" font-size="16" fill="#2f4235" >Категории и фильтры · 2</text><text x="398" y="206" font-size="14" fill="#53634e" >Обед · До 30 минут</text><rect x="386" y="226" width="144" height="44" rx="8" fill="#fff" stroke="#65745e"/><text x="398" y="254" font-size="14" fill="#2f4235" >Все рецепты</text><rect x="538" y="226" width="135" height="44" rx="8" fill="#edf2e9" stroke="#65745e"/><text x="550" y="254" font-size="14" fill="#2f4235" >До 30 минут</text><rect x="386" y="278" width="114" height="44" rx="8" fill="#fff" stroke="#65745e"/><text x="398" y="306" font-size="14" fill="#2f4235" >Без мяса</text><rect x="508" y="278" width="165" height="44" rx="8" fill="#fff" stroke="#65745e"/><text x="520" y="306" font-size="14" fill="#2f4235" >Больше белка</text><rect x="386" y="330" width="145" height="44" rx="8" fill="#fff" stroke="#65745e"/><text x="398" y="358" font-size="14" fill="#2f4235" >Заготовки</text><text x="386" y="405" font-size="14" fill="#53634e" >Приём пищи</text><rect x="386" y="415" width="343" height="44" rx="8" fill="#fff" stroke="#65745e"/><text x="398" y="443" font-size="16" fill="#2f4235" >Обед</text><text x="707" y="443" font-size="16" fill="#2f4235" >⌄</text><text x="386" y="499" font-size="14" fill="#53634e" >Тип блюда</text><rect x="386" y="509" width="343" height="44" rx="8" fill="#fff" stroke="#65745e"/><text x="398" y="537" font-size="16" fill="#2f4235" >Любое блюдо</text><text x="707" y="537" font-size="16" fill="#2f4235" >⌄</text><text x="386" y="593" font-size="14" fill="#53634e" >Акцент в питании</text><rect x="386" y="603" width="343" height="44" rx="8" fill="#fff" stroke="#65745e"/><text x="398" y="631" font-size="16" fill="#2f4235" >Любой</text><text x="707" y="631" font-size="16" fill="#2f4235" >⌄</text><text x="386" y="687" font-size="14" fill="#53634e" >Мясо</text><rect x="386" y="697" width="343" height="44" rx="8" fill="#fff" stroke="#65745e"/><text x="398" y="725" font-size="16" fill="#2f4235" >Все варианты</text><text x="707" y="725" font-size="16" fill="#2f4235" >⌄</text><text x="386" y="781" font-size="14" fill="#53634e" >Способ приготовления</text><rect x="386" y="791" width="343" height="44" rx="8" fill="#fff" stroke="#65745e"/><text x="398" y="819" font-size="16" fill="#2f4235" >Любой способ</text><text x="707" y="819" font-size="16" fill="#2f4235" >⌄</text><text x="386" y="875" font-size="14" fill="#53634e" >Инвентарь</text><rect x="386" y="885" width="343" height="44" rx="8" fill="#fff" stroke="#65745e"/><text x="398" y="913" font-size="16" fill="#2f4235" >Любой</text><text x="707" y="913" font-size="16" fill="#2f4235" >⌄</text><text x="386" y="969" font-size="14" fill="#53634e" >Заготовки</text><rect x="386" y="979" width="343" height="44" rx="8" fill="#fff" stroke="#65745e"/><text x="398" y="1007" font-size="16" fill="#2f4235" >Все блюда</text><text x="707" y="1007" font-size="16" fill="#2f4235" >⌄</text><rect x="386" y="1090" width="343" height="44" rx="8" fill="#fff" stroke="#65745e"/><text x="400" y="1118" font-size="16" fill="#2f4235" >Сбросить фильтры</text><rect x="386" y="1146" width="343" height="44" rx="8" fill="#edf2e9" stroke="#65745e"/><text x="400" y="1174" font-size="16" fill="#2f4235" >Свернуть фильтры</text><text x="386" y="1230" font-size="14" fill="#2f4235" >Выбор действует сразу.</text><text x="386" y="1254" font-size="14" fill="#2f4235" >Query и раздел при сбросе остаются.</text><text x="775" y="105" font-size="18" fill="#2f4235" >Список · ширина 390</text><rect x="775" y="124" width="390" height="520" rx="8" fill="#fbfcf9" stroke="#65745e"/><text x="791" y="158" font-size="24" fill="#2f4235" >Все рецепты · 8</text><rect x="791" y="178" width="358" height="354" rx="8" fill="#fff" stroke="#65745e"/><rect x="807" y="194" width="72" height="72" rx="8" fill="#edf2e9" stroke="#65745e"/><text x="843" y="235" font-size="14" fill="#53634e" text-anchor="middle">фото</text><text x="891" y="214" font-size="18" fill="#2f4235" >Суп с чечевицей</text><text x="891" y="238" font-size="18" fill="#2f4235" >и печёной</text><text x="891" y="262" font-size="18" fill="#2f4235" >морковью</text><rect x="1097" y="278" width="44" height="44" rx="8" fill="#fff" stroke="#65745e"/><text x="1119" y="308" font-size="28" fill="#2f4235" text-anchor="middle">♡</text><text x="807" y="306" font-size="14" fill="#53634e" >Чечевица · морковь · лук</text><text x="807" y="340" font-size="14" fill="#53634e" >Обед · Без мяса</text><text x="807" y="374" font-size="14" fill="#53634e" >Варить · 30 мин</text><text x="807" y="408" font-size="14" fill="#53634e" >Б 5 · Ж 2 · У 12</text><text x="807" y="442" font-size="14" fill="#53634e" >на 100 г</text><text x="791" y="574" font-size="14" fill="#2f4235" >Название полностью. Метаданные</text><text x="791" y="598" font-size="14" fill="#2f4235" >переносятся под миниатюру.</text><text x="791" y="622" font-size="14" fill="#2f4235" >Избранное — отдельная цель 44 px.</text><text x="775" y="706" font-size="18" fill="#2f4235" >Loading / empty</text><rect x="775" y="728" width="390" height="96" rx="8" fill="#fbfcf9" stroke="#65745e"/><text x="791" y="760" font-size="16" fill="#2f4235" >Загружаем рецепты…</text><text x="791" y="791" font-size="13" fill="#53634e" >Не показываем пустую книгу до GET.</text><rect x="775" y="840" width="390" height="96" rx="8" fill="#fbfcf9" stroke="#65745e"/><text x="791" y="872" font-size="16" fill="#2f4235" >По этим условиям ничего не найдено</text><text x="791" y="903" font-size="13" fill="#53634e" >Очистить поиск / Сбросить фильтры</text><rect x="775" y="952" width="390" height="96" rx="8" fill="#fbfcf9" stroke="#65745e"/><text x="791" y="984" font-size="16" fill="#2f4235" >Пока нет рецептов</text><text x="791" y="1015" font-size="13" fill="#53634e" >Добавить рецепт / Вдохновение</text><rect x="775" y="1064" width="390" height="96" rx="8" fill="#fbfcf9" stroke="#65745e"/><text x="791" y="1096" font-size="16" fill="#2f4235" >Здесь будут избранные рецепты</text><text x="791" y="1127" font-size="13" fill="#53634e" >Отметьте рецепт сердечком.</text><rect x="775" y="1176" width="390" height="96" rx="8" fill="#fbfcf9" stroke="#65745e"/><text x="791" y="1208" font-size="16" fill="#2f4235" >Что хочется приготовить?</text><text x="791" y="1239" font-size="13" fill="#53634e" >Найти идею в каталоге</text><text x="1195" y="105" font-size="18" fill="#2f4235" >Связь и запись · в потоке</text><rect x="1195" y="124" width="430" height="110" rx="8" fill="#edf2e9" stroke="#65745e"/><text x="1211" y="156" font-size="16" fill="#2f4235" >Связь с книгой установлена</text><text x="1211" y="188" font-size="14" fill="#53634e" >Обычный GET не подтверждает запись.</text><rect x="1195" y="254" width="430" height="110" rx="8" fill="#edf2e9" stroke="#65745e"/><text x="1211" y="286" font-size="16" fill="#2f4235" >Сохраняем изменение…</text><text x="1211" y="318" font-size="14" fill="#53634e" >Ждём ответ конкретной операции.</text><rect x="1195" y="384" width="430" height="110" rx="8" fill="#edf2e9" stroke="#65745e"/><text x="1211" y="416" font-size="16" fill="#2f4235" >Изменение сохранено</text><text x="1211" y="448" font-size="14" fill="#53634e" >Только после подтверждения сервера.</text><rect x="1195" y="514" width="430" height="110" rx="8" fill="#fff0ed" stroke="#65745e"/><text x="1211" y="546" font-size="16" fill="#2f4235" >Изменение не сохранено</text><text x="1211" y="578" font-size="14" fill="#53634e" >Постоянно, даже после успешного GET.</text><text x="1211" y="604" font-size="14" fill="#2f4235" >Повторите действие у рецепта.</text><rect x="1195" y="644" width="430" height="110" rx="8" fill="#fff0ed" stroke="#65745e"/><text x="1211" y="676" font-size="16" fill="#2f4235" >Нет связи с книгой</text><text x="1211" y="708" font-size="14" fill="#53634e" >Открытые данные могут быть неактуальны.</text><text x="1211" y="734" font-size="14" fill="#2f4235" >Проверить связь → только GET</text><rect x="1195" y="774" width="430" height="110" rx="8" fill="#fff0ed" stroke="#65745e"/><text x="1211" y="806" font-size="16" fill="#2f4235" >Не удалось подтвердить сохранение</text><text x="1211" y="838" font-size="14" fill="#53634e" >Сначала сверить актуальный результат.</text><rect x="1195" y="904" width="430" height="110" rx="8" fill="#fff0ed" stroke="#65745e"/><text x="1211" y="936" font-size="16" fill="#2f4235" >Нет сети</text><text x="1211" y="968" font-size="14" fill="#53634e" >Для сохранения нужна связь с книгой.</text><rect x="1195" y="1034" width="430" height="110" rx="8" fill="#fff0ed" stroke="#65745e"/><text x="1211" y="1066" font-size="16" fill="#2f4235" >Сеанс завершён</text><text x="1211" y="1098" font-size="14" fill="#53634e" >Войдите снова. Нет автоматического retry.</text><text x="1195" y="1205" font-size="14" fill="#2f4235" >Ошибки дополнительно у инициатора.</text><text x="1195" y="1230" font-size="14" fill="#2f4235" >Один live-источник, цвет + текст.</text><text x="1195" y="1255" font-size="14" fill="#2f4235" >Нет replay устаревшей книги.</text><text x="20" y="1347" font-size="15" fill="#2f4235" >Предложение a06.1-proposal-v1. Точные состояния и границы A06.2/401 — в A06_1_DESIGN_PROPOSAL.md.</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1650" height="1370" viewBox="0 0 1650 1370" role="img" aria-labelledby="title desc">
+<title id="title">A06.1 — поведение меню, фильтров и состояний</title>
+<desc id="desc">Схемы для согласования A06.1. Не реализация. Вымышленные данные, текущая кошка не изменена.</desc>
+<style>text{font-family:Arial,sans-serif}</style>
+<rect x="0" y="0" width="1650" height="1370" rx="0" fill="#e7e7e2" stroke="none"/>
+<text x="20" y="36" font-size="24" fill="#2f4235" >Крошка · A06.1 v2 · детали каталога после приветствия</text>
+<text x="20" y="65" font-size="16" fill="#2f4235" >Каталог расположен после полного приветствия и большого баннера. Обычный скролл; детали пока предложены.</text>
+<text x="20" y="105" font-size="18" fill="#2f4235" >«Ещё» · ширина 320</text>
+<rect x="20" y="124" width="320" height="420" rx="8" fill="#fbfcf9" stroke="#65745e"/>
+<rect x="36" y="140" width="130" height="69" rx="8" fill="#edf2e9" stroke="#65745e"/>
+<text x="101" y="165" font-size="9" fill="#53634e" text-anchor="middle">МЕСТО КОШКИ</text>
+<text x="101" y="191" font-size="24" fill="#2f4235" text-anchor="middle" font-family="Georgia">крошка.</text>
+<rect x="264" y="152" width="60" height="44" rx="8" fill="#edf2e9" stroke="#65745e"/>
+<text x="294" y="179" font-size="14" fill="#2f4235" text-anchor="middle">Ещё</text>
+<rect x="36" y="224" width="288" height="48" rx="8" fill="#fff" stroke="#65745e"/>
+<text x="50" y="254" font-size="16" fill="#2f4235" >Немного вдохновения</text>
+<rect x="36" y="280" width="288" height="48" rx="8" fill="#fff" stroke="#65745e"/>
+<text x="50" y="310" font-size="16" fill="#2f4235" >Открыть на телефоне</text>
+<rect x="36" y="336" width="288" height="48" rx="8" fill="#fff" stroke="#65745e"/>
+<text x="50" y="366" font-size="16" fill="#2f4235" >Загрузить рецепты</text>
+<rect x="36" y="392" width="288" height="48" rx="8" fill="#fff" stroke="#65745e"/>
+<text x="50" y="422" font-size="16" fill="#2f4235" >Скачать рецепты</text>
+<rect x="36" y="448" width="288" height="48" rx="8" fill="#fff" stroke="#65745e"/>
+<text x="50" y="478" font-size="16" fill="#2f4235" >Выйти</text>
+<text x="20" y="574" font-size="14" fill="#2f4235" >Раскрытие сдвигает контент вниз.</text>
+<text x="20" y="599" font-size="14" fill="#2f4235" >Escape → закрыть и вернуть фокус.</text>
+<text x="20" y="624" font-size="14" fill="#2f4235" >Dialog закрыт → фокус на «Ещё».</text>
+<text x="370" y="105" font-size="18" fill="#2f4235" >Фильтры · ширина 375</text>
+<rect x="370" y="124" width="375" height="1190" rx="8" fill="#fbfcf9" stroke="#65745e"/>
+<rect x="386" y="140" width="343" height="44" rx="8" fill="#edf2e9" stroke="#65745e"/>
+<text x="398" y="168" font-size="16" fill="#2f4235" >Категории и фильтры · 2</text>
+<text x="398" y="206" font-size="14" fill="#53634e" >Обед · До 30 минут</text>
+<rect x="386" y="226" width="144" height="44" rx="8" fill="#fff" stroke="#65745e"/>
+<text x="398" y="254" font-size="14" fill="#2f4235" >Все рецепты</text>
+<rect x="538" y="226" width="135" height="44" rx="8" fill="#edf2e9" stroke="#65745e"/>
+<text x="550" y="254" font-size="14" fill="#2f4235" >До 30 минут</text>
+<rect x="386" y="278" width="114" height="44" rx="8" fill="#fff" stroke="#65745e"/>
+<text x="398" y="306" font-size="14" fill="#2f4235" >Без мяса</text>
+<rect x="508" y="278" width="165" height="44" rx="8" fill="#fff" stroke="#65745e"/>
+<text x="520" y="306" font-size="14" fill="#2f4235" >Больше белка</text>
+<rect x="386" y="330" width="145" height="44" rx="8" fill="#fff" stroke="#65745e"/>
+<text x="398" y="358" font-size="14" fill="#2f4235" >Заготовки</text>
+<text x="386" y="405" font-size="14" fill="#53634e" >Приём пищи</text>
+<rect x="386" y="415" width="343" height="44" rx="8" fill="#fff" stroke="#65745e"/>
+<text x="398" y="443" font-size="16" fill="#2f4235" >Обед</text>
+<text x="707" y="443" font-size="16" fill="#2f4235" >⌄</text>
+<text x="386" y="499" font-size="14" fill="#53634e" >Тип блюда</text>
+<rect x="386" y="509" width="343" height="44" rx="8" fill="#fff" stroke="#65745e"/>
+<text x="398" y="537" font-size="16" fill="#2f4235" >Любое блюдо</text>
+<text x="707" y="537" font-size="16" fill="#2f4235" >⌄</text>
+<text x="386" y="593" font-size="14" fill="#53634e" >Акцент в питании</text>
+<rect x="386" y="603" width="343" height="44" rx="8" fill="#fff" stroke="#65745e"/>
+<text x="398" y="631" font-size="16" fill="#2f4235" >Любой</text>
+<text x="707" y="631" font-size="16" fill="#2f4235" >⌄</text>
+<text x="386" y="687" font-size="14" fill="#53634e" >Мясо</text>
+<rect x="386" y="697" width="343" height="44" rx="8" fill="#fff" stroke="#65745e"/>
+<text x="398" y="725" font-size="16" fill="#2f4235" >Все варианты</text>
+<text x="707" y="725" font-size="16" fill="#2f4235" >⌄</text>
+<text x="386" y="781" font-size="14" fill="#53634e" >Способ приготовления</text>
+<rect x="386" y="791" width="343" height="44" rx="8" fill="#fff" stroke="#65745e"/>
+<text x="398" y="819" font-size="16" fill="#2f4235" >Любой способ</text>
+<text x="707" y="819" font-size="16" fill="#2f4235" >⌄</text>
+<text x="386" y="875" font-size="14" fill="#53634e" >Инвентарь</text>
+<rect x="386" y="885" width="343" height="44" rx="8" fill="#fff" stroke="#65745e"/>
+<text x="398" y="913" font-size="16" fill="#2f4235" >Любой</text>
+<text x="707" y="913" font-size="16" fill="#2f4235" >⌄</text>
+<text x="386" y="969" font-size="14" fill="#53634e" >Заготовки</text>
+<rect x="386" y="979" width="343" height="44" rx="8" fill="#fff" stroke="#65745e"/>
+<text x="398" y="1007" font-size="16" fill="#2f4235" >Все блюда</text>
+<text x="707" y="1007" font-size="16" fill="#2f4235" >⌄</text>
+<rect x="386" y="1090" width="343" height="44" rx="8" fill="#fff" stroke="#65745e"/>
+<text x="400" y="1118" font-size="16" fill="#2f4235" >Сбросить фильтры</text>
+<rect x="386" y="1146" width="343" height="44" rx="8" fill="#edf2e9" stroke="#65745e"/>
+<text x="400" y="1174" font-size="16" fill="#2f4235" >Свернуть фильтры</text>
+<text x="386" y="1230" font-size="14" fill="#2f4235" >Выбор действует сразу.</text>
+<text x="386" y="1254" font-size="14" fill="#2f4235" >Query и раздел при сбросе остаются.</text>
+<text x="775" y="105" font-size="18" fill="#2f4235" >Список · ширина 390</text>
+<rect x="775" y="124" width="390" height="520" rx="8" fill="#fbfcf9" stroke="#65745e"/>
+<text x="791" y="158" font-size="24" fill="#2f4235" >Все рецепты · 8</text>
+<rect x="791" y="178" width="358" height="354" rx="8" fill="#fff" stroke="#65745e"/>
+<rect x="807" y="194" width="72" height="72" rx="8" fill="#edf2e9" stroke="#65745e"/>
+<text x="843" y="235" font-size="14" fill="#53634e" text-anchor="middle">фото</text>
+<text x="891" y="214" font-size="18" fill="#2f4235" >Суп с чечевицей</text>
+<text x="891" y="238" font-size="18" fill="#2f4235" >и печёной</text>
+<text x="891" y="262" font-size="18" fill="#2f4235" >морковью</text>
+<rect x="1097" y="278" width="44" height="44" rx="8" fill="#fff" stroke="#65745e"/>
+<text x="1119" y="308" font-size="28" fill="#2f4235" text-anchor="middle">♡</text>
+<text x="807" y="306" font-size="14" fill="#53634e" >Чечевица · морковь · лук</text>
+<text x="807" y="340" font-size="14" fill="#53634e" >Обед · Без мяса</text>
+<text x="807" y="374" font-size="14" fill="#53634e" >Варить · 30 мин</text>
+<text x="807" y="408" font-size="14" fill="#53634e" >Б 5 · Ж 2 · У 12</text>
+<text x="807" y="442" font-size="14" fill="#53634e" >на 100 г</text>
+<text x="791" y="574" font-size="14" fill="#2f4235" >Название полностью. Метаданные</text>
+<text x="791" y="598" font-size="14" fill="#2f4235" >переносятся под миниатюру.</text>
+<text x="791" y="622" font-size="14" fill="#2f4235" >Избранное — отдельная цель 44 px.</text>
+<text x="775" y="706" font-size="18" fill="#2f4235" >Loading / empty</text>
+<rect x="775" y="728" width="390" height="96" rx="8" fill="#fbfcf9" stroke="#65745e"/>
+<text x="791" y="760" font-size="16" fill="#2f4235" >Загружаем рецепты…</text>
+<text x="791" y="791" font-size="13" fill="#53634e" >Не показываем пустую книгу до GET.</text>
+<rect x="775" y="840" width="390" height="96" rx="8" fill="#fbfcf9" stroke="#65745e"/>
+<text x="791" y="872" font-size="16" fill="#2f4235" >По этим условиям ничего не найдено</text>
+<text x="791" y="903" font-size="13" fill="#53634e" >Очистить поиск / Сбросить фильтры</text>
+<rect x="775" y="952" width="390" height="96" rx="8" fill="#fbfcf9" stroke="#65745e"/>
+<text x="791" y="984" font-size="16" fill="#2f4235" >Пока нет рецептов</text>
+<text x="791" y="1015" font-size="13" fill="#53634e" >Добавить рецепт / Вдохновение</text>
+<rect x="775" y="1064" width="390" height="96" rx="8" fill="#fbfcf9" stroke="#65745e"/>
+<text x="791" y="1096" font-size="16" fill="#2f4235" >Здесь будут избранные рецепты</text>
+<text x="791" y="1127" font-size="13" fill="#53634e" >Отметьте рецепт сердечком.</text>
+<rect x="775" y="1176" width="390" height="96" rx="8" fill="#fbfcf9" stroke="#65745e"/>
+<text x="791" y="1208" font-size="16" fill="#2f4235" >Что хочется приготовить?</text>
+<text x="791" y="1239" font-size="13" fill="#53634e" >Найти идею в каталоге</text>
+<text x="1195" y="105" font-size="18" fill="#2f4235" >Связь и запись · в потоке</text>
+<rect x="1195" y="124" width="430" height="110" rx="8" fill="#edf2e9" stroke="#65745e"/>
+<text x="1211" y="156" font-size="16" fill="#2f4235" >Связь с книгой установлена</text>
+<text x="1211" y="188" font-size="14" fill="#53634e" >Обычный GET не подтверждает запись.</text>
+<rect x="1195" y="254" width="430" height="110" rx="8" fill="#edf2e9" stroke="#65745e"/>
+<text x="1211" y="286" font-size="16" fill="#2f4235" >Сохраняем изменение…</text>
+<text x="1211" y="318" font-size="14" fill="#53634e" >Ждём ответ конкретной операции.</text>
+<rect x="1195" y="384" width="430" height="110" rx="8" fill="#edf2e9" stroke="#65745e"/>
+<text x="1211" y="416" font-size="16" fill="#2f4235" >Изменение сохранено</text>
+<text x="1211" y="448" font-size="14" fill="#53634e" >Только после подтверждения сервера.</text>
+<rect x="1195" y="514" width="430" height="110" rx="8" fill="#fff0ed" stroke="#65745e"/>
+<text x="1211" y="546" font-size="16" fill="#2f4235" >Изменение не сохранено</text>
+<text x="1211" y="578" font-size="14" fill="#53634e" >Постоянно, даже после успешного GET.</text>
+<text x="1211" y="604" font-size="14" fill="#2f4235" >Повторите действие у рецепта.</text>
+<rect x="1195" y="644" width="430" height="110" rx="8" fill="#fff0ed" stroke="#65745e"/>
+<text x="1211" y="676" font-size="16" fill="#2f4235" >Нет связи с книгой</text>
+<text x="1211" y="708" font-size="14" fill="#53634e" >Открытые данные могут быть неактуальны.</text>
+<text x="1211" y="734" font-size="14" fill="#2f4235" >Проверить связь → только GET</text>
+<rect x="1195" y="774" width="430" height="110" rx="8" fill="#fff0ed" stroke="#65745e"/>
+<text x="1211" y="806" font-size="16" fill="#2f4235" >Не удалось подтвердить сохранение</text>
+<text x="1211" y="838" font-size="14" fill="#53634e" >Сначала сверить актуальный результат.</text>
+<rect x="1195" y="904" width="430" height="110" rx="8" fill="#fff0ed" stroke="#65745e"/>
+<text x="1211" y="936" font-size="16" fill="#2f4235" >Нет сети</text>
+<text x="1211" y="968" font-size="14" fill="#53634e" >Для сохранения нужна связь с книгой.</text>
+<rect x="1195" y="1034" width="430" height="110" rx="8" fill="#fff0ed" stroke="#65745e"/>
+<text x="1211" y="1066" font-size="16" fill="#2f4235" >Сеанс завершён</text>
+<text x="1211" y="1098" font-size="14" fill="#53634e" >Войдите снова. Нет автоматического retry.</text>
+<text x="1195" y="1205" font-size="14" fill="#2f4235" >Ошибки дополнительно у инициатора.</text>
+<text x="1195" y="1230" font-size="14" fill="#2f4235" >Один live-источник, цвет + текст.</text>
+<text x="1195" y="1255" font-size="14" fill="#2f4235" >Нет replay устаревшей книги.</text>
+<text x="20" y="1347" font-size="15" fill="#2f4235" >Предложение a06.1-proposal-v2. Точные состояния и границы A06.2/401 — в A06_1_DESIGN_PROPOSAL.md.</text>
+</svg>
