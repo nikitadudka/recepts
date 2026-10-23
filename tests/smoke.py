@@ -1660,5 +1660,112 @@ class RecipeBookTests(unittest.TestCase):
                         button = self.page.locator('[data-favorite=lentil-soup]')
                         self.assertNotEqual(button.evaluate('(e)=>getComputedStyle(e).boxShadow'), 'none')
 
+    def test_65_native_tab_order_preserves_toolbar_focus_during_render_and_sync(self):
+        # Native Chromium navigation is a DOM-order regression, not Safari emulation.
+        for theme in ['classic', 'halloween']:
+            for width in [1440, 390]:
+                with self.subTest(theme=theme, width=width):
+                    self.page.set_viewport_size({'width':width, 'height':1000})
+                    self.page.evaluate('(t)=>localStorage.setItem("kroshka-appearance",t)', theme)
+                    self.page.reload(wait_until='networkidle')
+                    self.page.evaluate('''() => {
+                        window.toolbarRefs = [...document.querySelectorAll('#search,#sort,#filter-toggle,#grid-view,#list-view')];
+                        window.scriptFocusCalls = [];
+                        const nativeFocus = HTMLElement.prototype.focus;
+                        HTMLElement.prototype.focus = function(...args) {
+                            scriptFocusCalls.push(this.id || this.tagName);
+                            return nativeFocus.apply(this,args);
+                        };
+                    }''')
+                    self.assertEqual(self.page.locator('[tabindex]').evaluate_all('(els)=>els.filter(e=>e.tabIndex>0).length'), 0)
+                    self.page.locator('#search').fill('чечевица')
+                    self.page.locator('#sort').select_option('time')
+                    expect(self.page.locator('.recipe-card')).to_have_count(2)
+                    self.page.locator('#list-view').click()
+                    self.page.locator('#filter-toggle').click()
+                    expanded = ['#search','#filter-toggle','#filter-meal','#filter-size','#filter-macro',
+                                '#filter-meat','#filter-cooking-method','#filter-equipment','#filter-preparation','#reset-filters']
+                    self.page.locator('#search').focus()
+                    self.page.evaluate('scriptFocusCalls=[]')
+                    for selector in expanded[1:]:
+                        self.page.keyboard.press('Tab')
+                        expect(self.page.locator(selector)).to_be_focused()
+                    for selector in reversed(expanded[:-1]):
+                        self.page.keyboard.press('Shift+Tab')
+                        expect(self.page.locator(selector)).to_be_focused()
+                    self.assertEqual(self.page.evaluate('scriptFocusCalls'), [])
+                    self.page.locator('#filter-meal').select_option('Обед')
+                    expect(self.page.locator('.recipe-card')).to_have_count(1)
+                    self.page.locator('#reset-filters').click()
+                    expect(self.page.locator('.recipe-card')).to_have_count(2)
+                    self.page.locator('#filter-toggle').click()
+                    sequence = ['#search','#filter-toggle','[data-quick=all]','[data-quick=fast]',
+                                '[data-quick=vegetarian]','[data-quick=protein]','[data-quick=preparation]',
+                                '#sort','#grid-view','#list-view']
+                    self.page.locator('#search').focus()
+                    self.page.evaluate('scriptFocusCalls=[]')
+                    for selector in sequence[1:]:
+                        self.page.keyboard.press('Tab')
+                        expect(self.page.locator(selector)).to_be_focused()
+                    for selector in reversed(sequence[:-1]):
+                        self.page.keyboard.press('Shift+Tab')
+                        expect(self.page.locator(selector)).to_be_focused()
+                    self.assertEqual(self.page.evaluate('scriptFocusCalls'), [])
+                    self.page.locator('#sort').focus()
+                    self.page.evaluate('scriptFocusCalls=[]')
+                    other = self.remote_context()
+                    revision = self.remote_update(other, lambda recipes: next(r for r in recipes if r['id']=='salmon').update(title='Удалённая правка для проверки Tab'))
+                    self.receive_revision(revision)
+                    expect(self.page.locator('#sort')).to_be_focused()
+                    with self.page.expect_response(lambda r:'/api/library?' in r.url and r.json().get('unchanged')):
+                        self.page.evaluate("window.dispatchEvent(new Event('online'))")
+                    self.assertEqual(self.page.evaluate('scriptFocusCalls'), [])
+                    self.assertTrue(self.page.evaluate('toolbarRefs.every(e=>e.isConnected && document.getElementById(e.id)===e)'))
+                    expect(self.page.locator('#sort')).to_have_value('time')
+                    expect(self.page.locator('#search')).to_have_value('чечевица')
+                    expect(self.page.locator('#recipe-grid')).to_have_class('recipe-grid list-view')
+                    self.page.keyboard.press('Tab')
+                    expect(self.page.locator('#grid-view')).to_be_focused()
+                    self.page.keyboard.press('Shift+Tab')
+                    expect(self.page.locator('#sort')).to_be_focused()
+
+    def test_66_cat_animation_has_no_displaced_edge_fragments_at_retina_scale(self):
+        from io import BytesIO
+        from PIL import Image, ImageChops
+        for theme in ['classic', 'halloween']:
+            for width in [1440, 390]:
+                with self.subTest(theme=theme, width=width):
+                    context = self.browser.new_context(viewport={'width':width,'height':1000}, device_scale_factor=2)
+                    self.addCleanup(context.close)
+                    self.assertEqual(context.request.post(self.url+'/api/login', data={'password':self.password}).status, 200)
+                    page = context.new_page()
+                    page.on('pageerror', lambda error:self.errors.append(str(error)))
+                    page.add_init_script('localStorage.setItem("kroshka-appearance",'+json.dumps(theme)+')')
+                    page.goto(self.url, wait_until='networkidle')
+                    page.evaluate('document.fonts.ready')
+                    logo = page.locator(('.sidebar>.brand' if width>680 else '.mobile-brand')+' .brand-cat')
+                    box = logo.bounding_box()
+                    clip = {'x':box['x']-6,'y':box['y'],'width':box['width']+18,'height':box['height']}
+                    timeline = page.locator('.svg-definitions')
+                    timeline.evaluate('(e)=>{e.pauseAnimations();e.setCurrentTime(0)}')
+                    still = Image.open(BytesIO(page.screenshot(clip=clip))).convert('RGB')
+                    right_edge = (int((6+box['width']+1)*2),0,still.width,still.height)
+                    # The previous screenshot test cropped to the logo box, hiding
+                    # duplicate fragments just OUTSIDE the source image on dark UI.
+                    changed = False
+                    for phase in [1.1,2.4,3.51,3.8,5.2,6.5]:
+                        timeline.evaluate('(e,t)=>e.setCurrentTime(t)',phase)
+                        frame = Image.open(BytesIO(page.screenshot(clip=clip))).convert('RGB')
+                        changed |= ImageChops.difference(still,frame).getbbox() is not None
+                        difference = ImageChops.difference(still.crop(right_edge),frame.crop(right_edge))
+                        self.assertFalse(any(max(pixel)>12 for pixel in difference.get_flattened_data()),
+                                         f'{theme} {width} phase {phase}: displaced right-edge fragments')
+                    self.assertTrue(changed, 'Animation must remain visible')
+                    page.emulate_media(reduced_motion='reduce')
+                    page.wait_for_function('[...document.querySelectorAll("feDisplacementMap")].every(e=>e.scale.animVal===0)')
+                    reduced = Image.open(BytesIO(page.screenshot(clip=clip))).convert('RGB')
+                    self.assertIsNone(ImageChops.difference(still,reduced).getbbox())
+                    context.close()
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)
