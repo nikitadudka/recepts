@@ -1,0 +1,330 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1660" height="2050" viewBox="0 0 1660 2050" role="img" aria-labelledby="title desc">
+<title id="title">A06.1 v2 — приветствие с большим баннером, затем каталог — Halloween</title>
+<desc id="desc">Четыре ширины: 320, 375, 390 и 430 CSS px. Полное приветствие с добавлением и существующим большим баннером перед каталогом. На коротком экране приветствие выше viewport; обычная прокрутка без snap. Пунктир не обрезает содержимое. Оригинальные иллюстрации подключены ссылками, новые assets не создавались. Данные карточки вымышлены.</desc>
+<style>@font-face{font-family:'Golos Text';src:url('https://raw.githubusercontent.com/nikitadudka/recepts/7a080a615afed90820d0122e38ee52626143f4f6/assets/golostext-GolosText%5Bwght%5D.ttf') format('truetype')}@font-face{font-family:'Lora Brand';src:url('https://raw.githubusercontent.com/nikitadudka/recepts/7a080a615afed90820d0122e38ee52626143f4f6/assets/lora-Lora-Italic%5Bwght%5D.ttf') format('truetype');font-style:italic}text{font-family:'Golos Text',Arial,sans-serif}.serif{font-family:Georgia,serif}.bold{font-weight:700}.brand-word{font-family:'Lora Brand',Georgia,serif;font-style:italic;font-weight:600}</style>
+<rect x="0" y="0" width="1660" height="2050" rx="0" fill="#e7e7e2" stroke="none"/>
+<text x="20" y="36" font-size="24" fill="#2f4235" >Крошка · A06.1 · v2 · Тыквенная полночь</text>
+<text x="20" y="64" font-size="16" fill="#2f4235" >Приветствие → добавление → большой баннер → каталог. Один документ с обычной прокруткой.</text>
+<text x="20" y="88" font-size="14" fill="#2f4235" >Пунктир = граница начального viewport; контент не обрезается. Иллюстрации подключены из текущего репозитория.</text>
+<text x="20" y="119" font-size="16" fill="#2f4235" class="bold">320 × 740 · вступление 844 px</text>
+<g transform="translate(20 138)">
+<rect x="0" y="0" width="320" height="1780" rx="12" fill="#211a24" stroke="#b99bac"/>
+<rect x="16" y="8" width="130" height="106" rx="8" fill="#3e2d39" stroke="none"/>
+<text x="81" y="30" font-size="11" fill="#d2bfce" text-anchor="middle">исходная кошка</text>
+<svg x="16" y="8" width="130" height="106" viewBox="0 0 1536 1024" overflow="visible" aria-label="Существующий логотип Крошка">
+<rect x="180" y="640" width="1180" height="275" rx="48" fill="#3d2936" stroke="#b27d50" stroke-width="3"/>
+<text x="255" y="820" textLength="1015" lengthAdjust="spacingAndGlyphs" class="brand-word" font-size="265" fill="#f4d2a5">крошка.</text>
+<image href="https://raw.githubusercontent.com/nikitadudka/recepts/7a080a615afed90820d0122e38ee52626143f4f6/assets/family-cat-cozy.png" width="1536" height="1024"/>
+</svg>
+<rect x="192" y="40" width="44" height="44" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<path d="M221 51a11 11 0 1 0 6 20a12 12 0 0 1-6-20" fill="none" stroke="#f5ebdb" stroke-width="1.7"/>
+<rect x="244" y="40" width="60" height="44" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<text x="274" y="68" font-size="14" fill="#f5ebdb" text-anchor="middle">Ещё</text>
+<text x="16" y="152" font-size="11" fill="#d2bfce" letter-spacing="1">СОБИРАЙТЕ. ГОТОВЬТЕ.</text>
+<text x="16" y="190" font-size="32" fill="#f5ebdb" class="serif">Ваша маленькая</text>
+<text x="16" y="226" font-size="32" fill="#f5ebdb" class="serif">кулинарная книга</text>
+<text x="16" y="268" font-size="16" fill="#d2bfce" >Любимые рецепты больше</text>
+<text x="16" y="292" font-size="16" fill="#d2bfce" >не потеряются в переписках.</text>
+<rect x="16" y="312" width="288" height="44" rx="8" fill="#e4ad69" stroke="#e4ad69"/>
+<text x="160" y="340" font-size="16" fill="#2b2030" text-anchor="middle">+ Добавить рецепт</text>
+<rect x="16" y="372" width="288" height="448" rx="14" fill="#281c26" stroke="#795039"/>
+<text x="32" y="394" font-size="11" fill="#d2bfce" letter-spacing=".5">ТЫКВЫ, ПРЯНОСТИ</text>
+<text x="32" y="410" font-size="11" fill="#d2bfce" letter-spacing=".5">И НЕМНОГО МАГИИ</text>
+<text x="32" y="450" font-size="32" fill="#f5ebdb" class="serif">Сварим немного</text>
+<text x="32" y="486" font-size="32" fill="#e4ad73" class="serif" font-style="italic">волшебства?</text>
+<text x="32" y="522" font-size="16" fill="#d2bfce" >Пусть за окном темнеет.</text>
+<text x="32" y="546" font-size="16" fill="#d2bfce" >На нашей кухне всегда тепло.</text>
+<rect x="28" y="578" width="264" height="44" rx="6" fill="none" stroke="none"/>
+<text x="32" y="606" font-size="16" fill="#f0c58f" >Открыть книгу заклинаний →</text>
+<rect x="32" y="632" width="256" height="172" rx="9" fill="#3e2d39" stroke="none"/>
+<text x="160" y="702" font-size="13" fill="#d2bfce" text-anchor="middle">существующая сцена</text>
+<text x="160" y="725" font-size="12" fill="#d2bfce" text-anchor="middle">halloween-hero.png</text>
+<image href="https://raw.githubusercontent.com/nikitadudka/recepts/7a080a615afed90820d0122e38ee52626143f4f6/assets/halloween-hero.png" x="32" y="632" width="256" height="172" preserveAspectRatio="xMidYMid meet"/>
+<path d="M0 740H320" stroke="#466da6" stroke-width="1.5" stroke-dasharray="6 5" opacity=".7"/>
+<path d="M16 844H304" stroke="#b99bac" stroke-width="1"/>
+<rect x="16" y="860" width="83.6923076923077" height="52" rx="8" fill="#3e2d39" stroke="#b99bac"/>
+<text x="57.84615384615385" y="882" font-size="14" fill="#f5ebdb" text-anchor="middle">Книга</text>
+<text x="57.84615384615385" y="901" font-size="12" fill="#d2bfce" text-anchor="middle">8</text>
+<rect x="107.6923076923077" y="860" width="104.61538461538461" height="52" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<text x="160" y="882" font-size="14" fill="#f5ebdb" text-anchor="middle">Избранное</text>
+<text x="160" y="901" font-size="12" fill="#d2bfce" text-anchor="middle">2</text>
+<rect x="220.30769230769232" y="860" width="83.6923076923077" height="52" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<text x="262.1538461538462" y="882" font-size="14" fill="#f5ebdb" text-anchor="middle">На пробу</text>
+<text x="262.1538461538462" y="901" font-size="12" fill="#d2bfce" text-anchor="middle">0</text>
+<text x="16" y="950" font-size="26" fill="#f5ebdb" class="serif">Все рецепты</text>
+<text x="16" y="986" font-size="14" fill="#d2bfce" >Поиск в книге</text>
+<rect x="16" y="994" width="288" height="48" rx="9" fill="#2c222f" stroke="#b99bac"/>
+<text x="30" y="1024" font-size="16" fill="#d2bfce" >Название или ингредиенты</text>
+<rect x="16" y="1054" width="288" height="44" rx="9" fill="#2c222f" stroke="#b99bac"/>
+<text x="30" y="1082" font-size="16" fill="#f5ebdb" >Категории и фильтры</text>
+<text x="286" y="1082" font-size="18" fill="#f5ebdb" text-anchor="middle">⌄</text>
+<rect x="16" y="1110" width="184" height="44" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<text x="28" y="1138" font-size="14" fill="#f5ebdb" >Сначала новые</text>
+<text x="181" y="1138" font-size="16" fill="#f5ebdb" >⌄</text>
+<rect x="208" y="1110" width="44" height="44" rx="8" fill="#3e2d39" stroke="#b99bac"/>
+<rect x="260" y="1110" width="44" height="44" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<rect x="219" y="1122" width="7" height="7" rx="1" fill="#f5ebdb" stroke="none"/>
+<rect x="229" y="1122" width="7" height="7" rx="1" fill="#f5ebdb" stroke="none"/>
+<rect x="219" y="1132" width="7" height="7" rx="1" fill="#f5ebdb" stroke="none"/>
+<rect x="229" y="1132" width="7" height="7" rx="1" fill="#f5ebdb" stroke="none"/>
+<path d="M271 1124h22" stroke="#f5ebdb" stroke-width="2"/>
+<path d="M271 1132h22" stroke="#f5ebdb" stroke-width="2"/>
+<path d="M271 1140h22" stroke="#f5ebdb" stroke-width="2"/>
+<text x="16" y="1182" font-size="14" fill="#d2bfce" >Связь с книгой установлена</text>
+<rect x="16" y="1202" width="288" height="372" rx="12" fill="#2c222f" stroke="#b99bac"/>
+<rect x="17" y="1203" width="286" height="162" rx="10" fill="#49323b" stroke="none"/>
+<ellipse cx="160" cy="1283" rx="124" ry="48.6" fill="#3e2d39" stroke="#b99bac" stroke-width="1.5"/>
+<text x="160" y="1288" font-size="13" fill="#d2bfce" text-anchor="middle">иллюстрация блюда</text>
+<rect x="252" y="1214" width="44" height="44" rx="22" fill="#2c222f" stroke="#b99bac"/>
+<text x="274" y="1244" font-size="28" fill="#f5ebdb" text-anchor="middle">♡</text>
+<text x="32" y="1400" font-size="20" fill="#f5ebdb" class="serif">Суп с чечевицей</text>
+<text x="32" y="1426" font-size="20" fill="#f5ebdb" class="serif">и печёной морковью</text>
+<text x="32" y="1454" font-size="14" fill="#d2bfce" >Чечевица · морковь · лук</text>
+<text x="32" y="1482" font-size="14" fill="#d2bfce" >Обед · Без мяса · Варить</text>
+<text x="32" y="1510" font-size="14" fill="#f5ebdb" >30 мин</text>
+<text x="32" y="1538" font-size="14" fill="#d2bfce" >Б 5 · Ж 2 · У 12 / на 100 г</text>
+</g>
+<text x="20" y="1950" font-size="13" fill="#2f4235" >Каталог после вступления: y=844</text>
+<text x="20" y="1974" font-size="13" fill="#2f4235" >Первая карточка: y=1202</text>
+<text x="364" y="119" font-size="16" fill="#2f4235" class="bold">375 × 812 · вступление 844 px</text>
+<g transform="translate(364 138)">
+<rect x="0" y="0" width="375" height="1780" rx="12" fill="#211a24" stroke="#b99bac"/>
+<rect x="16" y="8" width="151" height="106" rx="8" fill="#3e2d39" stroke="none"/>
+<text x="91.5" y="30" font-size="11" fill="#d2bfce" text-anchor="middle">исходная кошка</text>
+<svg x="16" y="8" width="151" height="106" viewBox="0 0 1536 1024" overflow="visible" aria-label="Существующий логотип Крошка">
+<rect x="180" y="640" width="1180" height="275" rx="48" fill="#3d2936" stroke="#b27d50" stroke-width="3"/>
+<text x="255" y="820" textLength="1015" lengthAdjust="spacingAndGlyphs" font-family="Georgia,serif" font-style="italic" font-size="265" fill="#f4d2a5">крошка.</text>
+<image href="https://raw.githubusercontent.com/nikitadudka/recepts/7a080a615afed90820d0122e38ee52626143f4f6/assets/family-cat-cozy.png" width="1536" height="1024"/>
+</svg>
+<rect x="247" y="40" width="44" height="44" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<path d="M276 51a11 11 0 1 0 6 20a12 12 0 0 1-6-20" fill="none" stroke="#f5ebdb" stroke-width="1.7"/>
+<rect x="299" y="40" width="60" height="44" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<text x="329" y="68" font-size="14" fill="#f5ebdb" text-anchor="middle">Ещё</text>
+<text x="16" y="152" font-size="11" fill="#d2bfce" letter-spacing="1">СОБИРАЙТЕ. ГОТОВЬТЕ.</text>
+<text x="16" y="190" font-size="32" fill="#f5ebdb" class="serif">Ваша маленькая</text>
+<text x="16" y="226" font-size="32" fill="#f5ebdb" class="serif">кулинарная книга</text>
+<text x="16" y="268" font-size="16" fill="#d2bfce" >Любимые рецепты больше</text>
+<text x="16" y="292" font-size="16" fill="#d2bfce" >не потеряются в переписках.</text>
+<rect x="16" y="312" width="343" height="44" rx="8" fill="#e4ad69" stroke="#e4ad69"/>
+<text x="187.5" y="340" font-size="16" fill="#2b2030" text-anchor="middle">+ Добавить рецепт</text>
+<rect x="16" y="372" width="343" height="448" rx="14" fill="#281c26" stroke="#795039"/>
+<text x="32" y="394" font-size="11" fill="#d2bfce" letter-spacing=".5">ТЫКВЫ, ПРЯНОСТИ</text>
+<text x="32" y="410" font-size="11" fill="#d2bfce" letter-spacing=".5">И НЕМНОГО МАГИИ</text>
+<text x="32" y="450" font-size="32" fill="#f5ebdb" class="serif">Сварим немного</text>
+<text x="32" y="486" font-size="32" fill="#e4ad73" class="serif" font-style="italic">волшебства?</text>
+<text x="32" y="522" font-size="16" fill="#d2bfce" >Пусть за окном темнеет.</text>
+<text x="32" y="546" font-size="16" fill="#d2bfce" >На нашей кухне всегда тепло.</text>
+<rect x="28" y="578" width="319" height="44" rx="6" fill="none" stroke="none"/>
+<text x="32" y="606" font-size="16" fill="#f0c58f" >Открыть книгу заклинаний →</text>
+<rect x="32" y="632" width="311" height="172" rx="9" fill="#3e2d39" stroke="none"/>
+<text x="187.5" y="702" font-size="13" fill="#d2bfce" text-anchor="middle">существующая сцена</text>
+<text x="187.5" y="725" font-size="12" fill="#d2bfce" text-anchor="middle">halloween-hero.png</text>
+<image href="https://raw.githubusercontent.com/nikitadudka/recepts/7a080a615afed90820d0122e38ee52626143f4f6/assets/halloween-hero.png" x="32" y="632" width="311" height="172" preserveAspectRatio="xMidYMid meet"/>
+<path d="M0 812H375" stroke="#466da6" stroke-width="1.5" stroke-dasharray="6 5" opacity=".7"/>
+<path d="M16 844H359" stroke="#b99bac" stroke-width="1"/>
+<rect x="16" y="860" width="100.61538461538461" height="52" rx="8" fill="#3e2d39" stroke="#b99bac"/>
+<text x="66.3076923076923" y="882" font-size="14" fill="#f5ebdb" text-anchor="middle">Книга</text>
+<text x="66.3076923076923" y="901" font-size="12" fill="#d2bfce" text-anchor="middle">8</text>
+<rect x="124.61538461538461" y="860" width="125.76923076923077" height="52" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<text x="187.5" y="882" font-size="14" fill="#f5ebdb" text-anchor="middle">Избранное</text>
+<text x="187.5" y="901" font-size="12" fill="#d2bfce" text-anchor="middle">2</text>
+<rect x="258.38461538461536" y="860" width="100.61538461538461" height="52" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<text x="308.6923076923077" y="882" font-size="14" fill="#f5ebdb" text-anchor="middle">На пробу</text>
+<text x="308.6923076923077" y="901" font-size="12" fill="#d2bfce" text-anchor="middle">0</text>
+<text x="16" y="950" font-size="26" fill="#f5ebdb" class="serif">Все рецепты</text>
+<text x="16" y="986" font-size="14" fill="#d2bfce" >Поиск в книге</text>
+<rect x="16" y="994" width="343" height="48" rx="9" fill="#2c222f" stroke="#b99bac"/>
+<text x="30" y="1024" font-size="16" fill="#d2bfce" >Название или ингредиенты</text>
+<rect x="16" y="1054" width="343" height="44" rx="9" fill="#2c222f" stroke="#b99bac"/>
+<text x="30" y="1082" font-size="16" fill="#f5ebdb" >Категории и фильтры</text>
+<text x="341" y="1082" font-size="18" fill="#f5ebdb" text-anchor="middle">⌄</text>
+<rect x="16" y="1110" width="239" height="44" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<text x="28" y="1138" font-size="14" fill="#f5ebdb" >Сначала новые</text>
+<text x="236" y="1138" font-size="16" fill="#f5ebdb" >⌄</text>
+<rect x="263" y="1110" width="44" height="44" rx="8" fill="#3e2d39" stroke="#b99bac"/>
+<rect x="315" y="1110" width="44" height="44" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<rect x="274" y="1122" width="7" height="7" rx="1" fill="#f5ebdb" stroke="none"/>
+<rect x="284" y="1122" width="7" height="7" rx="1" fill="#f5ebdb" stroke="none"/>
+<rect x="274" y="1132" width="7" height="7" rx="1" fill="#f5ebdb" stroke="none"/>
+<rect x="284" y="1132" width="7" height="7" rx="1" fill="#f5ebdb" stroke="none"/>
+<path d="M326 1124h22" stroke="#f5ebdb" stroke-width="2"/>
+<path d="M326 1132h22" stroke="#f5ebdb" stroke-width="2"/>
+<path d="M326 1140h22" stroke="#f5ebdb" stroke-width="2"/>
+<text x="16" y="1182" font-size="14" fill="#d2bfce" >Связь с книгой установлена</text>
+<rect x="16" y="1202" width="343" height="402.9375" rx="12" fill="#2c222f" stroke="#b99bac"/>
+<rect x="17" y="1203" width="341" height="192.9375" rx="10" fill="#49323b" stroke="none"/>
+<ellipse cx="187.5" cy="1298.46875" rx="151.5" ry="57.881249999999994" fill="#3e2d39" stroke="#b99bac" stroke-width="1.5"/>
+<text x="187.5" y="1303.46875" font-size="13" fill="#d2bfce" text-anchor="middle">иллюстрация блюда</text>
+<rect x="307" y="1214" width="44" height="44" rx="22" fill="#2c222f" stroke="#b99bac"/>
+<text x="329" y="1244" font-size="28" fill="#f5ebdb" text-anchor="middle">♡</text>
+<text x="32" y="1430.9375" font-size="20" fill="#f5ebdb" class="serif">Суп с чечевицей</text>
+<text x="32" y="1456.9375" font-size="20" fill="#f5ebdb" class="serif">и печёной морковью</text>
+<text x="32" y="1484.9375" font-size="14" fill="#d2bfce" >Чечевица · морковь · лук</text>
+<text x="32" y="1512.9375" font-size="14" fill="#d2bfce" >Обед · Без мяса · Варить</text>
+<text x="32" y="1540.9375" font-size="14" fill="#f5ebdb" >30 мин</text>
+<text x="32" y="1568.9375" font-size="14" fill="#d2bfce" >Б 5 · Ж 2 · У 12 / на 100 г</text>
+</g>
+<text x="364" y="1950" font-size="13" fill="#2f4235" >Каталог после вступления: y=844</text>
+<text x="364" y="1974" font-size="13" fill="#2f4235" >Первая карточка: y=1202</text>
+<text x="763" y="119" font-size="16" fill="#2f4235" class="bold">390 × 844 · вступление 844 px</text>
+<g transform="translate(763 138)">
+<rect x="0" y="0" width="390" height="1780" rx="12" fill="#211a24" stroke="#b99bac"/>
+<rect x="16" y="8" width="151" height="106" rx="8" fill="#3e2d39" stroke="none"/>
+<text x="91.5" y="30" font-size="11" fill="#d2bfce" text-anchor="middle">исходная кошка</text>
+<svg x="16" y="8" width="151" height="106" viewBox="0 0 1536 1024" overflow="visible" aria-label="Существующий логотип Крошка">
+<rect x="180" y="640" width="1180" height="275" rx="48" fill="#3d2936" stroke="#b27d50" stroke-width="3"/>
+<text x="255" y="820" textLength="1015" lengthAdjust="spacingAndGlyphs" font-family="Georgia,serif" font-style="italic" font-size="265" fill="#f4d2a5">крошка.</text>
+<image href="https://raw.githubusercontent.com/nikitadudka/recepts/7a080a615afed90820d0122e38ee52626143f4f6/assets/family-cat-cozy.png" width="1536" height="1024"/>
+</svg>
+<rect x="262" y="40" width="44" height="44" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<path d="M291 51a11 11 0 1 0 6 20a12 12 0 0 1-6-20" fill="none" stroke="#f5ebdb" stroke-width="1.7"/>
+<rect x="314" y="40" width="60" height="44" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<text x="344" y="68" font-size="14" fill="#f5ebdb" text-anchor="middle">Ещё</text>
+<text x="16" y="152" font-size="11" fill="#d2bfce" letter-spacing="1">СОБИРАЙТЕ. ГОТОВЬТЕ.</text>
+<text x="16" y="190" font-size="32" fill="#f5ebdb" class="serif">Ваша маленькая</text>
+<text x="16" y="226" font-size="32" fill="#f5ebdb" class="serif">кулинарная книга</text>
+<text x="16" y="268" font-size="16" fill="#d2bfce" >Любимые рецепты больше</text>
+<text x="16" y="292" font-size="16" fill="#d2bfce" >не потеряются в переписках.</text>
+<rect x="16" y="312" width="358" height="44" rx="8" fill="#e4ad69" stroke="#e4ad69"/>
+<text x="195" y="340" font-size="16" fill="#2b2030" text-anchor="middle">+ Добавить рецепт</text>
+<rect x="16" y="372" width="358" height="448" rx="14" fill="#281c26" stroke="#795039"/>
+<text x="32" y="394" font-size="11" fill="#d2bfce" letter-spacing=".5">ТЫКВЫ, ПРЯНОСТИ</text>
+<text x="32" y="410" font-size="11" fill="#d2bfce" letter-spacing=".5">И НЕМНОГО МАГИИ</text>
+<text x="32" y="450" font-size="32" fill="#f5ebdb" class="serif">Сварим немного</text>
+<text x="32" y="486" font-size="32" fill="#e4ad73" class="serif" font-style="italic">волшебства?</text>
+<text x="32" y="522" font-size="16" fill="#d2bfce" >Пусть за окном темнеет.</text>
+<text x="32" y="546" font-size="16" fill="#d2bfce" >На нашей кухне всегда тепло.</text>
+<rect x="28" y="578" width="334" height="44" rx="6" fill="none" stroke="none"/>
+<text x="32" y="606" font-size="16" fill="#f0c58f" >Открыть книгу заклинаний →</text>
+<rect x="32" y="632" width="326" height="172" rx="9" fill="#3e2d39" stroke="none"/>
+<text x="195" y="702" font-size="13" fill="#d2bfce" text-anchor="middle">существующая сцена</text>
+<text x="195" y="725" font-size="12" fill="#d2bfce" text-anchor="middle">halloween-hero.png</text>
+<image href="https://raw.githubusercontent.com/nikitadudka/recepts/7a080a615afed90820d0122e38ee52626143f4f6/assets/halloween-hero.png" x="32" y="632" width="326" height="172" preserveAspectRatio="xMidYMid meet"/>
+<path d="M0 844H390" stroke="#466da6" stroke-width="1.5" stroke-dasharray="6 5" opacity=".7"/>
+<path d="M16 844H374" stroke="#b99bac" stroke-width="1"/>
+<rect x="16" y="860" width="105.23076923076923" height="52" rx="8" fill="#3e2d39" stroke="#b99bac"/>
+<text x="68.61538461538461" y="882" font-size="14" fill="#f5ebdb" text-anchor="middle">Книга</text>
+<text x="68.61538461538461" y="901" font-size="12" fill="#d2bfce" text-anchor="middle">8</text>
+<rect x="129.23076923076923" y="860" width="131.53846153846155" height="52" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<text x="195" y="882" font-size="14" fill="#f5ebdb" text-anchor="middle">Избранное</text>
+<text x="195" y="901" font-size="12" fill="#d2bfce" text-anchor="middle">2</text>
+<rect x="268.7692307692308" y="860" width="105.23076923076923" height="52" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<text x="321.38461538461536" y="882" font-size="14" fill="#f5ebdb" text-anchor="middle">На пробу</text>
+<text x="321.38461538461536" y="901" font-size="12" fill="#d2bfce" text-anchor="middle">0</text>
+<text x="16" y="950" font-size="26" fill="#f5ebdb" class="serif">Все рецепты</text>
+<text x="16" y="986" font-size="14" fill="#d2bfce" >Поиск в книге</text>
+<rect x="16" y="994" width="358" height="48" rx="9" fill="#2c222f" stroke="#b99bac"/>
+<text x="30" y="1024" font-size="16" fill="#d2bfce" >Название или ингредиенты</text>
+<rect x="16" y="1054" width="358" height="44" rx="9" fill="#2c222f" stroke="#b99bac"/>
+<text x="30" y="1082" font-size="16" fill="#f5ebdb" >Категории и фильтры</text>
+<text x="356" y="1082" font-size="18" fill="#f5ebdb" text-anchor="middle">⌄</text>
+<rect x="16" y="1110" width="254" height="44" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<text x="28" y="1138" font-size="14" fill="#f5ebdb" >Сначала новые</text>
+<text x="251" y="1138" font-size="16" fill="#f5ebdb" >⌄</text>
+<rect x="278" y="1110" width="44" height="44" rx="8" fill="#3e2d39" stroke="#b99bac"/>
+<rect x="330" y="1110" width="44" height="44" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<rect x="289" y="1122" width="7" height="7" rx="1" fill="#f5ebdb" stroke="none"/>
+<rect x="299" y="1122" width="7" height="7" rx="1" fill="#f5ebdb" stroke="none"/>
+<rect x="289" y="1132" width="7" height="7" rx="1" fill="#f5ebdb" stroke="none"/>
+<rect x="299" y="1132" width="7" height="7" rx="1" fill="#f5ebdb" stroke="none"/>
+<path d="M341 1124h22" stroke="#f5ebdb" stroke-width="2"/>
+<path d="M341 1132h22" stroke="#f5ebdb" stroke-width="2"/>
+<path d="M341 1140h22" stroke="#f5ebdb" stroke-width="2"/>
+<text x="16" y="1182" font-size="14" fill="#d2bfce" >Связь с книгой установлена</text>
+<rect x="16" y="1202" width="358" height="411.375" rx="12" fill="#2c222f" stroke="#b99bac"/>
+<rect x="17" y="1203" width="356" height="201.375" rx="10" fill="#49323b" stroke="none"/>
+<ellipse cx="195" cy="1302.6875" rx="159" ry="60.412499999999994" fill="#3e2d39" stroke="#b99bac" stroke-width="1.5"/>
+<text x="195" y="1307.6875" font-size="13" fill="#d2bfce" text-anchor="middle">иллюстрация блюда</text>
+<rect x="322" y="1214" width="44" height="44" rx="22" fill="#2c222f" stroke="#b99bac"/>
+<text x="344" y="1244" font-size="28" fill="#f5ebdb" text-anchor="middle">♡</text>
+<text x="32" y="1439.375" font-size="20" fill="#f5ebdb" class="serif">Суп с чечевицей</text>
+<text x="32" y="1465.375" font-size="20" fill="#f5ebdb" class="serif">и печёной морковью</text>
+<text x="32" y="1493.375" font-size="14" fill="#d2bfce" >Чечевица · морковь · лук</text>
+<text x="32" y="1521.375" font-size="14" fill="#d2bfce" >Обед · Без мяса · Варить</text>
+<text x="32" y="1549.375" font-size="14" fill="#f5ebdb" >30 мин</text>
+<text x="32" y="1577.375" font-size="14" fill="#d2bfce" >Б 5 · Ж 2 · У 12 / на 100 г</text>
+</g>
+<text x="763" y="1950" font-size="13" fill="#2f4235" >Каталог после вступления: y=844</text>
+<text x="763" y="1974" font-size="13" fill="#2f4235" >Первая карточка: y=1202</text>
+<text x="1177" y="119" font-size="16" fill="#2f4235" class="bold">430 × 932 · вступление 932 px</text>
+<g transform="translate(1177 138)">
+<rect x="0" y="0" width="430" height="1780" rx="12" fill="#211a24" stroke="#b99bac"/>
+<rect x="16" y="8" width="151" height="106" rx="8" fill="#3e2d39" stroke="none"/>
+<text x="91.5" y="30" font-size="11" fill="#d2bfce" text-anchor="middle">исходная кошка</text>
+<svg x="16" y="8" width="151" height="106" viewBox="0 0 1536 1024" overflow="visible" aria-label="Существующий логотип Крошка">
+<rect x="180" y="640" width="1180" height="275" rx="48" fill="#3d2936" stroke="#b27d50" stroke-width="3"/>
+<text x="255" y="820" textLength="1015" lengthAdjust="spacingAndGlyphs" font-family="Georgia,serif" font-style="italic" font-size="265" fill="#f4d2a5">крошка.</text>
+<image href="https://raw.githubusercontent.com/nikitadudka/recepts/7a080a615afed90820d0122e38ee52626143f4f6/assets/family-cat-cozy.png" width="1536" height="1024"/>
+</svg>
+<rect x="302" y="40" width="44" height="44" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<path d="M331 51a11 11 0 1 0 6 20a12 12 0 0 1-6-20" fill="none" stroke="#f5ebdb" stroke-width="1.7"/>
+<rect x="354" y="40" width="60" height="44" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<text x="384" y="68" font-size="14" fill="#f5ebdb" text-anchor="middle">Ещё</text>
+<text x="16" y="152" font-size="11" fill="#d2bfce" letter-spacing="1">СОБИРАЙТЕ. ГОТОВЬТЕ.</text>
+<text x="16" y="190" font-size="32" fill="#f5ebdb" class="serif">Ваша маленькая</text>
+<text x="16" y="226" font-size="32" fill="#f5ebdb" class="serif">кулинарная книга</text>
+<text x="16" y="268" font-size="16" fill="#d2bfce" >Любимые рецепты больше</text>
+<text x="16" y="292" font-size="16" fill="#d2bfce" >не потеряются в переписках.</text>
+<rect x="16" y="312" width="398" height="44" rx="8" fill="#e4ad69" stroke="#e4ad69"/>
+<text x="215" y="340" font-size="16" fill="#2b2030" text-anchor="middle">+ Добавить рецепт</text>
+<rect x="16" y="372" width="398" height="448" rx="14" fill="#281c26" stroke="#795039"/>
+<text x="32" y="394" font-size="11" fill="#d2bfce" letter-spacing=".5">ТЫКВЫ, ПРЯНОСТИ</text>
+<text x="32" y="410" font-size="11" fill="#d2bfce" letter-spacing=".5">И НЕМНОГО МАГИИ</text>
+<text x="32" y="450" font-size="32" fill="#f5ebdb" class="serif">Сварим немного</text>
+<text x="32" y="486" font-size="32" fill="#e4ad73" class="serif" font-style="italic">волшебства?</text>
+<text x="32" y="522" font-size="16" fill="#d2bfce" >Пусть за окном темнеет.</text>
+<text x="32" y="546" font-size="16" fill="#d2bfce" >На нашей кухне всегда тепло.</text>
+<rect x="28" y="578" width="374" height="44" rx="6" fill="none" stroke="none"/>
+<text x="32" y="606" font-size="16" fill="#f0c58f" >Открыть книгу заклинаний →</text>
+<rect x="32" y="632" width="366" height="172" rx="9" fill="#3e2d39" stroke="none"/>
+<text x="215" y="702" font-size="13" fill="#d2bfce" text-anchor="middle">существующая сцена</text>
+<text x="215" y="725" font-size="12" fill="#d2bfce" text-anchor="middle">halloween-hero.png</text>
+<image href="https://raw.githubusercontent.com/nikitadudka/recepts/7a080a615afed90820d0122e38ee52626143f4f6/assets/halloween-hero.png" x="32" y="632" width="366" height="172" preserveAspectRatio="xMidYMid meet"/>
+<path d="M0 932H430" stroke="#466da6" stroke-width="1.5" stroke-dasharray="6 5" opacity=".7"/>
+<path d="M16 932H414" stroke="#b99bac" stroke-width="1"/>
+<rect x="16" y="948" width="117.53846153846153" height="52" rx="8" fill="#3e2d39" stroke="#b99bac"/>
+<text x="74.76923076923077" y="970" font-size="14" fill="#f5ebdb" text-anchor="middle">Книга</text>
+<text x="74.76923076923077" y="989" font-size="12" fill="#d2bfce" text-anchor="middle">8</text>
+<rect x="141.53846153846155" y="948" width="146.92307692307693" height="52" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<text x="215" y="970" font-size="14" fill="#f5ebdb" text-anchor="middle">Избранное</text>
+<text x="215" y="989" font-size="12" fill="#d2bfce" text-anchor="middle">2</text>
+<rect x="296.46153846153845" y="948" width="117.53846153846153" height="52" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<text x="355.2307692307692" y="970" font-size="14" fill="#f5ebdb" text-anchor="middle">На пробу</text>
+<text x="355.2307692307692" y="989" font-size="12" fill="#d2bfce" text-anchor="middle">0</text>
+<text x="16" y="1038" font-size="26" fill="#f5ebdb" class="serif">Все рецепты</text>
+<text x="16" y="1074" font-size="14" fill="#d2bfce" >Поиск в книге</text>
+<rect x="16" y="1082" width="398" height="48" rx="9" fill="#2c222f" stroke="#b99bac"/>
+<text x="30" y="1112" font-size="16" fill="#d2bfce" >Название или ингредиенты</text>
+<rect x="16" y="1142" width="398" height="44" rx="9" fill="#2c222f" stroke="#b99bac"/>
+<text x="30" y="1170" font-size="16" fill="#f5ebdb" >Категории и фильтры</text>
+<text x="396" y="1170" font-size="18" fill="#f5ebdb" text-anchor="middle">⌄</text>
+<rect x="16" y="1198" width="294" height="44" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<text x="28" y="1226" font-size="14" fill="#f5ebdb" >Сначала новые</text>
+<text x="291" y="1226" font-size="16" fill="#f5ebdb" >⌄</text>
+<rect x="318" y="1198" width="44" height="44" rx="8" fill="#3e2d39" stroke="#b99bac"/>
+<rect x="370" y="1198" width="44" height="44" rx="8" fill="#2c222f" stroke="#b99bac"/>
+<rect x="329" y="1210" width="7" height="7" rx="1" fill="#f5ebdb" stroke="none"/>
+<rect x="339" y="1210" width="7" height="7" rx="1" fill="#f5ebdb" stroke="none"/>
+<rect x="329" y="1220" width="7" height="7" rx="1" fill="#f5ebdb" stroke="none"/>
+<rect x="339" y="1220" width="7" height="7" rx="1" fill="#f5ebdb" stroke="none"/>
+<path d="M381 1212h22" stroke="#f5ebdb" stroke-width="2"/>
+<path d="M381 1220h22" stroke="#f5ebdb" stroke-width="2"/>
+<path d="M381 1228h22" stroke="#f5ebdb" stroke-width="2"/>
+<text x="16" y="1270" font-size="14" fill="#d2bfce" >Связь с книгой установлена</text>
+<rect x="16" y="1290" width="398" height="433.875" rx="12" fill="#2c222f" stroke="#b99bac"/>
+<rect x="17" y="1291" width="396" height="223.875" rx="10" fill="#49323b" stroke="none"/>
+<ellipse cx="215" cy="1401.9375" rx="179" ry="67.1625" fill="#3e2d39" stroke="#b99bac" stroke-width="1.5"/>
+<text x="215" y="1406.9375" font-size="13" fill="#d2bfce" text-anchor="middle">иллюстрация блюда</text>
+<rect x="362" y="1302" width="44" height="44" rx="22" fill="#2c222f" stroke="#b99bac"/>
+<text x="384" y="1332" font-size="28" fill="#f5ebdb" text-anchor="middle">♡</text>
+<text x="32" y="1549.875" font-size="20" fill="#f5ebdb" class="serif">Суп с чечевицей</text>
+<text x="32" y="1575.875" font-size="20" fill="#f5ebdb" class="serif">и печёной морковью</text>
+<text x="32" y="1603.875" font-size="14" fill="#d2bfce" >Чечевица · морковь · лук</text>
+<text x="32" y="1631.875" font-size="14" fill="#d2bfce" >Обед · Без мяса · Варить</text>
+<text x="32" y="1659.875" font-size="14" fill="#f5ebdb" >30 мин</text>
+<text x="32" y="1687.875" font-size="14" fill="#d2bfce" >Б 5 · Ж 2 · У 12 / на 100 г</text>
+</g>
+<text x="1177" y="1950" font-size="13" fill="#2f4235" >Каталог после вступления: y=932</text>
+<text x="1177" y="1974" font-size="13" fill="#2f4235" >Первая карточка: y=1290</text>
+<text x="20" y="2013" font-size="14" fill="#2f4235" >Схема: целиком видны приветствие, большой баннер и первая карточка ниже. Не реализация; внешние изображения могут блокироваться просмотрщиком SVG.</text>
+</svg>
