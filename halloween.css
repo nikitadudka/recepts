@@ -70,7 +70,7 @@
 [data-theme=halloween] .moon-seal{position:absolute;right:26px;top:23px;width:61px;height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid #dba06b7a;border-radius:35px 35px 9px 9px;background:#281c2644;backdrop-filter:blur(8px);font:31px Georgia;color:#f1c394;box-shadow:0 0 0 4px #e4ad7310}
 [data-theme=halloween] .moon-seal small{font:7px 'Golos Text',sans-serif;letter-spacing:1px;margin-top:4px}
 [data-theme=halloween] .halloween-bats{position:absolute;right:115px;top:26px;width:150px;height:65px;fill:#d9ad75;stroke:none;opacity:.66}
-[data-theme=halloween] .scene-caption{position:absolute;right:26px;bottom:23px;font:italic 16px Georgia;color:#f1caa2;text-shadow:0 1px 10px #000}
+[data-theme=halloween] .scene-caption{position:absolute;right:26px;bottom:23px;font:italic 16px Georgia;color:var(--ink);text-shadow:0 1px 10px #000}
 [data-theme=halloween] .collection-heading h2{color:#f0e2d3}
 [data-theme=halloween] .collection-heading h2 span{color:#e4ba8d;background:#44303c}
 [data-theme=halloween] .collection-hint{color:#b296ab}
