@@ -10,7 +10,7 @@
 [data-theme=halloween] .empty-state p{color:#c8adbf}
 .image-placeholder{color:#8fa47d}
 [data-theme=halloween] .image-placeholder{background:linear-gradient(135deg,#48303e,#2f2434);color:#b99174}
-.source-note{font-size:10px;line-height:1.7;color:#65735e;padding-top:15px;border-top:1px solid var(--line);margin:22px 0 0;overflow-wrap:anywhere}
+.source-note{font-size:10px;line-height:1.7;color:var(--muted);padding-top:15px;border-top:1px solid var(--line);margin:22px 0 0;overflow-wrap:anywhere}
 .source-note a{color:var(--green);text-decoration:underline;text-underline-offset:3px}
 .method-options .method-option:last-child:nth-child(odd){grid-column:1/-1}
 .catalog-dialog{width:1060px;height:88dvh;max-height:940px;border-radius:17px}
@@ -31,9 +31,9 @@
 .catalog-recipe-heading{display:flex;align-items:center;gap:17px}
 .catalog-emblem{display:grid;place-items:center;width:63px;height:73px;border-radius:36px 36px 12px 12px;background:#e8efdf;border:1px solid #d3dec7;color:#78936a;flex-shrink:0}
 .catalog-emblem svg{width:29px;height:29px;stroke-width:1.2}
-.catalog-recipe-kind{font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:#8fa27c;margin:0 0 10px}
+.catalog-recipe-kind{font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
 .catalog-recipe h3{font:32px/1.2 var(--serif);letter-spacing:-.6px;color:var(--ink);margin:0;overflow-wrap:anywhere}
-.catalog-recipe-stats{display:flex;align-items:center;gap:13px 24px;flex-wrap:wrap;padding:21px 0;margin:0 0 18px;border-bottom:1px solid var(--line);font-size:11px;color:#839772}
+.catalog-recipe-stats{display:flex;align-items:center;gap:13px 24px;flex-wrap:wrap;padding:21px 0;margin:0 0 18px;border-bottom:1px solid var(--line);font-size:11px;color:var(--muted)}
 .catalog-recipe-stats>span{display:flex;align-items:center;gap:6px;line-height:1.7}
 .catalog-recipe-stats svg{width:15px;height:15px}
 .catalog-columns{display:grid;grid-template-columns:38% minmax(0,1fr);gap:36px}
@@ -94,7 +94,7 @@
 }
 @media(max-width:360px){.catalog-footer .button{font-size:10px;padding:0 10px}.catalog-heading h2{font-size:25px}.catalog-recipe h3{font-size:24px}}
 
-.catalog-intro,.catalog-summary,.catalog-recipe-note{color:#65735e}
+.catalog-intro,.catalog-summary,.catalog-recipe-note{color:var(--muted)}
 [data-theme=halloween] :is(.catalog-intro,.catalog-summary,.catalog-recipe-note,.source-note){color:#c0a8bb}
 .catalog-save-actions{display:flex;gap:10px;align-items:center}
 .trial-card-actions{display:flex;gap:8px;align-items:center;border-top:1px solid var(--line);padding:12px 15px;background:var(--mint)}
@@ -133,3 +133,6 @@
 :is(.catalog-drink-art,.drink-detail-photo)>.generated-food-photo{width:auto;height:100%;max-width:100%;aspect-ratio:var(--art-ratio);margin:0 auto}
 :is(.catalog-drink-art,.drink-detail-photo){background:radial-gradient(ellipse,#f1e9db,#e1d9ca)}
 [data-theme=halloween] :is(.catalog-drink-art,.drink-detail-photo){background:radial-gradient(ellipse,#63493e,#352637)}
+/* A05.2: catalog controls share the theme's meaningful edge token. */
+.catalog-kind-label select,.trial-delete{border-color:var(--control-line)}
+[data-theme=halloween] .catalog-kind-label select,[data-theme=halloween] .trial-delete{border-color:var(--control-line)}

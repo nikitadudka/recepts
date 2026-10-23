@@ -11,6 +11,7 @@ import unittest
 import urllib.error
 import urllib.request
 from playwright.sync_api import sync_playwright, expect
+from contrast import assert_text_contrast, measurements, artwork_measurements, ratio
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -1503,6 +1504,161 @@ class RecipeBookTests(unittest.TestCase):
         self.page.keyboard.press('Escape')
         expect(self.page.locator('[data-open=lentil-soup]')).to_be_focused()
         expect(self.page.locator('[data-id=lentil-soup] .card-title')).to_have_text('Суп A05.1 из другой сессии')
+
+    def test_61_contrast_themes_viewports_and_surfaces(self):
+        # All text, inputs/placeholders, essential icons/edges and pseudo labels
+        # use resolved styles, inheritance, opacity and gradient stop bounds.
+        for theme in ['classic', 'halloween']:
+            for width in [1440, 390]:
+                with self.subTest(theme=theme, width=width):
+                    self.page.set_viewport_size({'width': width, 'height': 1000})
+                    self.page.evaluate('(t)=>localStorage.setItem("kroshka-appearance",t)', theme)
+                    self.page.reload(wait_until='networkidle')
+                    self.page.locator('#filter-toggle').click()
+                    assert_text_contrast(self, self.page)
+                    for target in ['#add-recipe', '.chip.active', '.nav-item.active']:
+                        self.page.locator(target).first.hover()
+                        assert_text_contrast(self, self.page)
+                    self.page.locator('[data-quick=protein]').click()
+                    assert_text_contrast(self, self.page)
+                    self.page.locator('[data-quick=all]').click()
+                    self.page.locator('#list-view').click()
+                    assert_text_contrast(self, self.page)
+                    self.page.locator('#grid-view').click()
+                    for opener, root in [
+                        ('[data-open=lentil-soup]', '#recipe-dialog'),
+                        ('#add-recipe', '#editor-dialog'),
+                        ('#inspire', '#catalog-dialog'),
+                        ('#open-connection', '#connection-dialog'),
+                        ('.topbar .theme-toggle', '#theme-dialog')
+                    ]:
+                        self.page.locator(opener).click()
+                        if root == '#editor-dialog':
+                            self.page.locator('#nutrition-details summary').click()
+                            self.page.locator('.method-option').first.click()
+                            self.page.locator('#choose-image').hover()
+                        if root == '#catalog-dialog':
+                            expect(self.page.locator('#catalog-next')).to_be_enabled()
+                        assert_text_contrast(self, self.page, root)
+                        if root == '#editor-dialog':
+                            self.page.once('dialog', lambda d: d.accept())
+                        self.page.keyboard.press('Escape')
+
+    def test_62_contrast_keyboard_focus_and_photo_controls(self):
+        for theme in ['classic', 'halloween']:
+            for width in [1440, 390]:
+                with self.subTest(theme=theme, width=width):
+                    self.page.set_viewport_size({'width': width, 'height': 1000})
+                    self.page.evaluate('(t)=>localStorage.setItem("kroshka-appearance",t)', theme)
+                    self.page.reload(wait_until='networkidle')
+                    for target in ['#search', '#add-recipe', '[data-open=lentil-soup]', '[data-favorite=lentil-soup]', '.topbar .theme-toggle']:
+                        self.tab_to(target)
+                        assert_text_contrast(self, self.page)
+                        focused = self.page.locator(target)
+                        self.assertTrue(focused.evaluate('(e)=>e.matches(":focus-visible")'))
+                        # The outer card ring is on the unclipped parent.
+                        ring = focused.locator('..') if target.startswith('[data-open=') or target == '#search' else focused
+                        style = ring.evaluate('(e)=>{const s=getComputedStyle(e);return [s.outlineWidth,s.outlineOffset,s.outlineStyle]}')
+                        self.assertEqual(style, ['2px', '2px', 'solid'])
+                    self.page.locator('#add-recipe').click()
+                    for target in ['[name=title]', '.ingredient-name', '.step-text', '#choose-image', '#nutrition-details summary', '.method-option input']:
+                        self.tab_to(target)
+                        assert_text_contrast(self, self.page, '#editor-dialog')
+                    # Checkbox mark uses the native accent, checked AND unchecked.
+                    self.page.keyboard.press('Space')
+                    assert_text_contrast(self, self.page, '#editor-dialog')
+                    self.page.once('dialog', lambda d: d.accept())
+                    self.page.keyboard.press('Escape')
+
+    def test_63_contrast_auth_errors_save_conflict_status_and_trials(self):
+        for theme in ['classic', 'halloween']:
+            for width in [1440, 390]:
+                with self.subTest(theme=theme, width=width):
+                    self.page.set_viewport_size({'width': width, 'height': 1000})
+                    self.page.evaluate('(t)=>localStorage.setItem("kroshka-appearance",t)', theme)
+                    self.page.reload(wait_until='networkidle')
+                    snapshot = self.context.request.get(self.url + '/api/library').json()
+                    self.assertEqual(self.context.request.put(self.url + '/api/library', data={'revision':snapshot['revision'],'recipes':self.seeds}).status, 200)
+                    self.page.reload(wait_until='networkidle')
+                    form = self.fill_recipe('   ')
+                    form.locator('[type=submit]').click()
+                    expect(self.page.locator('#form-error')).not_to_be_empty()
+                    assert_text_contrast(self, self.page, '#editor-dialog')
+                    form.locator('[name=title]').fill('Контраст A05.2')
+                    # Hold the actual PUT to inspect disabled pending controls.
+                    pending = []
+                    def reject(route):
+                        if route.request.method == 'PUT':
+                            pending.append(route)
+                        else:
+                            route.continue_()
+                    self.page.route('**/api/library', reject)
+                    form.locator('[type=submit]').click()
+                    expect(self.page.locator('#save-recipe')).to_be_disabled()
+                    disabled_rows = measurements(self.page, '#editor-dialog')
+                    self.assertTrue(any(r['disabled'] for r in disabled_rows))
+                    assert_text_contrast(self, self.page, '#editor-dialog')
+                    self.assertEqual(len(pending), 1)
+                    pending[0].fulfill(status=503, content_type='application/json', body=json.dumps({'error':'Тестовая ошибка сохранения'}))
+                    expect(self.page.locator('#form-error')).to_have_text('Тестовая ошибка сохранения')
+                    assert_text_contrast(self, self.page, '#editor-dialog')
+                    self.page.unroute('**/api/library', reject)
+                    self.save(form)
+                    expect(self.page.locator('.toast.visible')).to_have_css('opacity', '1')
+                    assert_text_contrast(self, self.page)
+                    self.page.locator('[data-open=lentil-soup]').click()
+                    other = self.remote_context()
+                    revision = self.remote_update(other, lambda recipes: next(r for r in recipes if r['id']=='lentil-soup').update(title='Удалённая правка A05.2'))
+                    self.receive_revision(revision)
+                    expect(self.page.locator('#recipe-sync-notice')).to_be_visible()
+                    assert_text_contrast(self, self.page, '#recipe-dialog')
+                    self.page.locator('#recipe-sync-action').click()
+                    self.page.locator('[data-edit]').click()
+                    self.page.locator('[name=title]').fill('Локальная правка A05.2')
+                    revision = self.remote_update(other, lambda recipes: next(r for r in recipes if r['id']=='lentil-soup').update(title='Новая удалённая правка A05.2'))
+                    self.receive_revision(revision)
+                    self.page.locator('#save-recipe').click()
+                    expect(self.page.locator('#save-copy')).to_be_visible()
+                    assert_text_contrast(self, self.page, '#editor-dialog')
+                    self.page.once('dialog', lambda d: d.accept())
+                    self.page.keyboard.press('Escape')
+                    self.page.locator('[data-collection=trial]').first.click()
+                    assert_text_contrast(self, self.page)
+                    self.page.locator('#inspire').click()
+                    expect(self.page.locator('#catalog-save-trial')).to_be_enabled()
+                    self.page.locator('#catalog-save-trial').click()
+                    self.page.keyboard.press('Escape')
+                    assert_text_contrast(self, self.page)
+                    self.page.locator('#logout').click()
+                    expect(self.page.locator('#auth-screen')).to_be_visible()
+                    assert_text_contrast(self, self.page, '#auth-screen')
+                    self.page.locator('#family-password').fill('invalid-test-password')
+                    self.page.locator('#auth-form [type=submit]').click()
+                    expect(self.page.locator('#auth-error')).not_to_be_empty()
+                    assert_text_contrast(self, self.page, '#auth-screen')
+                    self.page.locator('#family-password').fill(self.password)
+                    self.page.locator('#auth-form [type=submit]').click()
+                    expect(self.page.locator('#auth-screen')).not_to_be_visible()
+
+    def test_64_contrast_rendered_hero_artwork_and_photo_focus(self):
+        self.page.emulate_media(reduced_motion='reduce')
+        for theme in ['classic', 'halloween']:
+            for width in [1440, 390]:
+                with self.subTest(theme=theme, width=width):
+                    self.page.set_viewport_size({'width':width,'height':1000})
+                    self.page.evaluate('(t)=>localStorage.setItem("kroshka-appearance",t)', theme)
+                    self.page.reload(wait_until='networkidle')
+                    rows = artwork_measurements(self.page, '.hero')
+                    self.assertGreater(len(rows), 3)
+                    self.assertEqual([r for r in rows if r['ratio'] < r['minimum']], [], str(rows))
+                    # Opaque icon/badge surfaces retain contrast on synthetic extremes,
+                    # without changing or relying on any real user's photograph.
+                    for photo in ['#000', '#fff']:
+                        self.page.locator('[data-id=lentil-soup] .card-image').evaluate('(e,c)=>{e.querySelectorAll("img,.food-photo").forEach(n=>n.remove());e.style.background=c}',photo)
+                        self.tab_to('[data-favorite=lentil-soup]')
+                        assert_text_contrast(self, self.page)
+                        button = self.page.locator('[data-favorite=lentil-soup]')
+                        self.assertNotEqual(button.evaluate('(e)=>getComputedStyle(e).boxShadow'), 'none')
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
