@@ -1767,5 +1767,108 @@ class RecipeBookTests(unittest.TestCase):
                     self.assertIsNone(ImageChops.difference(still,reduced).getbbox())
                     context.close()
 
+    def test_67_webkit_cat_css_motion_has_clean_edges_on_both_sides(self):
+        from io import BytesIO
+        from PIL import Image, ImageChops
+        agents = {
+            1440:'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15',
+            390:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Mobile/15E148 Safari/604.1',
+        }
+        for theme in ['classic', 'halloween']:
+            for width, agent in agents.items():
+                with self.subTest(theme=theme, width=width):
+                    # UA selects the fallback in Chromium; this is NOT Safari QA.
+                    context = self.browser.new_context(viewport={'width':width,'height':1000}, device_scale_factor=2, user_agent=agent)
+                    self.addCleanup(context.close)
+                    self.assertEqual(context.request.post(self.url+'/api/login', data={'password':self.password}).status, 200)
+                    page = context.new_page()
+                    page.on('pageerror', lambda error:self.errors.append(str(error)))
+                    page.add_init_script('localStorage.setItem("kroshka-appearance",'+json.dumps(theme)+')')
+                    page.goto(self.url, wait_until='networkidle')
+                    page.evaluate('document.fonts.ready')
+                    self.assertEqual(page.locator('html').get_attribute('data-cat-motion'), 'css')
+                    self.assertTrue(page.locator('.cat-mascot, .cat-mascot>g').evaluate_all('(groups)=>groups.every(g=>!g.hasAttribute("filter") && getComputedStyle(g).filter==="none")'))
+                    self.assertTrue(page.locator('feDisplacementMap').evaluate_all('(maps)=>maps.every(m=>m.scale.animVal===0)'))
+                    logo = page.locator(('.sidebar>.brand' if width>680 else '.mobile-brand')+' .brand-cat')
+                    mascot = logo.locator('.cat-mascot')
+                    mascot.evaluate('(e)=>{const a=e.getAnimations()[0];a.pause();a.currentTime=0}')
+                    box = logo.bounding_box()
+                    clip = {'x':box['x']-6,'y':box['y'],'width':box['width']+12,'height':box['height']}
+                    def shot():
+                        return Image.open(BytesIO(page.screenshot(clip=clip))).convert('RGB')
+                    still = shot()
+                    # Include both image boundaries and the surrounding background,
+                    # not just the logo bbox. CSS motion has no horizontal component.
+                    edges = {
+                        'left':(0,0,int((6+1)*2),still.height),
+                        'right':(int((6+box['width']-1)*2),0,still.width,still.height),
+                    }
+                    def assert_clean_edge(frame, side):
+                        diff = ImageChops.difference(still.crop(edges[side]),frame.crop(edges[side]))
+                        self.assertFalse(any(max(pixel)>12 for pixel in diff.get_flattened_data()),
+                                         f'{theme} {width}: unexpected {side}-edge strip')
+                    changed = False
+                    for phase in [1100,2400,3250,3800,5200,6500]:
+                        mascot.evaluate('(e,t)=>e.getAnimations()[0].currentTime=t',phase)
+                        frame = shot()
+                        changed |= ImageChops.difference(still,frame).getbbox() is not None
+                        for side in edges:
+                            assert_clean_edge(frame,side)
+                    self.assertTrue(changed, 'Safe CSS motion must remain visible')
+                    # Sensitivity controls render a white strip on EACH side;
+                    # prevent a mispositioned/empty crop silently passing the test.
+                    if theme=='halloween' and width==390:
+                        for side, x in [('left',-35),('right',1544)]:
+                            logo.evaluate('''(e,x)=>{const r=document.createElementNS(e.namespaceURI,'rect');
+                                r.id='test-edge-strip';r.setAttribute('x',x);r.setAttribute('y','80');
+                                r.setAttribute('width','24');r.setAttribute('height','700');r.setAttribute('fill','white');e.append(r)}''',x)
+                            with self.assertRaisesRegex(AssertionError, side+'-edge strip'):
+                                assert_clean_edge(shot(),side)
+                            page.locator('#test-edge-strip').evaluate('(e)=>e.remove()')
+                    page.emulate_media(reduced_motion='reduce')
+                    self.assertEqual(mascot.evaluate('(e)=>getComputedStyle(e).animationName'), 'none')
+                    self.assertEqual(mascot.evaluate('(e)=>getComputedStyle(e).transform'), 'none')
+                    self.assertIsNone(ImageChops.difference(still,shot()).getbbox())
+                    page.emulate_media(reduced_motion='no-preference')
+                    mascot.evaluate('(e)=>{const a=e.getAnimations()[0];a.pause();a.currentTime=3250}')
+                    self.assertIsNotNone(ImageChops.difference(still,shot()).getbbox())
+                    context.close()
+
+    def test_68_cat_engine_selection_first_paint_and_current_assets(self):
+        agents = [
+            ('Macintosh', 'Version/18.6 Safari/605.1.15', 'css'),
+            ('Macintosh', 'Chrome/140.0.0.0 Safari/537.36', 'smil'),
+            ('Macintosh', 'Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0', 'smil'),
+            ('iPhone', 'CriOS/140.0.0.0 Mobile/15E148 Safari/604.1', 'css'),
+            ('iPhone', 'FxiOS/140.0 Mobile/15E148 Safari/605.1.15', 'css'),
+            ('Macintosh', 'Version/18.6 Mobile/15E148 Safari/604.1', 'css'),
+        ]
+        for platform, product, mode in agents:
+            with self.subTest(platform=platform, product=product):
+                context = self.browser.new_context(user_agent=f'Mozilla/5.0 ({platform}) AppleWebKit/605.1.15 (KHTML, like Gecko) {product}')
+                self.addCleanup(context.close)
+                page = context.new_page()
+                # Hold the main app: the first-paint guard must work independently
+                # of login, API calls and the later removal of filter attributes.
+                page.route('**/app.js*', lambda route:route.fulfill(content_type='text/javascript',body='/* app held for first-paint check */'))
+                page.goto(self.url, wait_until='networkidle')
+                self.assertEqual(page.locator('html').get_attribute('data-cat-motion'), mode)
+                if mode=='css':
+                    self.assertTrue(page.locator('.cat-mascot, .cat-mascot>g').evaluate_all('(groups)=>groups.every(g=>g.hasAttribute("filter") && getComputedStyle(g).filter==="none")'))
+                    self.assertEqual(page.locator('.auth-brand .cat-mascot').evaluate('(e)=>getComputedStyle(e).animationName'), 'cat-breathe')
+                    self.assertTrue(page.locator('feDisplacementMap').evaluate_all('(maps)=>maps.every(m=>m.scale.animVal===0)'))
+                context.close()
+        # Query-versioned resources are served as current files, with revalidation.
+        for name in ['style.css','theme.js','app.js']:
+            with self.subTest(resource=name):
+                asset = self.page.locator(f'[href^="{name}"], [src^="{name}"]')
+                url = asset.get_attribute('href') or asset.get_attribute('src')
+                self.assertIn('?v=a052-cat-css-1', url)
+                response = self.context.request.get(self.url+'/'+url)
+                self.assertEqual(response.status, 200)
+                self.assertEqual(response.headers.get('cache-control'), 'no-cache')
+                self.assertEqual(response.body(), (ROOT/name).read_bytes())
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)

@@ -126,3 +126,11 @@ button.photo-drop{width:100%;padding:0;text-align:start}
 /* Selected view and mobile collection markers remain visible on pale surfaces. */
 .view-switch button.active{box-shadow:inset 0 0 0 1px var(--green)}
 .nav-item.active:after{background:var(--green)}
+
+/* No displacement filtering of transparent edges in Safari/iOS WebKit.
+   Safe before theme.js as well: unselected mode renders the static bitmap. */
+:root:not([data-cat-motion="smil"]) .cat-mascot,
+:root:not([data-cat-motion="smil"]) .cat-mascot>g{filter:none}
+:root[data-cat-motion="css"] .cat-mascot{animation:cat-breathe 6.5s ease-in-out infinite}
+@keyframes cat-breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@media(prefers-reduced-motion:reduce){:root[data-cat-motion="css"] .cat-mascot{animation:none;transform:none}}

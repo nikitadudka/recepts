@@ -525,9 +525,13 @@ $('#connection-links').addEventListener('click',async event=>{const button=event
 setInterval(async()=>{if(syncing||document.hidden||$('#app-shell').hidden)return;syncing=true;try{await writeQueue;await refreshLibrary();}catch{$('#connection-status').textContent='Нет связи с Mac';}finally{syncing=false;}},5000);
 window.addEventListener('online',()=>refreshLibrary().catch(()=>{}));
 const motionPreference=window.matchMedia('(prefers-reduced-motion: reduce)');
+const svgCatMotion=document.documentElement.dataset.catMotion==='smil';
+if(!svgCatMotion)$$('.cat-mascot, .cat-mascot>g').forEach(group=>group.removeAttribute('filter'));
 function updateCatMotion(){
   $$('.cat-motion-animation').forEach(animation=>{
-    try{if(motionPreference.matches){animation.endElement();animation.parentElement.setAttribute('scale','0');}else{animation.beginElement();}}catch{/* Static artwork remains usable if SVG animation is unsupported. */}
+    const play=svgCatMotion&&!motionPreference.matches;
+    if(!play)animation.parentElement.setAttribute('scale','0');
+    try{if(play)animation.beginElement();else animation.endElement();}catch{/* Static artwork remains usable if SVG animation is unsupported. */}
   });
 }
 motionPreference.addEventListener('change',updateCatMotion);updateCatMotion();

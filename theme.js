@@ -5,6 +5,11 @@
   let choice = 'auto';
   try { const saved = localStorage.getItem(key); if (choices.includes(saved)) choice = saved; } catch {}
   const root = document.documentElement;
+  // Select before the SVG is parsed/painted. Safari and iOS WebKit use the
+  // original bitmap without displacement filters (edge artifacts on devices).
+  const ua = navigator.userAgent;
+  const webkit = /AppleWebKit\//.test(ua) && !/(?:Chrome|Chromium|Edg|OPR|SamsungBrowser)\//.test(ua);
+  root.dataset.catMotion = webkit ? 'css' : 'smil';
   let originals;
   const seasonalCopy = {
     '.page-heading .eyebrow': 'ОСЕНЬ НА КУХНЕ · 20–31 ОКТЯБРЯ',
