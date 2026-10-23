@@ -11,6 +11,7 @@ import unittest
 import urllib.error
 import urllib.request
 from playwright.sync_api import sync_playwright, expect
+from contrast import assert_text_contrast, measurements, artwork_measurements, ratio
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -1503,6 +1504,371 @@ class RecipeBookTests(unittest.TestCase):
         self.page.keyboard.press('Escape')
         expect(self.page.locator('[data-open=lentil-soup]')).to_be_focused()
         expect(self.page.locator('[data-id=lentil-soup] .card-title')).to_have_text('Суп A05.1 из другой сессии')
+
+    def test_61_contrast_themes_viewports_and_surfaces(self):
+        # All text, inputs/placeholders, essential icons/edges and pseudo labels
+        # use resolved styles, inheritance, opacity and gradient stop bounds.
+        for theme in ['classic', 'halloween']:
+            for width in [1440, 390]:
+                with self.subTest(theme=theme, width=width):
+                    self.page.set_viewport_size({'width': width, 'height': 1000})
+                    self.page.evaluate('(t)=>localStorage.setItem("kroshka-appearance",t)', theme)
+                    self.page.reload(wait_until='networkidle')
+                    self.page.locator('#filter-toggle').click()
+                    assert_text_contrast(self, self.page)
+                    for target in ['#add-recipe', '.chip.active', '.nav-item.active']:
+                        self.page.locator(target).first.hover()
+                        assert_text_contrast(self, self.page)
+                    self.page.locator('[data-quick=protein]').click()
+                    assert_text_contrast(self, self.page)
+                    self.page.locator('[data-quick=all]').click()
+                    self.page.locator('#list-view').click()
+                    assert_text_contrast(self, self.page)
+                    self.page.locator('#grid-view').click()
+                    for opener, root in [
+                        ('[data-open=lentil-soup]', '#recipe-dialog'),
+                        ('#add-recipe', '#editor-dialog'),
+                        ('#inspire', '#catalog-dialog'),
+                        ('#open-connection', '#connection-dialog'),
+                        ('.topbar .theme-toggle', '#theme-dialog')
+                    ]:
+                        self.page.locator(opener).click()
+                        if root == '#editor-dialog':
+                            self.page.locator('#nutrition-details summary').click()
+                            self.page.locator('.method-option').first.click()
+                            self.page.locator('#choose-image').hover()
+                        if root == '#catalog-dialog':
+                            expect(self.page.locator('#catalog-next')).to_be_enabled()
+                        assert_text_contrast(self, self.page, root)
+                        if root == '#editor-dialog':
+                            self.page.once('dialog', lambda d: d.accept())
+                        self.page.keyboard.press('Escape')
+
+    def test_62_contrast_keyboard_focus_and_photo_controls(self):
+        for theme in ['classic', 'halloween']:
+            for width in [1440, 390]:
+                with self.subTest(theme=theme, width=width):
+                    self.page.set_viewport_size({'width': width, 'height': 1000})
+                    self.page.evaluate('(t)=>localStorage.setItem("kroshka-appearance",t)', theme)
+                    self.page.reload(wait_until='networkidle')
+                    for target in ['#search', '#add-recipe', '[data-open=lentil-soup]', '[data-favorite=lentil-soup]', '.topbar .theme-toggle']:
+                        self.tab_to(target)
+                        assert_text_contrast(self, self.page)
+                        focused = self.page.locator(target)
+                        self.assertTrue(focused.evaluate('(e)=>e.matches(":focus-visible")'))
+                        # The outer card ring is on the unclipped parent.
+                        ring = focused.locator('..') if target.startswith('[data-open=') or target == '#search' else focused
+                        style = ring.evaluate('(e)=>{const s=getComputedStyle(e);return [s.outlineWidth,s.outlineOffset,s.outlineStyle]}')
+                        self.assertEqual(style, ['2px', '2px', 'solid'])
+                    self.page.locator('#add-recipe').click()
+                    for target in ['[name=title]', '.ingredient-name', '.step-text', '#choose-image', '#nutrition-details summary', '.method-option input']:
+                        self.tab_to(target)
+                        assert_text_contrast(self, self.page, '#editor-dialog')
+                    # Checkbox mark uses the native accent, checked AND unchecked.
+                    self.page.keyboard.press('Space')
+                    assert_text_contrast(self, self.page, '#editor-dialog')
+                    self.page.once('dialog', lambda d: d.accept())
+                    self.page.keyboard.press('Escape')
+
+    def test_63_contrast_auth_errors_save_conflict_status_and_trials(self):
+        for theme in ['classic', 'halloween']:
+            for width in [1440, 390]:
+                with self.subTest(theme=theme, width=width):
+                    self.page.set_viewport_size({'width': width, 'height': 1000})
+                    self.page.evaluate('(t)=>localStorage.setItem("kroshka-appearance",t)', theme)
+                    self.page.reload(wait_until='networkidle')
+                    snapshot = self.context.request.get(self.url + '/api/library').json()
+                    self.assertEqual(self.context.request.put(self.url + '/api/library', data={'revision':snapshot['revision'],'recipes':self.seeds}).status, 200)
+                    self.page.reload(wait_until='networkidle')
+                    form = self.fill_recipe('   ')
+                    form.locator('[type=submit]').click()
+                    expect(self.page.locator('#form-error')).not_to_be_empty()
+                    assert_text_contrast(self, self.page, '#editor-dialog')
+                    form.locator('[name=title]').fill('Контраст A05.2')
+                    # Hold the actual PUT to inspect disabled pending controls.
+                    pending = []
+                    def reject(route):
+                        if route.request.method == 'PUT':
+                            pending.append(route)
+                        else:
+                            route.continue_()
+                    self.page.route('**/api/library', reject)
+                    form.locator('[type=submit]').click()
+                    expect(self.page.locator('#save-recipe')).to_be_disabled()
+                    disabled_rows = measurements(self.page, '#editor-dialog')
+                    self.assertTrue(any(r['disabled'] for r in disabled_rows))
+                    assert_text_contrast(self, self.page, '#editor-dialog')
+                    self.assertEqual(len(pending), 1)
+                    pending[0].fulfill(status=503, content_type='application/json', body=json.dumps({'error':'Тестовая ошибка сохранения'}))
+                    expect(self.page.locator('#form-error')).to_have_text('Тестовая ошибка сохранения')
+                    assert_text_contrast(self, self.page, '#editor-dialog')
+                    self.page.unroute('**/api/library', reject)
+                    self.save(form)
+                    expect(self.page.locator('.toast.visible')).to_have_css('opacity', '1')
+                    assert_text_contrast(self, self.page)
+                    self.page.locator('[data-open=lentil-soup]').click()
+                    other = self.remote_context()
+                    revision = self.remote_update(other, lambda recipes: next(r for r in recipes if r['id']=='lentil-soup').update(title='Удалённая правка A05.2'))
+                    self.receive_revision(revision)
+                    expect(self.page.locator('#recipe-sync-notice')).to_be_visible()
+                    assert_text_contrast(self, self.page, '#recipe-dialog')
+                    self.page.locator('#recipe-sync-action').click()
+                    self.page.locator('[data-edit]').click()
+                    self.page.locator('[name=title]').fill('Локальная правка A05.2')
+                    revision = self.remote_update(other, lambda recipes: next(r for r in recipes if r['id']=='lentil-soup').update(title='Новая удалённая правка A05.2'))
+                    self.receive_revision(revision)
+                    self.page.locator('#save-recipe').click()
+                    expect(self.page.locator('#save-copy')).to_be_visible()
+                    assert_text_contrast(self, self.page, '#editor-dialog')
+                    self.page.once('dialog', lambda d: d.accept())
+                    self.page.keyboard.press('Escape')
+                    self.page.locator('[data-collection=trial]').first.click()
+                    assert_text_contrast(self, self.page)
+                    self.page.locator('#inspire').click()
+                    expect(self.page.locator('#catalog-save-trial')).to_be_enabled()
+                    self.page.locator('#catalog-save-trial').click()
+                    self.page.keyboard.press('Escape')
+                    assert_text_contrast(self, self.page)
+                    self.page.locator('#logout').click()
+                    expect(self.page.locator('#auth-screen')).to_be_visible()
+                    assert_text_contrast(self, self.page, '#auth-screen')
+                    self.page.locator('#family-password').fill('invalid-test-password')
+                    self.page.locator('#auth-form [type=submit]').click()
+                    expect(self.page.locator('#auth-error')).not_to_be_empty()
+                    assert_text_contrast(self, self.page, '#auth-screen')
+                    self.page.locator('#family-password').fill(self.password)
+                    self.page.locator('#auth-form [type=submit]').click()
+                    expect(self.page.locator('#auth-screen')).not_to_be_visible()
+
+    def test_64_contrast_rendered_hero_artwork_and_photo_focus(self):
+        self.page.emulate_media(reduced_motion='reduce')
+        for theme in ['classic', 'halloween']:
+            for width in [1440, 390]:
+                with self.subTest(theme=theme, width=width):
+                    self.page.set_viewport_size({'width':width,'height':1000})
+                    self.page.evaluate('(t)=>localStorage.setItem("kroshka-appearance",t)', theme)
+                    self.page.reload(wait_until='networkidle')
+                    rows = artwork_measurements(self.page, '.hero')
+                    self.assertGreater(len(rows), 3)
+                    self.assertEqual([r for r in rows if r['ratio'] < r['minimum']], [], str(rows))
+                    # Opaque icon/badge surfaces retain contrast on synthetic extremes,
+                    # without changing or relying on any real user's photograph.
+                    for photo in ['#000', '#fff']:
+                        self.page.locator('[data-id=lentil-soup] .card-image').evaluate('(e,c)=>{e.querySelectorAll("img,.food-photo").forEach(n=>n.remove());e.style.background=c}',photo)
+                        self.tab_to('[data-favorite=lentil-soup]')
+                        assert_text_contrast(self, self.page)
+                        button = self.page.locator('[data-favorite=lentil-soup]')
+                        self.assertNotEqual(button.evaluate('(e)=>getComputedStyle(e).boxShadow'), 'none')
+
+    def test_65_native_tab_order_preserves_toolbar_focus_during_render_and_sync(self):
+        # Native Chromium navigation is a DOM-order regression, not Safari emulation.
+        for theme in ['classic', 'halloween']:
+            for width in [1440, 390]:
+                with self.subTest(theme=theme, width=width):
+                    self.page.set_viewport_size({'width':width, 'height':1000})
+                    self.page.evaluate('(t)=>localStorage.setItem("kroshka-appearance",t)', theme)
+                    self.page.reload(wait_until='networkidle')
+                    self.page.evaluate('''() => {
+                        window.toolbarRefs = [...document.querySelectorAll('#search,#sort,#filter-toggle,#grid-view,#list-view')];
+                        window.scriptFocusCalls = [];
+                        const nativeFocus = HTMLElement.prototype.focus;
+                        HTMLElement.prototype.focus = function(...args) {
+                            scriptFocusCalls.push(this.id || this.tagName);
+                            return nativeFocus.apply(this,args);
+                        };
+                    }''')
+                    self.assertEqual(self.page.locator('[tabindex]').evaluate_all('(els)=>els.filter(e=>e.tabIndex>0).length'), 0)
+                    self.page.locator('#search').fill('чечевица')
+                    self.page.locator('#sort').select_option('time')
+                    expect(self.page.locator('.recipe-card')).to_have_count(2)
+                    self.page.locator('#list-view').click()
+                    self.page.locator('#filter-toggle').click()
+                    expanded = ['#search','#filter-toggle','#filter-meal','#filter-size','#filter-macro',
+                                '#filter-meat','#filter-cooking-method','#filter-equipment','#filter-preparation','#reset-filters']
+                    self.page.locator('#search').focus()
+                    self.page.evaluate('scriptFocusCalls=[]')
+                    for selector in expanded[1:]:
+                        self.page.keyboard.press('Tab')
+                        expect(self.page.locator(selector)).to_be_focused()
+                    for selector in reversed(expanded[:-1]):
+                        self.page.keyboard.press('Shift+Tab')
+                        expect(self.page.locator(selector)).to_be_focused()
+                    self.assertEqual(self.page.evaluate('scriptFocusCalls'), [])
+                    self.page.locator('#filter-meal').select_option('Обед')
+                    expect(self.page.locator('.recipe-card')).to_have_count(1)
+                    self.page.locator('#reset-filters').click()
+                    expect(self.page.locator('.recipe-card')).to_have_count(2)
+                    self.page.locator('#filter-toggle').click()
+                    sequence = ['#search','#filter-toggle','[data-quick=all]','[data-quick=fast]',
+                                '[data-quick=vegetarian]','[data-quick=protein]','[data-quick=preparation]',
+                                '#sort','#grid-view','#list-view']
+                    self.page.locator('#search').focus()
+                    self.page.evaluate('scriptFocusCalls=[]')
+                    for selector in sequence[1:]:
+                        self.page.keyboard.press('Tab')
+                        expect(self.page.locator(selector)).to_be_focused()
+                    for selector in reversed(sequence[:-1]):
+                        self.page.keyboard.press('Shift+Tab')
+                        expect(self.page.locator(selector)).to_be_focused()
+                    self.assertEqual(self.page.evaluate('scriptFocusCalls'), [])
+                    self.page.locator('#sort').focus()
+                    self.page.evaluate('scriptFocusCalls=[]')
+                    other = self.remote_context()
+                    revision = self.remote_update(other, lambda recipes: next(r for r in recipes if r['id']=='salmon').update(title='Удалённая правка для проверки Tab'))
+                    self.receive_revision(revision)
+                    expect(self.page.locator('#sort')).to_be_focused()
+                    with self.page.expect_response(lambda r:'/api/library?' in r.url and r.json().get('unchanged')):
+                        self.page.evaluate("window.dispatchEvent(new Event('online'))")
+                    self.assertEqual(self.page.evaluate('scriptFocusCalls'), [])
+                    self.assertTrue(self.page.evaluate('toolbarRefs.every(e=>e.isConnected && document.getElementById(e.id)===e)'))
+                    expect(self.page.locator('#sort')).to_have_value('time')
+                    expect(self.page.locator('#search')).to_have_value('чечевица')
+                    expect(self.page.locator('#recipe-grid')).to_have_class('recipe-grid list-view')
+                    self.page.keyboard.press('Tab')
+                    expect(self.page.locator('#grid-view')).to_be_focused()
+                    self.page.keyboard.press('Shift+Tab')
+                    expect(self.page.locator('#sort')).to_be_focused()
+
+    def test_66_cat_animation_has_no_displaced_edge_fragments_at_retina_scale(self):
+        from io import BytesIO
+        from PIL import Image, ImageChops
+        for theme in ['classic', 'halloween']:
+            for width in [1440, 390]:
+                with self.subTest(theme=theme, width=width):
+                    context = self.browser.new_context(viewport={'width':width,'height':1000}, device_scale_factor=2)
+                    self.addCleanup(context.close)
+                    self.assertEqual(context.request.post(self.url+'/api/login', data={'password':self.password}).status, 200)
+                    page = context.new_page()
+                    page.on('pageerror', lambda error:self.errors.append(str(error)))
+                    page.add_init_script('localStorage.setItem("kroshka-appearance",'+json.dumps(theme)+')')
+                    page.goto(self.url, wait_until='networkidle')
+                    page.evaluate('document.fonts.ready')
+                    logo = page.locator(('.sidebar>.brand' if width>680 else '.mobile-brand')+' .brand-cat')
+                    box = logo.bounding_box()
+                    clip = {'x':box['x']-6,'y':box['y'],'width':box['width']+18,'height':box['height']}
+                    timeline = page.locator('.svg-definitions')
+                    timeline.evaluate('(e)=>{e.pauseAnimations();e.setCurrentTime(0)}')
+                    still = Image.open(BytesIO(page.screenshot(clip=clip))).convert('RGB')
+                    right_edge = (int((6+box['width']+1)*2),0,still.width,still.height)
+                    # The previous screenshot test cropped to the logo box, hiding
+                    # duplicate fragments just OUTSIDE the source image on dark UI.
+                    changed = False
+                    for phase in [1.1,2.4,3.51,3.8,5.2,6.5]:
+                        timeline.evaluate('(e,t)=>e.setCurrentTime(t)',phase)
+                        frame = Image.open(BytesIO(page.screenshot(clip=clip))).convert('RGB')
+                        changed |= ImageChops.difference(still,frame).getbbox() is not None
+                        difference = ImageChops.difference(still.crop(right_edge),frame.crop(right_edge))
+                        self.assertFalse(any(max(pixel)>12 for pixel in difference.get_flattened_data()),
+                                         f'{theme} {width} phase {phase}: displaced right-edge fragments')
+                    self.assertTrue(changed, 'Animation must remain visible')
+                    page.emulate_media(reduced_motion='reduce')
+                    page.wait_for_function('[...document.querySelectorAll("feDisplacementMap")].every(e=>e.scale.animVal===0)')
+                    reduced = Image.open(BytesIO(page.screenshot(clip=clip))).convert('RGB')
+                    self.assertIsNone(ImageChops.difference(still,reduced).getbbox())
+                    context.close()
+
+    def test_67_webkit_cat_css_motion_has_clean_edges_on_both_sides(self):
+        from io import BytesIO
+        from PIL import Image, ImageChops
+        agents = {
+            1440:'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15',
+            390:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Mobile/15E148 Safari/604.1',
+        }
+        for theme in ['classic', 'halloween']:
+            for width, agent in agents.items():
+                with self.subTest(theme=theme, width=width):
+                    # UA selects the fallback in Chromium; this is NOT Safari QA.
+                    context = self.browser.new_context(viewport={'width':width,'height':1000}, device_scale_factor=2, user_agent=agent)
+                    self.addCleanup(context.close)
+                    self.assertEqual(context.request.post(self.url+'/api/login', data={'password':self.password}).status, 200)
+                    page = context.new_page()
+                    page.on('pageerror', lambda error:self.errors.append(str(error)))
+                    page.add_init_script('localStorage.setItem("kroshka-appearance",'+json.dumps(theme)+')')
+                    page.goto(self.url, wait_until='networkidle')
+                    page.evaluate('document.fonts.ready')
+                    self.assertEqual(page.locator('html').get_attribute('data-cat-motion'), 'css')
+                    self.assertTrue(page.locator('.cat-mascot, .cat-mascot>g').evaluate_all('(groups)=>groups.every(g=>!g.hasAttribute("filter") && getComputedStyle(g).filter==="none")'))
+                    self.assertTrue(page.locator('feDisplacementMap').evaluate_all('(maps)=>maps.every(m=>m.scale.animVal===0)'))
+                    logo = page.locator(('.sidebar>.brand' if width>680 else '.mobile-brand')+' .brand-cat')
+                    mascot = logo.locator('.cat-mascot')
+                    mascot.evaluate('(e)=>{const a=e.getAnimations()[0];a.pause();a.currentTime=0}')
+                    box = logo.bounding_box()
+                    clip = {'x':box['x']-6,'y':box['y'],'width':box['width']+12,'height':box['height']}
+                    def shot():
+                        return Image.open(BytesIO(page.screenshot(clip=clip))).convert('RGB')
+                    still = shot()
+                    # Include both image boundaries and the surrounding background,
+                    # not just the logo bbox. CSS motion has no horizontal component.
+                    edges = {
+                        'left':(0,0,int((6+1)*2),still.height),
+                        'right':(int((6+box['width']-1)*2),0,still.width,still.height),
+                    }
+                    def assert_clean_edge(frame, side):
+                        diff = ImageChops.difference(still.crop(edges[side]),frame.crop(edges[side]))
+                        self.assertFalse(any(max(pixel)>12 for pixel in diff.get_flattened_data()),
+                                         f'{theme} {width}: unexpected {side}-edge strip')
+                    changed = False
+                    for phase in [1100,2400,3250,3800,5200,6500]:
+                        mascot.evaluate('(e,t)=>e.getAnimations()[0].currentTime=t',phase)
+                        frame = shot()
+                        changed |= ImageChops.difference(still,frame).getbbox() is not None
+                        for side in edges:
+                            assert_clean_edge(frame,side)
+                    self.assertTrue(changed, 'Safe CSS motion must remain visible')
+                    # Sensitivity controls render a white strip on EACH side;
+                    # prevent a mispositioned/empty crop silently passing the test.
+                    if theme=='halloween' and width==390:
+                        for side, x in [('left',-35),('right',1544)]:
+                            logo.evaluate('''(e,x)=>{const r=document.createElementNS(e.namespaceURI,'rect');
+                                r.id='test-edge-strip';r.setAttribute('x',x);r.setAttribute('y','80');
+                                r.setAttribute('width','24');r.setAttribute('height','700');r.setAttribute('fill','white');e.append(r)}''',x)
+                            with self.assertRaisesRegex(AssertionError, side+'-edge strip'):
+                                assert_clean_edge(shot(),side)
+                            page.locator('#test-edge-strip').evaluate('(e)=>e.remove()')
+                    page.emulate_media(reduced_motion='reduce')
+                    self.assertEqual(mascot.evaluate('(e)=>getComputedStyle(e).animationName'), 'none')
+                    self.assertEqual(mascot.evaluate('(e)=>getComputedStyle(e).transform'), 'none')
+                    self.assertIsNone(ImageChops.difference(still,shot()).getbbox())
+                    page.emulate_media(reduced_motion='no-preference')
+                    mascot.evaluate('(e)=>{const a=e.getAnimations()[0];a.pause();a.currentTime=3250}')
+                    self.assertIsNotNone(ImageChops.difference(still,shot()).getbbox())
+                    context.close()
+
+    def test_68_cat_engine_selection_first_paint_and_current_assets(self):
+        agents = [
+            ('Macintosh', 'Version/18.6 Safari/605.1.15', 'css'),
+            ('Macintosh', 'Chrome/140.0.0.0 Safari/537.36', 'smil'),
+            ('Macintosh', 'Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0', 'smil'),
+            ('iPhone', 'CriOS/140.0.0.0 Mobile/15E148 Safari/604.1', 'css'),
+            ('iPhone', 'FxiOS/140.0 Mobile/15E148 Safari/605.1.15', 'css'),
+            ('Macintosh', 'Version/18.6 Mobile/15E148 Safari/604.1', 'css'),
+        ]
+        for platform, product, mode in agents:
+            with self.subTest(platform=platform, product=product):
+                context = self.browser.new_context(user_agent=f'Mozilla/5.0 ({platform}) AppleWebKit/605.1.15 (KHTML, like Gecko) {product}')
+                self.addCleanup(context.close)
+                page = context.new_page()
+                # Hold the main app: the first-paint guard must work independently
+                # of login, API calls and the later removal of filter attributes.
+                page.route('**/app.js*', lambda route:route.fulfill(content_type='text/javascript',body='/* app held for first-paint check */'))
+                page.goto(self.url, wait_until='networkidle')
+                self.assertEqual(page.locator('html').get_attribute('data-cat-motion'), mode)
+                if mode=='css':
+                    self.assertTrue(page.locator('.cat-mascot, .cat-mascot>g').evaluate_all('(groups)=>groups.every(g=>g.hasAttribute("filter") && getComputedStyle(g).filter==="none")'))
+                    self.assertEqual(page.locator('.auth-brand .cat-mascot').evaluate('(e)=>getComputedStyle(e).animationName'), 'cat-breathe')
+                    self.assertTrue(page.locator('feDisplacementMap').evaluate_all('(maps)=>maps.every(m=>m.scale.animVal===0)'))
+                context.close()
+        # Query-versioned resources are served as current files, with revalidation.
+        for name in ['style.css','theme.js','app.js']:
+            with self.subTest(resource=name):
+                asset = self.page.locator(f'[href^="{name}"], [src^="{name}"]')
+                url = asset.get_attribute('href') or asset.get_attribute('src')
+                self.assertIn('?v=a052-cat-css-1', url)
+                response = self.context.request.get(self.url+'/'+url)
+                self.assertEqual(response.status, 200)
+                self.assertEqual(response.headers.get('cache-control'), 'no-cache')
+                self.assertEqual(response.body(), (ROOT/name).read_bytes())
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
